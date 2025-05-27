@@ -59,27 +59,27 @@ void __fastcall THealthMonitorForm::ConnectButtonClick(TObject *Sender)
             MonitorTCPClient->Connect();
         }
         catch (Exception &e) {
-            ShowMessage("연결 실패: " + e.Message);
+            ShowMessage("Connection Fail: " + e.Message);
         }
     }
     else {
         MonitorTCPClient->Disconnect();
         UpdateTimer->Enabled = false;
-        ConnectButton->Caption = "연결";
+        ConnectButton->Caption = "Connetion";
         isConnected = false;
     }
 }
 
 void __fastcall THealthMonitorForm::MonitorTCPClientConnected(TObject *Sender)
 {
-    ConnectButton->Caption = "연결 해제";
+    ConnectButton->Caption = "Disconnected";
     isConnected = true;
     UpdateTimer->Enabled = true;
 }
 
 void __fastcall THealthMonitorForm::MonitorTCPClientDisconnected(TObject *Sender)
 {
-    ConnectButton->Caption = "연결";
+    ConnectButton->Caption = "Connected";
     isConnected = false;
     UpdateTimer->Enabled = false;
 }

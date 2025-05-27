@@ -1,7 +1,7 @@
 object HealthMonitorForm: THealthMonitorForm
   Left = 0
   Top = 0
-  Caption = '시스템 모니터링'
+  Caption = 'Raspi-HealthMonitoring'
   ClientHeight = 400
   ClientWidth = 600
   Color = clBtnFace
