@@ -53,6 +53,9 @@ void __fastcall THealthMonitorForm::ConnectButtonClick(TObject *Sender)
     if (!isConnected) {
         try {
             MonitorTCPClient->Host = IPAddressEdit->Text;
+            MonitorTCPClient->Port = 5001;
+            MonitorTCPClient->ConnectTimeout = 5000;  // 5초 타임아웃 설정
+            MonitorTCPClient->ReadTimeout = 5000;     // 읽기 타임아웃 설정
             MonitorTCPClient->Connect();
         }
         catch (Exception &e) {
@@ -106,7 +109,7 @@ void THealthMonitorForm::UpdateSystemInfo()
 
 void THealthMonitorForm::ParseSystemInfo(const String& data)
 {
-    // 데이터 형식: "CPU:50|MEM:60|TEMP:45|DISK:75"
+    // 데이터 형식: "CPU:50.5|MEM:60.2|TEMP:45.7|DISK:75.1"
     try {
         TStringList* items = new TStringList();
         items->Delimiter = '|';
@@ -115,23 +118,24 @@ void THealthMonitorForm::ParseSystemInfo(const String& data)
         for (int i = 0; i < items->Count; i++) {
             String item = items->Strings[i];
             String key = item.SubString(1, item.Pos(":") - 1);
-            int value = StrToInt(item.SubString(item.Pos(":") + 1, item.Length()));
+            double value = StrToFloat(item.SubString(item.Pos(":") + 1, item.Length()));
+            int intValue = static_cast<int>(value + 0.5); // 반올림
             
             if (key == "CPU") {
-                CPUProgressBar->Position = value;
-                CPULabel->Caption = "CPU 사용량: " + IntToStr(value) + "%";
+                CPUProgressBar->Position = intValue;
+                CPULabel->Caption = "CPU Usage: " + FloatToStrF(value, ffFixed, 7, 1) + "%";
             }
             else if (key == "MEM") {
-                MemoryProgressBar->Position = value;
-                MemoryLabel->Caption = "메모리 사용량: " + IntToStr(value) + "%";
+                MemoryProgressBar->Position = intValue;
+                MemoryLabel->Caption = "Memory Usage: " + FloatToStrF(value, ffFixed, 7, 1) + "%";
             }
             else if (key == "TEMP") {
-                TempProgressBar->Position = value;
-                TempLabel->Caption = "CPU 온도: " + IntToStr(value) + "°C";
+                TempProgressBar->Position = intValue;
+                TempLabel->Caption = "CPU Temperature: " + FloatToStrF(value, ffFixed, 7, 1) + "°C";
             }
             else if (key == "DISK") {
-                DiskProgressBar->Position = value;
-                DiskLabel->Caption = "디스크 사용량: " + IntToStr(value) + "%";
+                DiskProgressBar->Position = intValue;
+                DiskLabel->Caption = "Disk Usage: " + FloatToStrF(value, ffFixed, 7, 1) + "%";
             }
         }
         
