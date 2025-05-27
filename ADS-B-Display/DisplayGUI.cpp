@@ -24,6 +24,7 @@
 #include "TimeFunctions.h"
 #include "SBS_Message.h"
 #include "CPA.h"
+#include "HealthMonitorForm.h"
 
 #define MAP_CENTER_LAT  40.73612;
 #define MAP_CENTER_LON -80.33158;

@@ -24,6 +24,7 @@
 #include <IdTCPClient.hpp>
 #include <IdTCPConnection.hpp>
 #include "cspin.h"
+#include "HealthMonitorForm.h"
 
 typedef float T_GL_Color[4];
 
