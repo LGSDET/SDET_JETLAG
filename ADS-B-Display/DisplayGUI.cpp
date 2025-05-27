@@ -1733,7 +1733,10 @@ void __fastcall TForm1::UseSBSLocalClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TForm1::HealthMonitorClick(TObject *Sender)
 {
- ;
+    if (!HealthMonitorForm) {
+        HealthMonitorForm = new THealthMonitorForm(Application);
+    }
+    HealthMonitorForm->Show();
 }
 
 //---------------------------------------------------------------------------
