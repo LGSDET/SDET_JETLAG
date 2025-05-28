@@ -1,16 +1,16 @@
 #ifndef HealthMonitorFormH
 #define HealthMonitorFormH
 
-#include <Classes.hpp>
-#include <Controls.hpp>
-#include <StdCtrls.hpp>
-#include <Forms.hpp>
-#include <ExtCtrls.hpp>
-#include <ComCtrls.hpp>
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Vcl.ComCtrls.hpp>
 #include <IdBaseComponent.hpp>
 #include <IdComponent.hpp>
 #include <IdTCPClient.hpp>
 #include <IdTCPConnection.hpp>
+#include <Vcl.ExtCtrls.hpp>
 
 class THealthMonitorForm : public TForm
 {
@@ -20,6 +20,8 @@ __published:
     TLabel *MemoryLabel;
     TLabel *TempLabel;
     TLabel *DiskLabel;
+    TLabel *UptimeLabel;
+    TLabel *PowerLabel;
     TProgressBar *CPUProgressBar;
     TProgressBar *MemoryProgressBar;
     TProgressBar *TempProgressBar;
@@ -40,6 +42,7 @@ private:
     bool isConnected;
     void UpdateSystemInfo();
     void ParseSystemInfo(const String& data);
+    void ClearAndDisableValues();
     
 public:
     __fastcall THealthMonitorForm(TComponent* Owner);

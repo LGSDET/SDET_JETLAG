@@ -1,96 +1,144 @@
 object HealthMonitorForm: THealthMonitorForm
   Left = 0
   Top = 0
-  Caption = 'Raspi-HealthMonitoring'
-  ClientHeight = 400
-  ClientWidth = 600
+  BorderStyle = bsSingle
+  Caption = 'Raspberry Pi Health Monitor'
+  ClientHeight = 350
+  ClientWidth = 400
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
-  OnCreate = FormCreate
-  OnDestroy = FormDestroy
-  PixelsPerInch = 96
+  Position = poScreenCenter
   TextHeight = 13
   object MainPanel: TPanel
-    Left = 0
-    Top = 0
-    Width = 600
-    Height = 400
-    Align = alClient
+    Left = 8
+    Top = 8
+    Width = 384
+    Height = 334
     TabOrder = 0
     object CPULabel: TLabel
       Left = 16
       Top = 16
-      Width = 120
+      Width = 350
       Height = 13
-      Caption = 'CPU 사용량: 0%'
+      Caption = 'CPU Usage: 0.0/100.0%'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
     end
     object MemoryLabel: TLabel
       Left = 16
-      Top = 80
-      Width = 120
+      Top = 72
+      Width = 350
       Height = 13
-      Caption = '메모리 사용량: 0%'
+      Caption = 'Memory Usage: 0/0 MB'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
     end
     object TempLabel: TLabel
       Left = 16
-      Top = 144
-      Width = 120
+      Top = 128
+      Width = 350
       Height = 13
-      Caption = 'CPU 온도: 0°C'
+      Caption = 'CPU Temperature: 0.0/85.0'#176'C'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
     end
     object DiskLabel: TLabel
       Left = 16
-      Top = 208
-      Width = 120
+      Top = 184
+      Width = 350
       Height = 13
-      Caption = '디스크 사용량: 0%'
+      Caption = 'Disk Usage: 0/100%'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object UptimeLabel: TLabel
+      Left = 16
+      Top = 240
+      Width = 350
+      Height = 13
+      Caption = 'Uptime: 00:00:00'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object PowerLabel: TLabel
+      Left = 16
+      Top = 270
+      Width = 350
+      Height = 13
+      Caption = 'Power: 0.0V/0.0A'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
     end
     object CPUProgressBar: TProgressBar
       Left = 16
       Top = 35
-      Width = 560
+      Width = 350
       Height = 20
       TabOrder = 0
     end
     object MemoryProgressBar: TProgressBar
       Left = 16
-      Top = 99
-      Width = 560
+      Top = 91
+      Width = 350
       Height = 20
       TabOrder = 1
     end
     object TempProgressBar: TProgressBar
       Left = 16
-      Top = 163
-      Width = 560
+      Top = 147
+      Width = 350
       Height = 20
+      Max = 85
       TabOrder = 2
     end
     object DiskProgressBar: TProgressBar
       Left = 16
-      Top = 227
-      Width = 560
+      Top = 203
+      Width = 350
       Height = 20
       TabOrder = 3
     end
     object ConnectButton: TButton
       Left = 16
-      Top = 272
+      Top = 299
       Width = 75
       Height = 25
-      Caption = '연결'
+      Caption = 'Connect'
       TabOrder = 4
       OnClick = ConnectButtonClick
     end
     object IPAddressEdit: TEdit
-      Left = 104
-      Top = 274
-      Width = 121
+      Left = 97
+      Top = 301
+      Width = 269
       Height = 21
       TabOrder = 5
       Text = '192.168.0.190'
@@ -100,8 +148,8 @@ object HealthMonitorForm: THealthMonitorForm
     Enabled = False
     Interval = 1000
     OnTimer = UpdateTimerTimer
-    Left = 544
-    Top = 344
+    Left = 360
+    Top = 8
   end
   object MonitorTCPClient: TIdTCPClient
     OnConnected = MonitorTCPClientConnected

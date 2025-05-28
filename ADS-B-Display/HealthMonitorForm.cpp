@@ -32,12 +32,49 @@ void __fastcall THealthMonitorForm::FormCreate(TObject *Sender)
     MemoryProgressBar->Min = 0;
     MemoryProgressBar->Max = 100;
     TempProgressBar->Min = 0;
-    TempProgressBar->Max = 100;
+    TempProgressBar->Max = 85;  // CPU 최대 온도 85도
     DiskProgressBar->Min = 0;
     DiskProgressBar->Max = 100;
     
     IPAddressEdit->Text = "192.168.0.190";  // 기본 IP 주소
-    ConnectButton->Caption = "연결";
+    ConnectButton->Caption = "Connect";
+    
+    // 초기 상태를 비활성화로 설정
+    ClearAndDisableValues();
+}
+
+void THealthMonitorForm::ClearAndDisableValues()
+{
+    // 프로그레스바 초기화
+    CPUProgressBar->Position = 0;
+    MemoryProgressBar->Position = 0;
+    TempProgressBar->Position = 0;
+    DiskProgressBar->Position = 0;
+    
+    // 레이블 텍스트 비활성화 상태로 변경
+    CPULabel->Caption = "CPU Usage: N/A";
+    CPULabel->Font->Color = clGray;
+    
+    MemoryLabel->Caption = "Memory Usage: N/A";
+    MemoryLabel->Font->Color = clGray;
+    
+    TempLabel->Caption = "CPU Temperature: N/A";
+    TempLabel->Font->Color = clGray;
+    
+    DiskLabel->Caption = "Disk Usage: N/A";
+    DiskLabel->Font->Color = clGray;
+    
+    UptimeLabel->Caption = "Uptime: N/A";
+    UptimeLabel->Font->Color = clGray;
+    
+    PowerLabel->Caption = "Power: N/A";
+    PowerLabel->Font->Color = clGray;
+    
+    // 프로그레스바 비활성화 색상으로 변경
+    CPUProgressBar->State = pbError;
+    MemoryProgressBar->State = pbError;
+    TempProgressBar->State = pbError;
+    DiskProgressBar->State = pbError;
 }
 
 void __fastcall THealthMonitorForm::FormDestroy(TObject *Sender)
@@ -59,29 +96,46 @@ void __fastcall THealthMonitorForm::ConnectButtonClick(TObject *Sender)
             MonitorTCPClient->Connect();
         }
         catch (Exception &e) {
-            ShowMessage("Connection Fail: " + e.Message);
+            ShowMessage("Connection Failed: " + e.Message);
+            ClearAndDisableValues();  // 연결 실패 시 값 초기화
         }
     }
     else {
         MonitorTCPClient->Disconnect();
         UpdateTimer->Enabled = false;
-        ConnectButton->Caption = "Connetion";
+        ConnectButton->Caption = "Connect";
         isConnected = false;
+        ClearAndDisableValues();  // 연결 해제 시 값 초기화
     }
 }
 
 void __fastcall THealthMonitorForm::MonitorTCPClientConnected(TObject *Sender)
 {
-    ConnectButton->Caption = "Disconnected";
+    ConnectButton->Caption = "Disconnect";
     isConnected = true;
     UpdateTimer->Enabled = true;
+    
+    // 연결 시 프로그레스바 상태 정상으로 변경
+    CPUProgressBar->State = pbNormal;
+    MemoryProgressBar->State = pbNormal;
+    TempProgressBar->State = pbNormal;
+    DiskProgressBar->State = pbNormal;
+    
+    // 레이블 색상을 활성화 상태로 변경
+    CPULabel->Font->Color = clWindowText;
+    MemoryLabel->Font->Color = clWindowText;
+    TempLabel->Font->Color = clWindowText;
+    DiskLabel->Font->Color = clWindowText;
+    UptimeLabel->Font->Color = clWindowText;
+    PowerLabel->Font->Color = clWindowText;
 }
 
 void __fastcall THealthMonitorForm::MonitorTCPClientDisconnected(TObject *Sender)
 {
-    ConnectButton->Caption = "Connected";
+    ConnectButton->Caption = "Connect";
     isConnected = false;
     UpdateTimer->Enabled = false;
+    ClearAndDisableValues();  // 연결 해제 시 값 초기화
 }
 
 void __fastcall THealthMonitorForm::UpdateTimerTimer(TObject *Sender)
@@ -109,7 +163,7 @@ void THealthMonitorForm::UpdateSystemInfo()
 
 void THealthMonitorForm::ParseSystemInfo(const String& data)
 {
-    // 데이터 형식: "CPU:50.5|MEM:60.2|TEMP:45.7|DISK:75.1"
+    // 데이터 형식: "CPU:50.5/100|MEM:1024/4096|TEMP:45.7/85|DISK:75/100|UPTIME:01:30:45|POWER:5.1V/2.1A"
     try {
         TStringList* items = new TStringList();
         items->Delimiter = '|';
@@ -118,24 +172,50 @@ void THealthMonitorForm::ParseSystemInfo(const String& data)
         for (int i = 0; i < items->Count; i++) {
             String item = items->Strings[i];
             String key = item.SubString(1, item.Pos(":") - 1);
-            double value = StrToFloat(item.SubString(item.Pos(":") + 1, item.Length()));
-            int intValue = static_cast<int>(value + 0.5); // 반올림
+            String valueStr = item.SubString(item.Pos(":") + 1, item.Length());
             
             if (key == "CPU") {
-                CPUProgressBar->Position = intValue;
-                CPULabel->Caption = "CPU Usage: " + FloatToStrF(value, ffFixed, 7, 1) + "%";
+                // CPU:현재/최대
+                String current = valueStr.SubString(1, valueStr.Pos("/") - 1);
+                String maximum = valueStr.SubString(valueStr.Pos("/") + 1, valueStr.Length());
+                double currentVal = StrToFloat(current);
+                CPUProgressBar->Position = static_cast<int>(currentVal + 0.5);
+                CPULabel->Caption = "CPU Usage: " + FloatToStrF(currentVal, ffFixed, 7, 1) + "/" + maximum + "%";
             }
             else if (key == "MEM") {
-                MemoryProgressBar->Position = intValue;
-                MemoryLabel->Caption = "Memory Usage: " + FloatToStrF(value, ffFixed, 7, 1) + "%";
+                // MEM:현재/최대 (MB)
+                String current = valueStr.SubString(1, valueStr.Pos("/") - 1);
+                String maximum = valueStr.SubString(valueStr.Pos("/") + 1, valueStr.Length());
+                int currentVal = StrToInt(current);
+                int maxVal = StrToInt(maximum);
+                MemoryProgressBar->Position = (currentVal * 100) / maxVal;
+                MemoryLabel->Caption = "Memory Usage: " + current + "/" + maximum + " MB";
             }
             else if (key == "TEMP") {
-                TempProgressBar->Position = intValue;
-                TempLabel->Caption = "CPU Temperature: " + FloatToStrF(value, ffFixed, 7, 1) + "°C";
+                // TEMP:현재/최대
+                String current = valueStr.SubString(1, valueStr.Pos("/") - 1);
+                String maximum = valueStr.SubString(valueStr.Pos("/") + 1, valueStr.Length());
+                double currentVal = StrToFloat(current);
+                TempProgressBar->Position = static_cast<int>(currentVal + 0.5);
+                TempLabel->Caption = "CPU Temperature: " + FloatToStrF(currentVal, ffFixed, 7, 1) + "/" + maximum + "°C";
             }
             else if (key == "DISK") {
-                DiskProgressBar->Position = intValue;
-                DiskLabel->Caption = "Disk Usage: " + FloatToStrF(value, ffFixed, 7, 1) + "%";
+                // DISK:현재/최대
+                String current = valueStr.SubString(1, valueStr.Pos("/") - 1);
+                String maximum = valueStr.SubString(valueStr.Pos("/") + 1, valueStr.Length());
+                int currentVal = StrToInt(current);
+                DiskProgressBar->Position = currentVal;
+                DiskLabel->Caption = "Disk Usage: " + current + "/" + maximum + "%";
+            }
+            else if (key == "UPTIME") {
+                // UPTIME:HH:MM:SS
+                UptimeLabel->Caption = "Uptime: " + valueStr;
+            }
+            else if (key == "POWER") {
+                // POWER:전압V/전류A
+                String voltage = valueStr.SubString(1, valueStr.Pos("/") - 1);
+                String current = valueStr.SubString(valueStr.Pos("/") + 1, valueStr.Length());
+                PowerLabel->Caption = "Power: " + voltage + "/" + current;
             }
         }
         
