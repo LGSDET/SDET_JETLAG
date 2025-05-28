@@ -24,7 +24,7 @@ object HealthMonitorForm: THealthMonitorForm
       Top = 16
       Width = 350
       Height = 13
-      Caption = 'CPU Usage: 0.0/100.0%'
+      Caption = 'CPU Usage: 0.0% / 100.0%'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -37,7 +37,7 @@ object HealthMonitorForm: THealthMonitorForm
       Top = 72
       Width = 350
       Height = 13
-      Caption = 'Memory Usage: 0/0 MB'
+      Caption = 'Memory Usage: 0 MB / 0 MB'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -50,7 +50,7 @@ object HealthMonitorForm: THealthMonitorForm
       Top = 128
       Width = 350
       Height = 13
-      Caption = 'CPU Temperature: 0.0/85.0'#176'C'
+      Caption = 'CPU Temperature: 0.0°C / 85.0°C'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -63,7 +63,7 @@ object HealthMonitorForm: THealthMonitorForm
       Top = 184
       Width = 350
       Height = 13
-      Caption = 'Disk Usage: 0/100%'
+      Caption = 'Disk Usage: 0% / 100%'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11

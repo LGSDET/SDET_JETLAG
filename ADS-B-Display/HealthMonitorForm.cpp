@@ -204,9 +204,18 @@ void THealthMonitorForm::ParseSystemInfo(const String& data)
                 }
             }
             else if (key == "UPTIME") {
-                // UPTIME:HH:MM:SS (예: "UPTIME:01:30:45")
+                // UPTIME:HH:MM:SS 또는 UPTIME:DDd HH:MM:SS 형식 처리
                 try {
-                    UptimeLabel->Caption = "Uptime: " + valueStr.Trim();
+                    String uptimeStr = valueStr.Trim();
+                    if (uptimeStr.Pos("d ") > 0) {  // 일수가 포함된 경우
+                        // "5d 12:34:56" 형식 처리
+                        String daysStr = uptimeStr.SubString(1, uptimeStr.Pos("d") - 1);
+                        String timeStr = uptimeStr.SubString(uptimeStr.Pos(" ") + 1, uptimeStr.Length());
+                        UptimeLabel->Caption = "Uptime: " + daysStr + " days " + timeStr;
+                    } else {
+                        // "12:34:56" 형식 처리
+                        UptimeLabel->Caption = "Uptime: " + uptimeStr;
+                    }
                 }
                 catch (...) {
                     UptimeLabel->Caption = "Uptime: Error";
@@ -222,7 +231,7 @@ void THealthMonitorForm::ParseSystemInfo(const String& data)
                     
                     // 전류 파싱 (/ 다음부터 A 앞까지의 숫자)
                     int slashPos = valueStr.Pos("/");
-                    int aPos = valueStr.LastPos("A");  // LastPos 사용하여 마지막 'A' 찾기
+                    int aPos = valueStr.Pos("A");  // 'A' 문자의 위치 찾기
                     if (slashPos <= 0 || aPos <= 0) throw Exception("Invalid current format");
                     String currentStr = valueStr.SubString(slashPos + 1, aPos - slashPos - 1).Trim();
                     
