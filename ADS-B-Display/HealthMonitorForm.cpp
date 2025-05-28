@@ -202,17 +202,31 @@ void THealthMonitorForm::ParseSystemInfo(const String& data)
                 UptimeLabel->Caption = "Uptime: " + valueStr;
             }
             else if (key == "POWER") {
-                // POWER:전압V/전류A
+                // POWER:전압V/전류A 형식 (예: "POWER:5.1V/2.1A")
                 try {
-                    String voltage = valueStr.SubString(1, valueStr.Pos("V") - 1);
-                    String current = valueStr.SubString(valueStr.Pos("/") + 1, valueStr.Pos("A") - valueStr.Pos("/") - 1);
-                    double voltageVal = StrToFloat(voltage);
-                    double currentVal = StrToFloat(current);
-                    PowerLabel->Caption = "Power: " + FloatToStrF(voltageVal, ffFixed, 7, 1) + "V/" + 
-                                                    FloatToStrF(currentVal, ffFixed, 7, 1) + "A";
+                    // 전압 파싱 (V 앞까지의 숫자)
+                    int vPos = valueStr.Pos("V");
+                    if (vPos <= 0) throw Exception("Invalid voltage format");
+                    String voltageStr = valueStr.SubString(1, vPos - 1);
+                    
+                    // 전류 파싱 (/ 다음부터 A 앞까지의 숫자)
+                    int slashPos = valueStr.Pos("/");
+                    int aPos = valueStr.Pos("A");
+                    if (slashPos <= 0 || aPos <= 0) throw Exception("Invalid current format");
+                    String currentStr = valueStr.SubString(slashPos + 1, aPos - slashPos - 1);
+                    
+                    try {
+                        double voltageVal = StrToFloat(voltageStr);
+                        double currentVal = StrToFloat(currentStr);
+                        PowerLabel->Caption = "Power: " + FloatToStrF(voltageVal, ffFixed, 7, 1) + "V/" + 
+                                                       FloatToStrF(currentVal, ffFixed, 7, 1) + "A";
+                    }
+                    catch (...) {
+                        PowerLabel->Caption = "Power: Error converting values";
+                    }
                 }
                 catch (...) {
-                    PowerLabel->Caption = "Power: Error parsing values";
+                    PowerLabel->Caption = "Power: Invalid format";
                 }
             }
         }

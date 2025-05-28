@@ -8,17 +8,30 @@ import subprocess
 def get_power_info():
     try:
         # vcgencmd 명령어로 전압과 전류 정보 가져오기
-        voltage = subprocess.check_output(['vcgencmd', 'measure_volts', 'core']).decode()
-        current = subprocess.check_output(['vcgencmd', 'measure_current']).decode()
+        voltage = subprocess.check_output(['vcgencmd', 'measure_volts', 'core']).decode().strip()
+        current = subprocess.check_output(['vcgencmd', 'measure_current']).decode().strip()
         
         # 전압 파싱 (V=1.2000V 형식에서 숫자만 추출)
-        voltage_value = float(voltage.split('=')[1].replace('V', ''))
+        voltage_parts = voltage.split('=')
+        if len(voltage_parts) != 2 or not voltage_parts[1].endswith('V'):
+            raise ValueError("Invalid voltage format")
+        voltage_value = float(voltage_parts[1].replace('V', ''))
         
         # 전류 파싱 (I=1.2000A 형식에서 숫자만 추출)
-        current_value = float(current.split('=')[1].replace('A', ''))
+        current_parts = current.split('=')
+        if len(current_parts) != 2 or not current_parts[1].endswith('A'):
+            raise ValueError("Invalid current format")
+        current_value = float(current_parts[1].replace('A', ''))
         
+        # 값이 음수이거나 비정상적으로 큰 경우 예외 발생
+        if voltage_value < 0 or voltage_value > 5.5:  # 라즈베리파이 정상 전압 범위
+            raise ValueError("Voltage out of range")
+        if current_value < 0 or current_value > 3.0:  # 라즈베리파이 정상 전류 범위
+            raise ValueError("Current out of range")
+            
         return voltage_value, current_value
-    except:
+    except (subprocess.CalledProcessError, ValueError, IndexError) as e:
+        print(f"Power info error: {str(e)}")
         return 0.0, 0.0
 
 def get_system_info():
