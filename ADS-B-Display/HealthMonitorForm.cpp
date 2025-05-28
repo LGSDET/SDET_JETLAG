@@ -190,30 +190,41 @@ void THealthMonitorForm::ParseSystemInfo(const String& data)
                 TempLabel->Caption = "CPU Temperature: " + FloatToStrF(currentVal, ffFixed, 7, 1) + "/" + maximum + "°C";
             }
             else if (key == "DISK") {
-                // DISK:현재/최대
-                String current = valueStr.SubString(1, valueStr.Pos("/") - 1);
-                String maximum = valueStr.SubString(valueStr.Pos("/") + 1, valueStr.Length());
-                int currentVal = StrToInt(current);
-                DiskProgressBar->Position = currentVal;
-                DiskLabel->Caption = "Disk Usage: " + current + "/" + maximum + "%";
+                // DISK:현재/최대 (예: "DISK:75/100")
+                try {
+                    String current = valueStr.SubString(1, valueStr.Pos("/") - 1);
+                    String maximum = valueStr.SubString(valueStr.Pos("/") + 1, valueStr.Length());
+                    int currentVal = StrToInt(current.Trim());
+                    int maxVal = StrToInt(maximum.Trim());
+                    DiskProgressBar->Position = currentVal;
+                    DiskLabel->Caption = "Disk Usage: " + IntToStr(currentVal) + "/" + IntToStr(maxVal) + "%";
+                }
+                catch (...) {
+                    DiskLabel->Caption = "Disk Usage: Error";
+                }
             }
             else if (key == "UPTIME") {
-                // UPTIME:HH:MM:SS
-                UptimeLabel->Caption = "Uptime: " + valueStr;
+                // UPTIME:HH:MM:SS (예: "UPTIME:01:30:45")
+                try {
+                    UptimeLabel->Caption = "Uptime: " + valueStr.Trim();
+                }
+                catch (...) {
+                    UptimeLabel->Caption = "Uptime: Error";
+                }
             }
             else if (key == "POWER") {
-                // POWER:전압V/전류A 형식 (예: "POWER:5.1V/2.1A")
+                // POWER:전압V/전류A (예: "POWER:5.1V/2.1A")
                 try {
                     // 전압 파싱 (V 앞까지의 숫자)
                     int vPos = valueStr.Pos("V");
                     if (vPos <= 0) throw Exception("Invalid voltage format");
-                    String voltageStr = valueStr.SubString(1, vPos - 1);
+                    String voltageStr = valueStr.SubString(1, vPos - 1).Trim();
                     
                     // 전류 파싱 (/ 다음부터 A 앞까지의 숫자)
                     int slashPos = valueStr.Pos("/");
-                    int aPos = valueStr.Pos("A");
+                    int aPos = valueStr.LastPos("A");  // LastPos 사용하여 마지막 'A' 찾기
                     if (slashPos <= 0 || aPos <= 0) throw Exception("Invalid current format");
-                    String currentStr = valueStr.SubString(slashPos + 1, aPos - slashPos - 1);
+                    String currentStr = valueStr.SubString(slashPos + 1, aPos - slashPos - 1).Trim();
                     
                     try {
                         double voltageVal = StrToFloat(voltageStr);

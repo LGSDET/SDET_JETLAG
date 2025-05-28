@@ -58,7 +58,7 @@ def get_system_info():
     
     # 디스크 사용량 (현재/최대)
     disk = psutil.disk_usage('/')
-    disk_info = f"DISK:{disk.percent}/{100}"
+    disk_info = f"DISK:{int(disk.percent)}/{100}"
     
     # Uptime
     boot_time = datetime.fromtimestamp(psutil.boot_time())
