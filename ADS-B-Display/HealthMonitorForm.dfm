@@ -76,7 +76,7 @@ object HealthMonitorForm: THealthMonitorForm
       Top = 240
       Width = 350
       Height = 13
-      Caption = 'Uptime: 00:00:00'
+      Caption = 'Uptime: 0 days 00:00:00'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11

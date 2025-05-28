@@ -207,15 +207,10 @@ void THealthMonitorForm::ParseSystemInfo(const String& data)
                 // UPTIME:HH:MM:SS 또는 UPTIME:DDd HH:MM:SS 형식 처리
                 try {
                     String uptimeStr = valueStr.Trim();
-                    if (uptimeStr.Pos("d ") > 0) {  // 일수가 포함된 경우
-                        // "5d 12:34:56" 형식 처리
-                        String daysStr = uptimeStr.SubString(1, uptimeStr.Pos("d") - 1);
-                        String timeStr = uptimeStr.SubString(uptimeStr.Pos(" ") + 1, uptimeStr.Length());
-                        UptimeLabel->Caption = "Uptime: " + daysStr + " days " + timeStr;
-                    } else {
-                        // "12:34:56" 형식 처리
-                        UptimeLabel->Caption = "Uptime: " + uptimeStr;
-                    }
+                    // "5d 12:34:56" 형식 처리
+                    String daysStr = uptimeStr.SubString(1, uptimeStr.Pos("d") - 1);
+                    String timeStr = uptimeStr.SubString(uptimeStr.Pos(" ") + 1, uptimeStr.Length());
+                    UptimeLabel->Caption = "Uptime: " + daysStr + " days " + timeStr;                    
                 }
                 catch (...) {
                     UptimeLabel->Caption = "Uptime: Error";
