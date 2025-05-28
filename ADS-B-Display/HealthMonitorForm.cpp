@@ -70,11 +70,6 @@ void THealthMonitorForm::ClearAndDisableValues()
     PowerLabel->Caption = "Power: N/A";
     PowerLabel->Font->Color = clGray;
     
-    // 프로그레스바 비활성화 색상으로 변경
-    CPUProgressBar->State = pbError;
-    MemoryProgressBar->State = pbError;
-    TempProgressBar->State = pbError;
-    DiskProgressBar->State = pbError;
 }
 
 void __fastcall THealthMonitorForm::FormDestroy(TObject *Sender)
@@ -115,11 +110,6 @@ void __fastcall THealthMonitorForm::MonitorTCPClientConnected(TObject *Sender)
     isConnected = true;
     UpdateTimer->Enabled = true;
     
-    // 연결 시 프로그레스바 상태 정상으로 변경
-    CPUProgressBar->State = pbNormal;
-    MemoryProgressBar->State = pbNormal;
-    TempProgressBar->State = pbNormal;
-    DiskProgressBar->State = pbNormal;
     
     // 레이블 색상을 활성화 상태로 변경
     CPULabel->Font->Color = clWindowText;
@@ -213,9 +203,17 @@ void THealthMonitorForm::ParseSystemInfo(const String& data)
             }
             else if (key == "POWER") {
                 // POWER:전압V/전류A
-                String voltage = valueStr.SubString(1, valueStr.Pos("/") - 1);
-                String current = valueStr.SubString(valueStr.Pos("/") + 1, valueStr.Length());
-                PowerLabel->Caption = "Power: " + voltage + "/" + current;
+                try {
+                    String voltage = valueStr.SubString(1, valueStr.Pos("V") - 1);
+                    String current = valueStr.SubString(valueStr.Pos("/") + 1, valueStr.Pos("A") - valueStr.Pos("/") - 1);
+                    double voltageVal = StrToFloat(voltage);
+                    double currentVal = StrToFloat(current);
+                    PowerLabel->Caption = "Power: " + FloatToStrF(voltageVal, ffFixed, 7, 1) + "V/" + 
+                                                    FloatToStrF(currentVal, ffFixed, 7, 1) + "A";
+                }
+                catch (...) {
+                    PowerLabel->Caption = "Power: Error parsing values";
+                }
             }
         }
         
