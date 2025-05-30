@@ -4,6 +4,7 @@ import time
 from gpiozero import CPUTemperature
 from datetime import datetime, timedelta
 import subprocess
+import zlib  # CRC32를 위해 추가
 
 def get_power_info():
     try:
@@ -71,6 +72,11 @@ def get_system_info():
     # 모든 정보를 파이프(|)로 구분하여 반환
     return f"{cpu_info}|{memory_info}|{temp_info}|{disk_info}|{uptime_info}|{power_info}"
 
+def calculate_crc32(data):
+    """데이터의 CRC32 체크섬을 계산하여 8자리 16진수 문자열로 반환"""
+    crc = zlib.crc32(data.encode()) & 0xFFFFFFFF
+    return f"{crc:08x}"
+
 def main():
     # 서버 설정
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -89,13 +95,19 @@ def main():
             while True:
                 start_time = time.time()  # 현재 시간 기록
                 
-                # 시스템 정보 수집 및 전송
+                # 시스템 정보 수집
                 info = get_system_info()
-                client_socket.send((info + "\n").encode())
+                
+                # CRC32 체크섬 계산 및 데이터에 추가
+                crc32 = calculate_crc32(info)
+                message = f"{info}|CRC={crc32}\n"
+                
+                # 데이터 전송
+                client_socket.send(message.encode())
                 
                 # 정확한 1초 간격 유지
                 elapsed_time = time.time() - start_time
-                sleep_time = max(0, 1.0 - elapsed_time)  # 음수가 되지 않도록 보장
+                sleep_time = max(0, 1.0 - elapsed_time)
                 if sleep_time > 0:
                     time.sleep(sleep_time)
                 

@@ -2,6 +2,7 @@
 #pragma hdrstop
 
 #include "HealthMonitorForm.h"
+#include <zlib.h>  // CRC32를 위해 추가
 
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -151,13 +152,51 @@ void THealthMonitorForm::UpdateSystemInfo()
     }
 }
 
+bool THealthMonitorForm::VerifyCRC32(const String& data, const String& receivedCRC)
+{
+    try {
+        // CRC 부분을 제외한 데이터 추출
+        int crcPos = data.Pos("|CRC=");
+        if (crcPos <= 0) return false;
+        
+        String pureData = data.SubString(1, crcPos - 1);
+        
+        // CRC32 계산
+        uLong crc = crc32(0L, Z_NULL, 0);
+        AnsiString ansiData = pureData;
+        crc = crc32(crc, (const Bytef*)ansiData.c_str(), ansiData.Length());
+        
+        // 16진수 문자열로 변환
+        String calculatedCRC = IntToHex(crc, 8).LowerCase();
+        
+        return calculatedCRC == receivedCRC.LowerCase();
+    }
+    catch (...) {
+        return false;
+    }
+}
+
 void THealthMonitorForm::ParseSystemInfo(const String& data)
 {
     // 데이터 형식: "CPU:50.5/100|MEM:1024/4096|TEMP:45.7/85|DISK:75/100|UPTIME:01:30:45|POWER:5.1V/2.1A"
     try {
+        // CRC 검증
+        int crcPos = data.Pos("|CRC=");
+        if (crcPos <= 0) {
+            throw Exception("CRC not found in data");
+        }
+        
+        String crcValue = data.SubString(crcPos + 5, 8);  // CRC= 다음의 8자리 추출
+        if (!VerifyCRC32(data, crcValue)) {
+            throw Exception("CRC verification failed");
+        }
+        
+        // CRC를 제외한 실제 데이터 파싱
+        String pureData = data.SubString(1, crcPos - 1);
+        
         TStringList* items = new TStringList();
         items->Delimiter = '|';
-        items->DelimitedText = data;
+        items->DelimitedText = pureData;
         
         for (int i = 0; i < items->Count; i++) {
             String item = items->Strings[i];
@@ -207,10 +246,15 @@ void THealthMonitorForm::ParseSystemInfo(const String& data)
                 // UPTIME:HH:MM:SS 또는 UPTIME:DDd HH:MM:SS 형식 처리
                 try {
                     String uptimeStr = valueStr.Trim();
-                    // "5d 12:34:56" 형식 처리
-                    String daysStr = uptimeStr.SubString(1, uptimeStr.Pos("d") - 1);
-                    String timeStr = uptimeStr.SubString(uptimeStr.Pos(" ") + 1, uptimeStr.Length());
-                    UptimeLabel->Caption = "Uptime: " + daysStr + " days " + timeStr;                    
+                    if (uptimeStr.Pos("d ") > 0) {  // 일수가 포함된 경우
+                        // "5d 12:34:56" 형식 처리
+                        String daysStr = uptimeStr.SubString(1, uptimeStr.Pos("d") - 1);
+                        String timeStr = uptimeStr.SubString(uptimeStr.Pos(" ") + 1, uptimeStr.Length());
+                        UptimeLabel->Caption = "Uptime: " + daysStr + " days " + timeStr;
+                    } else {
+                        // "12:34:56" 형식을 "0 days 12:34:56" 형식으로 변환
+                        UptimeLabel->Caption = "Uptime: 0 days " + uptimeStr;
+                    }
                 }
                 catch (...) {
                     UptimeLabel->Caption = "Uptime: Error";
@@ -249,6 +293,7 @@ void THealthMonitorForm::ParseSystemInfo(const String& data)
         delete items;
     }
     catch (Exception &e) {
-        ShowMessage("데이터 파싱 오류: " + e.Message);
+        ShowMessage("데이터 검증 오류: " + e.Message);
+        MonitorTCPClient->Disconnect();
     }
 } 

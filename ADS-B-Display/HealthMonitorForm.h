@@ -43,6 +43,7 @@ private:
     void UpdateSystemInfo();
     void ParseSystemInfo(const String& data);
     void ClearAndDisableValues();
+    bool VerifyCRC32(const String& data, const String& receivedCRC);
     
 public:
     __fastcall THealthMonitorForm(TComponent* Owner);
