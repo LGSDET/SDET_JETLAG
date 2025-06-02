@@ -84,19 +84,6 @@ object HealthMonitorForm: THealthMonitorForm
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object PowerLabel: TLabel
-      Left = 16
-      Top = 270
-      Width = 350
-      Height = 13
-      Caption = 'Power: 0.0V/0.0A'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
     object CPUProgressBar: TProgressBar
       Left = 16
       Top = 35

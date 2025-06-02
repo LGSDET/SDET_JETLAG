@@ -12,6 +12,35 @@
 #include <IdTCPConnection.hpp>
 #include <Vcl.ExtCtrls.hpp>
 
+// 각 메트릭의 데이터를 저장할 구조체들
+struct CPUMetricData {
+    double usage;
+    bool isValid;
+};
+
+struct MemoryMetricData {
+    int currentUsage;
+    int totalMemory;
+    bool isValid;
+};
+
+struct TemperatureMetricData {
+    double temperature;
+    double maxTemperature;
+    bool isValid;
+};
+
+struct DiskMetricData {
+    int usagePercent;
+    bool isValid;
+};
+
+struct UptimeMetricData {
+    int days;
+    String timeStr;
+    bool isValid;
+};
+
 class THealthMonitorForm : public TForm
 {
 __published:
@@ -21,7 +50,6 @@ __published:
     TLabel *TempLabel;
     TLabel *DiskLabel;
     TLabel *UptimeLabel;
-    TLabel *PowerLabel;
     TProgressBar *CPUProgressBar;
     TProgressBar *MemoryProgressBar;
     TProgressBar *TempProgressBar;
@@ -41,9 +69,23 @@ __published:
 private:
     bool isConnected;
     void UpdateSystemInfo();
-    void ParseSystemInfo(const String& data);
+    bool ParseSystemInfo(const String& data);
     void ClearAndDisableValues();
     bool VerifyCRC32(const String& data, const String& receivedCRC);
+    
+    // 파싱 함수들 - 테스트 가능한 값 반환
+    CPUMetricData ParseCPUMetric(const String& value);
+    MemoryMetricData ParseMemoryMetric(const String& value);
+    TemperatureMetricData ParseTemperatureMetric(const String& value);
+    DiskMetricData ParseDiskMetric(const String& value);
+    UptimeMetricData ParseUptimeMetric(const String& value);
+    
+    // UI 업데이트 함수들
+    void UpdateCPUUI(const CPUMetricData& data);
+    void UpdateMemoryUI(const MemoryMetricData& data);
+    void UpdateTemperatureUI(const TemperatureMetricData& data);
+    void UpdateDiskUI(const DiskMetricData& data);
+    void UpdateUptimeUI(const UptimeMetricData& data);
     
 public:
     __fastcall THealthMonitorForm(TComponent* Owner);
