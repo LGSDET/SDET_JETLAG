@@ -1,5 +1,5 @@
 .\Win64\Release\CPA.o: \
-  C:\Users\USER\Documents\LG\ADS-B-Display\ADS-B-DisplayPCH1.h \
+  D:\PJT_SDET\SDET_JETLAG\ADS-B-Display\ADS-B-DisplayPCH1.h \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\vcl.h \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\basepch0.h \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\System.hpp \
@@ -343,4 +343,4 @@
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Vcl.Mask.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\System.MaskUtils.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Vcl.ListActns.hpp \
-  CPA.cpp C:\Users\USER\Documents\LG\ADS-B-Display/CPA.h
+  CPA.cpp D:\PJT_SDET\SDET_JETLAG\ADS-B-Display/CPA.h

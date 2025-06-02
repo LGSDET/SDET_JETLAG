@@ -1,0 +1,309 @@
+﻿#include <vcl.h>
+#pragma hdrstop
+
+#include "HealthMonitorForm.h"
+#include <zlib.h> // CRC32를 위해 추가
+
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+
+THealthMonitorForm *HealthMonitorForm;
+
+__fastcall THealthMonitorForm::THealthMonitorForm(TComponent *Owner)
+    : TForm(Owner) {
+  isConnected = false;
+
+  // TCP 클라이언트 초기화
+  MonitorTCPClient = new TIdTCPClient(this);
+  MonitorTCPClient->Port = 5001; // 모니터링용 포트
+  MonitorTCPClient->OnConnected = MonitorTCPClientConnected;
+  MonitorTCPClient->OnDisconnected = MonitorTCPClientDisconnected;
+
+  // 타이머 설정 (1초마다 업데이트)
+  UpdateTimer->Interval = 1000;
+  UpdateTimer->Enabled = false;
+}
+
+void __fastcall THealthMonitorForm::FormCreate(TObject *Sender) {
+  // 초기 UI 설정
+  CPUProgressBar->Min = 0;
+  CPUProgressBar->Max = 100;
+  MemoryProgressBar->Min = 0;
+  MemoryProgressBar->Max = 100;
+  TempProgressBar->Min = 0;
+  TempProgressBar->Max = 85; // CPU 최대 온도 85도
+  DiskProgressBar->Min = 0;
+  DiskProgressBar->Max = 100;
+
+  IPAddressEdit->Text = "192.168.0.190"; // 기본 IP 주소
+  ConnectButton->Caption = "Connect";
+
+}
+
+
+void __fastcall THealthMonitorForm::FormDestroy(TObject *Sender) {
+  if (MonitorTCPClient->Connected()) {
+    MonitorTCPClient->Disconnect();
+  }
+  UpdateTimer->Enabled = false;
+}
+
+void __fastcall THealthMonitorForm::ConnectButtonClick(TObject *Sender) {
+  if (!isConnected) {
+    try {
+      MonitorTCPClient->Host = IPAddressEdit->Text;
+      MonitorTCPClient->Port = 5001;
+      MonitorTCPClient->ConnectTimeout = 5000; // 5초 타임아웃 설정
+      MonitorTCPClient->ReadTimeout = 5000;    // 읽기 타임아웃 설정
+      MonitorTCPClient->Connect();
+    } catch (Exception &e) {
+      ShowMessage("Connection Failed: " + e.Message);
+      ClearAndDisableValues(); // 연결 실패 시 값 초기화
+    }
+  } else {
+    MonitorTCPClient->Disconnect();
+    UpdateTimer->Enabled = false;
+    ConnectButton->Caption = "Connect";
+    isConnected = false;
+    ClearAndDisableValues(); // 연결 해제 시 값 초기화
+  }
+}
+
+void __fastcall THealthMonitorForm::MonitorTCPClientConnected(TObject *Sender) {
+  ConnectButton->Caption = "Disconnect";
+  isConnected = true;
+  UpdateTimer->Enabled = true;
+
+  // 레이블 색상을 활성화 상태로 변경
+  CPULabel->Font->Color = clWindowText;
+  MemoryLabel->Font->Color = clWindowText;
+  TempLabel->Font->Color = clWindowText;
+  DiskLabel->Font->Color = clWindowText;
+  UptimeLabel->Font->Color = clWindowText;
+}
+
+void __fastcall THealthMonitorForm::MonitorTCPClientDisconnected(
+    TObject *Sender) {
+  ConnectButton->Caption = "Connect";
+  isConnected = false;
+  UpdateTimer->Enabled = false;
+  ClearAndDisableValues(); // 연결 해제 시 값 초기화
+}
+
+void __fastcall THealthMonitorForm::UpdateTimerTimer(TObject *Sender) {
+  UpdateSystemInfo();
+}
+
+void THealthMonitorForm::UpdateSystemInfo() {
+  if (!MonitorTCPClient->Connected())
+    return;
+
+  try {
+    // 시스템 정보 요청
+    MonitorTCPClient->Socket->WriteLn("GET_SYSTEM_INFO");
+
+    // 응답 수신
+    String response = MonitorTCPClient->Socket->ReadLn();
+    ParseSystemInfo(response);
+  } catch (Exception &e) {
+    ShowMessage("데이터 수신 오류: " + e.Message);
+    MonitorTCPClient->Disconnect();
+  }
+}
+
+bool THealthMonitorForm::VerifyCRC32(const String &data,
+                                     const String &receivedCRC) {
+  try {
+    // CRC 부분을 제외한 데이터 추출
+    int crcPos = data.Pos("|CRC=");
+    if (crcPos <= 0)
+      return false;
+
+    String pureData = data.SubString(1, crcPos - 1);
+
+    // CRC32 계산
+    uLong crc = crc32(0L, Z_NULL, 0);
+    AnsiString ansiData = pureData;
+    crc = crc32(crc, (const Bytef *)ansiData.c_str(), ansiData.Length());
+
+    // 16진수 문자열로 변환
+    String calculatedCRC = IntToHex(static_cast<__int64>(crc), 8).LowerCase();
+    return calculatedCRC == receivedCRC.LowerCase();
+  } catch (...) {
+    return false;
+  }
+}
+
+bool THealthMonitorForm::ParseSystemInfo(const String &data) {
+  try {
+    int crcPos = data.Pos("|CRC=");
+    if (crcPos <= 0) {
+      throw Exception("CRC not found in data");
+    }
+
+    String crcValue = data.SubString(crcPos + 5, 8);
+    if (!VerifyCRC32(data, crcValue)) {
+      throw Exception("CRC verification failed");
+    }
+
+    String pureData = data.SubString(1, crcPos - 1);
+    TStringList *items = new TStringList();
+    items->Delimiter = '|';
+    items->DelimitedText = pureData;
+
+    for (int i = 0; i < items->Count; i++) {
+      String item = items->Strings[i];
+      String key = item.SubString(1, item.Pos(":") - 1);
+      String value = item.SubString(item.Pos(":") + 1, item.Length());
+
+      if (key == "CPU") {
+        auto cpuData = ParseCPUMetric(value);
+        if (cpuData.isValid)
+          UpdateCPUUI(cpuData);
+      } else if (key == "MEM") {
+        auto memData = ParseMemoryMetric(value);
+        if (memData.isValid)
+          UpdateMemoryUI(memData);
+      } else if (key == "TEMP") {
+        auto tempData = ParseTemperatureMetric(value);
+        if (tempData.isValid)
+          UpdateTemperatureUI(tempData);
+      } else if (key == "DISK") {
+        auto diskData = ParseDiskMetric(value);
+        if (diskData.isValid)
+          UpdateDiskUI(diskData);
+      } else if (key == "UPTIME") {
+        auto uptimeData = ParseUptimeMetric(value);
+        if (uptimeData.isValid)
+          UpdateUptimeUI(uptimeData);
+      }
+    }
+
+    delete items;
+    return true;
+  } catch (Exception &e) {
+    ShowMessage("데이터 검증 오류: " + e.Message);
+    MonitorTCPClient->Disconnect();
+    return false;
+  }
+}
+
+CPUMetricData THealthMonitorForm::ParseCPUMetric(const String &value) {
+  CPUMetricData result = {0.0, false};
+  try {
+    String current = value.SubString(1, value.Pos("/") - 1);
+    result.usage = StrToFloat(current);
+    result.isValid = true;
+  } catch (...) {
+  }
+  return result;
+}
+
+void THealthMonitorForm::UpdateCPUUI(const CPUMetricData &data) {
+  if (!data.isValid) {
+    CPULabel->Caption = "CPU Usage: Error";
+    return;
+  }
+  CPUProgressBar->Position = static_cast<int>(data.usage + 0.5);
+  CPULabel->Caption =
+      "CPU Usage: " + FloatToStrF(data.usage, ffFixed, 7, 1) + "%";
+}
+
+MemoryMetricData THealthMonitorForm::ParseMemoryMetric(const String &value) {
+  MemoryMetricData result = {0, 0, false};
+  try {
+    String current = value.SubString(1, value.Pos("/") - 1);
+    String maximum = value.SubString(value.Pos("/") + 1, value.Length());
+    result.currentUsage = StrToInt(current);
+    result.totalMemory = StrToInt(maximum);
+    result.isValid = true;
+  } catch (...) {
+  }
+  return result;
+}
+
+void THealthMonitorForm::UpdateMemoryUI(const MemoryMetricData &data) {
+  if (!data.isValid) {
+    MemoryLabel->Caption = "Memory Usage: Error";
+    return;
+  }
+  MemoryProgressBar->Position = (data.currentUsage * 100) / data.totalMemory;
+  MemoryLabel->Caption = "Memory Usage: " + IntToStr(data.currentUsage) + "/" +
+                         IntToStr(data.totalMemory) + " MB";
+}
+
+TemperatureMetricData
+THealthMonitorForm::ParseTemperatureMetric(const String &value) {
+  TemperatureMetricData result = {0.0, 85.0, false};
+  try {
+    String current = value.SubString(1, value.Pos("/") - 1);
+    String maximum = value.SubString(value.Pos("/") + 1, value.Length());
+    result.temperature = StrToFloat(current);
+    result.maxTemperature = StrToFloat(maximum);
+    result.isValid = true;
+  } catch (...) {
+  }
+  return result;
+}
+
+void THealthMonitorForm::UpdateTemperatureUI(
+    const TemperatureMetricData &data) {
+  if (!data.isValid) {
+    TempLabel->Caption = "CPU Temperature: Error";
+    return;
+  }
+  TempProgressBar->Position = static_cast<int>(data.temperature + 0.5);
+  TempLabel->Caption =
+      "CPU Temperature: " + FloatToStrF(data.temperature, ffFixed, 7, 1) + "°C";
+}
+
+DiskMetricData THealthMonitorForm::ParseDiskMetric(const String &value) {
+  DiskMetricData result = {0, false};
+  try {
+    String current = value.SubString(1, value.Pos("/") - 1);
+    result.usagePercent = StrToInt(current.Trim());
+    result.isValid = true;
+  } catch (...) {
+  }
+  return result;
+}
+
+void THealthMonitorForm::UpdateDiskUI(const DiskMetricData &data) {
+  if (!data.isValid) {
+    DiskLabel->Caption = "Disk Usage: Error";
+    return;
+  }
+  DiskProgressBar->Position = data.usagePercent;
+  DiskLabel->Caption = "Disk Usage: " + IntToStr(data.usagePercent) + "%";
+}
+
+UptimeMetricData THealthMonitorForm::ParseUptimeMetric(const String &value) {
+  UptimeMetricData result = {0, "", false};
+  try {
+    String uptimeStr = value.Trim();
+    if (uptimeStr.Pos("d ") > 0) {
+      result.days = StrToInt(uptimeStr.SubString(1, uptimeStr.Pos("d") - 1));
+      result.timeStr =
+          uptimeStr.SubString(uptimeStr.Pos(" ") + 1, uptimeStr.Length());
+    } else {
+      result.days = 0;
+      result.timeStr = uptimeStr;
+    }
+    result.isValid = true;
+  } catch (...) {
+  }
+  return result;
+}
+
+void THealthMonitorForm::UpdateUptimeUI(const UptimeMetricData &data) {
+  if (!data.isValid) {
+    UptimeLabel->Caption = "Uptime: Error";
+    return;
+  }
+  if (data.days > 0) {
+    UptimeLabel->Caption =
+        "Uptime: " + IntToStr(data.days) + " days " + data.timeStr;
+  } else {
+    UptimeLabel->Caption = "Uptime: 0 days " + data.timeStr;
+  }
+}

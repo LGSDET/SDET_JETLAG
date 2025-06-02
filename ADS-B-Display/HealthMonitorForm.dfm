@@ -22,7 +22,7 @@ object HealthMonitorForm: THealthMonitorForm
     object CPULabel: TLabel
       Left = 16
       Top = 16
-      Width = 350
+      Width = 152
       Height = 13
       Caption = 'CPU Usage: 0.0% / 100.0%'
       Font.Charset = DEFAULT_CHARSET
@@ -35,7 +35,7 @@ object HealthMonitorForm: THealthMonitorForm
     object MemoryLabel: TLabel
       Left = 16
       Top = 72
-      Width = 350
+      Width = 157
       Height = 13
       Caption = 'Memory Usage: 0 MB / 0 MB'
       Font.Charset = DEFAULT_CHARSET
@@ -48,9 +48,9 @@ object HealthMonitorForm: THealthMonitorForm
     object TempLabel: TLabel
       Left = 16
       Top = 128
-      Width = 350
+      Width = 185
       Height = 13
-      Caption = 'CPU Temperature: 0.0°C / 85.0°C'
+      Caption = 'CPU Temperature: 0.0'#176'C / 85.0'#176'C'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -61,7 +61,7 @@ object HealthMonitorForm: THealthMonitorForm
     object DiskLabel: TLabel
       Left = 16
       Top = 184
-      Width = 350
+      Width = 134
       Height = 13
       Caption = 'Disk Usage: 0% / 100%'
       Font.Charset = DEFAULT_CHARSET
@@ -74,7 +74,7 @@ object HealthMonitorForm: THealthMonitorForm
     object UptimeLabel: TLabel
       Left = 16
       Top = 240
-      Width = 350
+      Width = 135
       Height = 13
       Caption = 'Uptime: 0 days 00:00:00'
       Font.Charset = DEFAULT_CHARSET
@@ -133,15 +133,17 @@ object HealthMonitorForm: THealthMonitorForm
   end
   object UpdateTimer: TTimer
     Enabled = False
-    Interval = 1000
     OnTimer = UpdateTimerTimer
     Left = 360
     Top = 8
   end
   object MonitorTCPClient: TIdTCPClient
-    OnConnected = MonitorTCPClientConnected
     OnDisconnected = MonitorTCPClientDisconnected
+    OnConnected = MonitorTCPClientConnected
+    ConnectTimeout = 0
+    Port = 0
+    ReadTimeout = -1
     Left = 456
     Top = 344
   end
-end 
+end

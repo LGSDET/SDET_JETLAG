@@ -1,4 +1,4 @@
-#include <vcl.h>
+﻿#include <vcl.h>
 #pragma hdrstop
 
 #include "HealthMonitorForm.h"
@@ -37,18 +37,8 @@ void __fastcall THealthMonitorForm::FormCreate(TObject *Sender) {
 
   IPAddressEdit->Text = "192.168.0.190"; // 기본 IP 주소
   ConnectButton->Caption = "Connect";
-
-  // 초기 상태를 비활성화로 설정
-  ClearAndDisableValues();
 }
 
-void THealthMonitorForm::ClearAndDisableValues() {
-  cpuMetric->reset();
-  memoryMetric->reset();
-  tempMetric->reset();
-  diskMetric->reset();
-  uptimeMetric->reset();
-}
 
 void __fastcall THealthMonitorForm::FormDestroy(TObject *Sender) {
   if (MonitorTCPClient->Connected()) {
@@ -67,14 +57,12 @@ void __fastcall THealthMonitorForm::ConnectButtonClick(TObject *Sender) {
       MonitorTCPClient->Connect();
     } catch (Exception &e) {
       ShowMessage("Connection Failed: " + e.Message);
-      ClearAndDisableValues(); // 연결 실패 시 값 초기화
     }
   } else {
     MonitorTCPClient->Disconnect();
     UpdateTimer->Enabled = false;
     ConnectButton->Caption = "Connect";
     isConnected = false;
-    ClearAndDisableValues(); // 연결 해제 시 값 초기화
   }
 }
 
@@ -96,7 +84,6 @@ void __fastcall THealthMonitorForm::MonitorTCPClientDisconnected(
   ConnectButton->Caption = "Connect";
   isConnected = false;
   UpdateTimer->Enabled = false;
-  ClearAndDisableValues(); // 연결 해제 시 값 초기화
 }
 
 void __fastcall THealthMonitorForm::UpdateTimerTimer(TObject *Sender) {
@@ -241,8 +228,7 @@ void THealthMonitorForm::UpdateMemoryUI(const MemoryMetricData &data) {
                          IntToStr(data.totalMemory) + " MB";
 }
 
-TemperatureMetricData
-THealthMonitorForm::ParseTemperatureMetric(const String &value) {
+TemperatureMetricData THealthMonitorForm::ParseTemperatureMetric(const String &value) {
   TemperatureMetricData result = {0.0, 85.0, false};
   try {
     String current = value.SubString(1, value.Pos("/") - 1);

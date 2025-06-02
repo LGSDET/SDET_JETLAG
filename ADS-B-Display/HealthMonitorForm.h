@@ -1,4 +1,4 @@
-#ifndef HealthMonitorFormH
+﻿#ifndef HealthMonitorFormH
 #define HealthMonitorFormH
 
 #include <System.Classes.hpp>
@@ -70,7 +70,6 @@ private:
     bool isConnected;
     void UpdateSystemInfo();
     bool ParseSystemInfo(const String& data);
-    void ClearAndDisableValues();
     bool VerifyCRC32(const String& data, const String& receivedCRC);
     
     // 파싱 함수들 - 테스트 가능한 값 반환
