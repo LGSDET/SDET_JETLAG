@@ -1,12 +1,14 @@
 #ifndef HEALTHMONITOR_UI_H
 #define HEALTHMONITOR_UI_H
 
+#include <vcl.h>
+#pragma hdrstop
+
 #include "HealthMonitor_Communication.h"
 #include "HealthMonitor_MetricData.h"
-#include <vcl.h>
 
 class THealthMonitorUI : public TForm {
-private:
+__published:
   TProgressBar *CPUProgressBar;
   TProgressBar *MemoryProgressBar;
   TProgressBar *TempProgressBar;
@@ -22,14 +24,15 @@ private:
   TButton *ConnectButton;
   TTimer *UpdateTimer;
 
-  THealthMonitorCommunication *Communication;
-
   void __fastcall FormCreate(TObject *Sender);
   void __fastcall FormDestroy(TObject *Sender);
   void __fastcall ConnectButtonClick(TObject *Sender);
   void __fastcall UpdateTimerTimer(TObject *Sender);
 
-public:
+private:  // User declarations
+  THealthMonitorCommunication *Communication;
+
+public:   // User declarations
   __fastcall THealthMonitorUI(TComponent *Owner);
 
   void UpdateCPUUI(const CPUMetricData &data);
