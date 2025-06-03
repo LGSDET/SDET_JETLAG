@@ -1,4 +1,3 @@
-.\Win64\Release\HealthMonitorForm.o: \
   D:\PJT_SDET\SDET_JETLAG\ADS-B-Display\ADS-B-DisplayPCH1.h \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\vcl.h \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\basepch0.h \
@@ -343,8 +342,6 @@
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Vcl.Mask.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\System.MaskUtils.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Vcl.ListActns.hpp \
-  HealthMonitorForm.cpp \
-  D:\PJT_SDET\SDET_JETLAG\ADS-B-Display/HealthMonitorForm.h \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdBaseComponent.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdComponent.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdGlobal.hpp \

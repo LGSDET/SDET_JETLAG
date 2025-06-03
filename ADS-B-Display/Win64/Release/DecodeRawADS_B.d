@@ -431,4 +431,3 @@
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\SysUtils.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\Messages.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\Windows.hpp \
-  D:\PJT_SDET\SDET_JETLAG\ADS-B-Display/HealthMonitorForm.h
