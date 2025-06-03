@@ -60,6 +60,34 @@ void __fastcall THealthMonitorUI::UpdateTimerTimer(TObject *Sender) {
   Communication->UpdateSystemInfo();
 }
 
+void __fastcall THealthMonitorUI::MonitorTCPClientConnected(TObject *Sender) {
+    // 연결이 성공했을 때의 처리
+    ConnectButton->Caption = "Disconnect";
+    UpdateTimer->Enabled = true;
+    
+    // 초기 상태 업데이트 요청
+    Communication->UpdateSystemInfo();
+}
+
+void __fastcall THealthMonitorUI::MonitorTCPClientDisconnected(TObject *Sender) {
+    // 연결이 끊어졌을 때의 처리
+    ConnectButton->Caption = "Connect";
+    UpdateTimer->Enabled = false;
+    
+    // 모든 프로그레스바 초기화
+    CPUProgressBar->Position = 0;
+    MemoryProgressBar->Position = 0;
+    TempProgressBar->Position = 0;
+    DiskProgressBar->Position = 0;
+    
+    // 모든 레이블 초기화
+    CPULabel->Caption = "CPU Usage: 0.0% / 100.0%";
+    MemoryLabel->Caption = "Memory Usage: 0 MB / 0 MB";
+    TempLabel->Caption = "CPU Temperature: 0.0°C / 85.0°C";
+    DiskLabel->Caption = "Disk Usage: 0% / 100%";
+    UptimeLabel->Caption = "Uptime: 0 days 00:00:00";
+}
+
 void THealthMonitorUI::UpdateCPUUI(const CPUMetricData &data) {
   if (!data.isValid) {
     CPULabel->Caption = "CPU Usage: Error";

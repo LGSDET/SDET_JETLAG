@@ -1481,7 +1481,7 @@ void __fastcall TForm1::BigQueryCheckBoxClick(TObject *Sender) {
 //---------------------------------------------------------------------------
 void __fastcall TForm1::CreateBigQueryCSV(void) {
   AnsiString HomeDir = ExtractFilePath(ExtractFileDir(Application->ExeName));
-  BigQueryCSVFileName = "BigQuery" + UIntToStr(BigQueryFileCount) + ".csv";
+  BigQueryCSVFileName = "BigQuery" + UIntToStr(static_cast<unsigned int>(BigQueryFileCount)) + ".csv";
   BigQueryRowCount = 0;
   BigQueryFileCount++;
   BigQueryCSV = new TStreamWriter(
