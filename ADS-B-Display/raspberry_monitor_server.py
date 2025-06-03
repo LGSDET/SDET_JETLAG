@@ -91,39 +91,52 @@ def main():
         try:
             client_socket, addr = server_socket.accept()
             print(f"클라이언트가 연결되었습니다: {addr}")
+            client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)  # Keep-Alive 설정 추가
             
             while True:
-                start_time = time.time()  # 현재 시간 기록
+                try:
+                    start_time = time.time()  # 현재 시간 기록
+                    
+                    # 시스템 정보 수집
+                    info = get_system_info()
+                    
+                    # CRC32 체크섬 계산 및 데이터에 추가
+                    crc32 = calculate_crc32(info)
+                    message = f"{info}|CRC={crc32}\n"
+                    
+                    # 데이터 전송
+                    client_socket.send(message.encode())
+                    
+                    # 정확한 1초 간격 유지
+                    elapsed_time = time.time() - start_time
+                    sleep_time = max(0, 1.0 - elapsed_time)
+                    if sleep_time > 0:
+                        time.sleep(sleep_time)
                 
-                # 시스템 정보 수집
-                info = get_system_info()
+                except BrokenPipeError:
+                    print("클라이언트가 연결을 종료했습니다. (Broken Pipe)")
+                    break
+                except ConnectionResetError:
+                    print("클라이언트가 연결을 강제 종료했습니다.")
+                    break
+                except socket.error as e:
+                    if e.errno == 32:  # Broken pipe
+                        print("클라이언트와의 연결이 끊어졌습니다. (Error 32)")
+                    else:
+                        print(f"소켓 에러 발생: {e}")
+                    break
                 
-                # CRC32 체크섬 계산 및 데이터에 추가
-                crc32 = calculate_crc32(info)
-                message = f"{info}|CRC={crc32}\n"
-                
-                # 데이터 전송
-                client_socket.send(message.encode())
-                
-                # 정확한 1초 간격 유지
-                elapsed_time = time.time() - start_time
-                sleep_time = max(0, 1.0 - elapsed_time)
-                if sleep_time > 0:
-                    time.sleep(sleep_time)
-                
-        except ConnectionResetError:
-            print("클라이언트 연결이 종료되었습니다.")
-        except socket.error as e:
-            print(f"소켓 에러 발생: {e}")
         except Exception as e:
             print(f"에러 발생: {e}")
         finally:
             if client_socket:
                 try:
+                    client_socket.shutdown(socket.SHUT_RDWR)  # 소켓 종료 전 정상적인 shutdown 수행
                     client_socket.close()
+                    print("클라이언트 소켓이 정상적으로 종료되었습니다.")
                 except:
                     pass
-            time.sleep(1)  # 재연결 시도 전 잠시 대기
+            time.sleep(0.5)  # 재연결 시도 전 0.5초 대기 (1초에서 0.5초로 줄임)
 
 if __name__ == "__main__":
     main() 
