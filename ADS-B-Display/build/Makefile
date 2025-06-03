@@ -85,6 +85,51 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/opt/homebrew/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/opt/homebrew/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/opt/homebrew/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/opt/homebrew/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/opt/homebrew/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/opt/homebrew/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build/CMakeFiles /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build//CMakeFiles/progress.marks
@@ -116,6 +161,183 @@ depend:
 	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
+#=============================================================================
+# Target rules for targets named health_monitor
+
+# Build rule for target.
+health_monitor: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 health_monitor
+.PHONY : health_monitor
+
+# fast build rule for target.
+health_monitor/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/build
+.PHONY : health_monitor/fast
+
+#=============================================================================
+# Target rules for targets named health_monitor_test
+
+# Build rule for target.
+health_monitor_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 health_monitor_test
+.PHONY : health_monitor_test
+
+# fast build rule for target.
+health_monitor_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor_test.dir/build.make CMakeFiles/health_monitor_test.dir/build
+.PHONY : health_monitor_test/fast
+
+#=============================================================================
+# Target rules for targets named gmock
+
+# Build rule for target.
+gmock: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gmock
+.PHONY : gmock
+
+# fast build rule for target.
+gmock/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googlemock/CMakeFiles/gmock.dir/build.make _deps/googletest-build/googlemock/CMakeFiles/gmock.dir/build
+.PHONY : gmock/fast
+
+#=============================================================================
+# Target rules for targets named gmock_main
+
+# Build rule for target.
+gmock_main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gmock_main
+.PHONY : gmock_main
+
+# fast build rule for target.
+gmock_main/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googlemock/CMakeFiles/gmock_main.dir/build.make _deps/googletest-build/googlemock/CMakeFiles/gmock_main.dir/build
+.PHONY : gmock_main/fast
+
+#=============================================================================
+# Target rules for targets named gtest
+
+# Build rule for target.
+gtest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gtest
+.PHONY : gtest
+
+# fast build rule for target.
+gtest/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googletest/CMakeFiles/gtest.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest.dir/build
+.PHONY : gtest/fast
+
+#=============================================================================
+# Target rules for targets named gtest_main
+
+# Build rule for target.
+gtest_main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gtest_main
+.PHONY : gtest_main
+
+# fast build rule for target.
+gtest_main/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build
+.PHONY : gtest_main/fast
+
+HealthMonitor_Alert.o: HealthMonitor_Alert.cpp.o
+.PHONY : HealthMonitor_Alert.o
+
+# target to build an object file
+HealthMonitor_Alert.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_Alert.cpp.o
+.PHONY : HealthMonitor_Alert.cpp.o
+
+HealthMonitor_Alert.i: HealthMonitor_Alert.cpp.i
+.PHONY : HealthMonitor_Alert.i
+
+# target to preprocess a source file
+HealthMonitor_Alert.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_Alert.cpp.i
+.PHONY : HealthMonitor_Alert.cpp.i
+
+HealthMonitor_Alert.s: HealthMonitor_Alert.cpp.s
+.PHONY : HealthMonitor_Alert.s
+
+# target to generate assembly for a file
+HealthMonitor_Alert.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_Alert.cpp.s
+.PHONY : HealthMonitor_Alert.cpp.s
+
+HealthMonitor_Communication.o: HealthMonitor_Communication.cpp.o
+.PHONY : HealthMonitor_Communication.o
+
+# target to build an object file
+HealthMonitor_Communication.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor_test.dir/build.make CMakeFiles/health_monitor_test.dir/HealthMonitor_Communication.cpp.o
+.PHONY : HealthMonitor_Communication.cpp.o
+
+HealthMonitor_Communication.i: HealthMonitor_Communication.cpp.i
+.PHONY : HealthMonitor_Communication.i
+
+# target to preprocess a source file
+HealthMonitor_Communication.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor_test.dir/build.make CMakeFiles/health_monitor_test.dir/HealthMonitor_Communication.cpp.i
+.PHONY : HealthMonitor_Communication.cpp.i
+
+HealthMonitor_Communication.s: HealthMonitor_Communication.cpp.s
+.PHONY : HealthMonitor_Communication.s
+
+# target to generate assembly for a file
+HealthMonitor_Communication.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor_test.dir/build.make CMakeFiles/health_monitor_test.dir/HealthMonitor_Communication.cpp.s
+.PHONY : HealthMonitor_Communication.cpp.s
+
+HealthMonitor_UI.o: HealthMonitor_UI.cpp.o
+.PHONY : HealthMonitor_UI.o
+
+# target to build an object file
+HealthMonitor_UI.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_UI.cpp.o
+.PHONY : HealthMonitor_UI.cpp.o
+
+HealthMonitor_UI.i: HealthMonitor_UI.cpp.i
+.PHONY : HealthMonitor_UI.i
+
+# target to preprocess a source file
+HealthMonitor_UI.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_UI.cpp.i
+.PHONY : HealthMonitor_UI.cpp.i
+
+HealthMonitor_UI.s: HealthMonitor_UI.cpp.s
+.PHONY : HealthMonitor_UI.s
+
+# target to generate assembly for a file
+HealthMonitor_UI.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_UI.cpp.s
+.PHONY : HealthMonitor_UI.cpp.s
+
+tests/test_health_monitor.o: tests/test_health_monitor.cpp.o
+.PHONY : tests/test_health_monitor.o
+
+# target to build an object file
+tests/test_health_monitor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor_test.dir/build.make CMakeFiles/health_monitor_test.dir/tests/test_health_monitor.cpp.o
+.PHONY : tests/test_health_monitor.cpp.o
+
+tests/test_health_monitor.i: tests/test_health_monitor.cpp.i
+.PHONY : tests/test_health_monitor.i
+
+# target to preprocess a source file
+tests/test_health_monitor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor_test.dir/build.make CMakeFiles/health_monitor_test.dir/tests/test_health_monitor.cpp.i
+.PHONY : tests/test_health_monitor.cpp.i
+
+tests/test_health_monitor.s: tests/test_health_monitor.cpp.s
+.PHONY : tests/test_health_monitor.s
+
+# target to generate assembly for a file
+tests/test_health_monitor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor_test.dir/build.make CMakeFiles/health_monitor_test.dir/tests/test_health_monitor.cpp.s
+.PHONY : tests/test_health_monitor.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -123,7 +345,29 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... gmock"
+	@echo "... gmock_main"
+	@echo "... gtest"
+	@echo "... gtest_main"
+	@echo "... health_monitor"
+	@echo "... health_monitor_test"
+	@echo "... HealthMonitor_Alert.o"
+	@echo "... HealthMonitor_Alert.i"
+	@echo "... HealthMonitor_Alert.s"
+	@echo "... HealthMonitor_Communication.o"
+	@echo "... HealthMonitor_Communication.i"
+	@echo "... HealthMonitor_Communication.s"
+	@echo "... HealthMonitor_UI.o"
+	@echo "... HealthMonitor_UI.i"
+	@echo "... HealthMonitor_UI.s"
+	@echo "... tests/test_health_monitor.o"
+	@echo "... tests/test_health_monitor.i"
+	@echo "... tests/test_health_monitor.s"
 .PHONY : help
 
 

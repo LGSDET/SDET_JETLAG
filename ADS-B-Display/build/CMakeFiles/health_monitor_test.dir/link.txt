@@ -1,0 +1,1 @@
+/usr/bin/c++ -g -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/health_monitor_test.dir/tests/test_health_monitor.cpp.o CMakeFiles/health_monitor_test.dir/HealthMonitor_Communication.cpp.o -o health_monitor_test  lib/libgtest_main.a lib/libgtest.a

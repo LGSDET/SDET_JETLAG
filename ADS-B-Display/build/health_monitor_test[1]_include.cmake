@@ -1,0 +1,5 @@
+if(EXISTS "/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build/health_monitor_test[1]_tests.cmake")
+  include("/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build/health_monitor_test[1]_tests.cmake")
+else()
+  add_test(health_monitor_test_NOT_BUILT health_monitor_test_NOT_BUILT)
+endif()
