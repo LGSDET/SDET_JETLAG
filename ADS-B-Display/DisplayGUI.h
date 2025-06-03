@@ -273,6 +273,7 @@ public:  // User declarations
   DWORD BigQueryFileCount;
   int NumSpriteImages;
   int CurrentSpriteImage;
+  THealthMonitorUI *HealthMonitorUI;
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

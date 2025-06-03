@@ -155,6 +155,7 @@ __fastcall TForm1::TForm1(TComponent *Owner) : TForm(Owner) {
   PlayBackRawStream = NULL;
   TrackHook.Valid_CC = false;
   TrackHook.Valid_CPA = false;
+  HealthMonitorUI = NULL;
 
   HashTable = ght_create(10000);
 
@@ -198,6 +199,10 @@ __fastcall TForm1::~TForm1() {
   if (LoadMapFromInternet) {
     if (g_Keyhole)
       delete g_Keyhole;
+  }
+  if (HealthMonitorUI) {
+    delete HealthMonitorUI;
+    HealthMonitorUI = NULL;
   }
 }
 //---------------------------------------------------------------------------
