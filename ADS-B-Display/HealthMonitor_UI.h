@@ -25,6 +25,7 @@ __published:
   TLabel *TempLabel;
   TLabel *DiskLabel;
   TLabel *UptimeLabel;
+  TLabel *LatencyLabel;  // 지연시간 표시 레이블
 
   TEdit *IPAddressEdit;
   TButton *ConnectButton;
@@ -37,18 +38,25 @@ __published:
   void __fastcall UpdateTimerTimer(TObject *Sender);
   void __fastcall MonitorTCPClientConnected(TObject *Sender);
   void __fastcall MonitorTCPClientDisconnected(TObject *Sender);
+  void __fastcall FormResize(TObject *Sender);
 
-private:  // User declarations
+private:
   THealthMonitorCommunication *Communication;
-
-public:   // User declarations
-  __fastcall THealthMonitorUI(TComponent *Owner);
-
+  
+  // UI 관리 함수들
+  void ResetUIElements();  // UI 요소들을 기본값으로 초기화
+  void HandleConnectionStateChange(bool connected);  // 연결 상태 변경 처리
+  void UpdateLatencyDisplay(int latency);  // 지연시간 표시 업데이트
+  
+  // 메트릭 데이터 UI 업데이트 함수들
   void UpdateCPUUI(const CPUMetricData &data);
   void UpdateMemoryUI(const MemoryMetricData &data);
   void UpdateTemperatureUI(const TemperatureMetricData &data);
   void UpdateDiskUI(const DiskMetricData &data);
   void UpdateUptimeUI(const UptimeMetricData &data);
+
+public:
+  __fastcall THealthMonitorUI(TComponent *Owner);
 };
 
 extern PACKAGE THealthMonitorUI *HealthMonitorUI;

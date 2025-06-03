@@ -3,8 +3,8 @@ object HealthMonitorUI: THealthMonitorUI
   Top = 0
   BorderStyle = bsSingle
   Caption = 'Raspberry Pi Health Monitor'
-  ClientHeight = 350
-  ClientWidth = 400
+  ClientHeight = 450
+  ClientWidth = 800
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,11 +14,26 @@ object HealthMonitorUI: THealthMonitorUI
   Position = poScreenCenter
   TextHeight = 13
   object MainPanel: TPanel
-    Left = 8
-    Top = 8
-    Width = 384
-    Height = 334
+    Left = 0
+    Top = 0
+    Width = 800
+    Height = 450
+    Align = alClient
     TabOrder = 0
+    object LatencyLabel: TLabel
+      Left = 680
+      Top = 10
+      Width = 100
+      Height = 20
+      Alignment = taRightJustify
+      Caption = 'Latency: 0 ms'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clGreen
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
     object CPULabel: TLabel
       Left = 16
       Top = 16

@@ -3,6 +3,9 @@
 
 #include "HealthMonitor_Communication.h"
 #include <zlib.h>
+#include <chrono>
+
+const int MAX_LATENCY_MS = 5000;  // 최대 허용 지연시간 5초
 
 THealthMonitorCommunication::THealthMonitorCommunication(TComponent *Owner) {
   isConnected = false;
@@ -10,6 +13,19 @@ THealthMonitorCommunication::THealthMonitorCommunication(TComponent *Owner) {
   MonitorTCPClient->Port = 5001;
   MonitorTCPClient->OnConnected = OnConnected;
   MonitorTCPClient->OnDisconnected = OnDisconnected;
+  currentLatency = 0;
+  ResetTimer();
+}
+
+void THealthMonitorCommunication::ResetTimer() {
+  timerStart = std::chrono::duration_cast<std::chrono::milliseconds>(
+      std::chrono::steady_clock::now().time_since_epoch()).count();
+}
+
+__int64 THealthMonitorCommunication::GetElapsedTime() {
+  auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
+      std::chrono::steady_clock::now().time_since_epoch()).count();
+  return now - timerStart;
 }
 
 THealthMonitorCommunication::~THealthMonitorCommunication() {
@@ -77,6 +93,28 @@ void THealthMonitorCommunication::UpdateSystemInfo() {
   }
 }
 
+bool THealthMonitorCommunication::IsLatencyExceeded() const {
+  return currentLatency > MAX_LATENCY_MS;
+}
+
+void THealthMonitorCommunication::UpdateLatency(__int64 serverTime) {
+  __int64 clientTime = GetElapsedTime();
+  currentLatency = clientTime - serverTime;
+  
+  // 음수 지연시간 보정
+  if (currentLatency < 0) {
+    currentLatency = 0;
+  }
+  
+  // 지연시간 초과시 연결 종료
+  if (IsLatencyExceeded()) {
+    Disconnect();
+  }
+  
+  // 다음 측정을 위해 타이머 리셋
+  ResetTimer();
+}
+
 bool THealthMonitorCommunication::ParseSystemInfo(const String &data) {
   try {
     int crcPos = data.Pos("|CRC=");
@@ -94,7 +132,16 @@ bool THealthMonitorCommunication::ParseSystemInfo(const String &data) {
     items->Delimiter = '|';
     items->DelimitedText = pureData;
 
-    for (int i = 0; i < items->Count; i++) {
+    // 서버의 타이머 값 파싱 및 지연시간 업데이트
+    String timerStr = items->Strings[0];
+    if (timerStr.Pos("TIMER=") == 1) {
+      String serverTimeStr = timerStr.SubString(7, timerStr.Length() - 6);
+      __int64 serverTime = StrToInt64(serverTimeStr);
+      UpdateLatency(serverTime);
+    }
+
+    // 나머지 시스템 정보 파싱
+    for (int i = 1; i < items->Count; i++) {
       String item = items->Strings[i];
       String key = item.SubString(1, item.Pos(":") - 1);
       String value = item.SubString(item.Pos(":") + 1, item.Length());
@@ -115,7 +162,7 @@ bool THealthMonitorCommunication::ParseSystemInfo(const String &data) {
     delete items;
     return true;
   } catch (Exception &e) {
-    MonitorTCPClient->Disconnect();
+    Disconnect();
     return false;
   }
 }

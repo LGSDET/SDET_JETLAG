@@ -19,6 +19,21 @@ __fastcall THealthMonitorUI::THealthMonitorUI(TComponent *Owner)
   // 타이머 설정 (1초마다 업데이트)
   UpdateTimer->Interval = 1000;
   UpdateTimer->Enabled = false;
+
+  // 지연시간 레이블 생성 및 설정
+  LatencyLabel = new TLabel(this);
+  LatencyLabel->Parent = this;
+  LatencyLabel->Font->Size = 10;
+  LatencyLabel->Font->Style = TFontStyles() << fsBold;  // 볼드체
+  LatencyLabel->Caption = "Latency: 0 ms";
+  LatencyLabel->Font->Color = clGreen;  // 초기 색상은 초록색
+  
+  // 폼의 오른쪽 위에 위치
+  LatencyLabel->Top = 10;
+  LatencyLabel->Left = this->ClientWidth - LatencyLabel->Width - 20;
+  
+  // 폼 크기가 변경될 때 위치 조정
+  this->OnResize = FormResize;
 }
 
 void __fastcall THealthMonitorUI::FormCreate(TObject *Sender) {
@@ -44,20 +59,31 @@ void __fastcall THealthMonitorUI::FormDestroy(TObject *Sender) {
 void __fastcall THealthMonitorUI::ConnectButtonClick(TObject *Sender) {
   if (!Communication->IsConnected()) {
     if (Communication->Connect(IPAddressEdit->Text)) {
-      ConnectButton->Caption = "Disconnect";
-      UpdateTimer->Enabled = true;
+      HandleConnectionStateChange(true);
     } else {
       ShowMessage("Connection Failed");
     }
   } else {
     Communication->Disconnect();
-    UpdateTimer->Enabled = false;
-    ConnectButton->Caption = "Connect";
+    HandleConnectionStateChange(false);
+  }
+}
+
+void __fastcall THealthMonitorUI::FormResize(TObject *Sender) {
+  if (LatencyLabel) {
+    LatencyLabel->Left = this->ClientWidth - LatencyLabel->Width - 20;
   }
 }
 
 void __fastcall THealthMonitorUI::UpdateTimerTimer(TObject *Sender) {
   Communication->UpdateSystemInfo();
+  
+  // 지연시간 초과로 연결이 끊어졌는지 확인
+  if (!Communication->IsConnected()) {
+    HandleConnectionStateChange(false);
+    ShowMessage("서버와의 연결이 지연시간 초과로 종료되었습니다. (5초 초과)");
+    return;
+  }
   
   // Update UI with stored metric data
   UpdateCPUUI(Communication->GetCPUData());
@@ -65,34 +91,45 @@ void __fastcall THealthMonitorUI::UpdateTimerTimer(TObject *Sender) {
   UpdateTemperatureUI(Communication->GetTemperatureData());
   UpdateDiskUI(Communication->GetDiskData());
   UpdateUptimeUI(Communication->GetUptimeData());
+  UpdateLatencyDisplay(Communication->currentLatency);
 }
 
 void __fastcall THealthMonitorUI::MonitorTCPClientConnected(TObject *Sender) {
-    // 연결이 성공했을 때의 처리
-    ConnectButton->Caption = "Disconnect";
-    UpdateTimer->Enabled = true;
-    
-    // 초기 상태 업데이트 요청
-    Communication->UpdateSystemInfo();
+  HandleConnectionStateChange(true);
 }
 
 void __fastcall THealthMonitorUI::MonitorTCPClientDisconnected(TObject *Sender) {
-    // 연결이 끊어졌을 때의 처리
+  HandleConnectionStateChange(false);
+}
+
+void THealthMonitorUI::ResetUIElements() {
+  // 모든 프로그레스바 초기화
+  CPUProgressBar->Position = 0;
+  MemoryProgressBar->Position = 0;
+  TempProgressBar->Position = 0;
+  DiskProgressBar->Position = 0;
+  
+  // 모든 레이블 초기화
+  CPULabel->Caption = "CPU Usage: 0.0% / 100.0%";
+  MemoryLabel->Caption = "Memory Usage: 0 MB / 0 MB";
+  TempLabel->Caption = "CPU Temperature: 0.0°C / 85.0°C";
+  DiskLabel->Caption = "Disk Usage: 0% / 100%";
+  UptimeLabel->Caption = "Uptime: 0 days 00:00:00";
+  
+  // 지연시간 레이블 초기화
+  LatencyLabel->Caption = "Latency: 0 ms";
+  LatencyLabel->Font->Color = clGreen;
+}
+
+void THealthMonitorUI::HandleConnectionStateChange(bool connected) {
+  if (connected) {
+    ConnectButton->Caption = "Disconnect";
+    UpdateTimer->Enabled = true;
+  } else {
     ConnectButton->Caption = "Connect";
     UpdateTimer->Enabled = false;
-    
-    // 모든 프로그레스바 초기화
-    CPUProgressBar->Position = 0;
-    MemoryProgressBar->Position = 0;
-    TempProgressBar->Position = 0;
-    DiskProgressBar->Position = 0;
-    
-    // 모든 레이블 초기화
-    CPULabel->Caption = "CPU Usage: 0.0% / 100.0%";
-    MemoryLabel->Caption = "Memory Usage: 0 MB / 0 MB";
-    TempLabel->Caption = "CPU Temperature: 0.0°C / 85.0°C";
-    DiskLabel->Caption = "Disk Usage: 0% / 100%";
-    UptimeLabel->Caption = "Uptime: 0 days 00:00:00";
+    ResetUIElements();
+  }
 }
 
 void THealthMonitorUI::UpdateCPUUI(const CPUMetricData &data) {
@@ -144,5 +181,19 @@ void THealthMonitorUI::UpdateUptimeUI(const UptimeMetricData &data) {
         "Uptime: " + IntToStr(data.days) + " days " + data.timeStr;
   } else {
     UptimeLabel->Caption = "Uptime: 0 days " + data.timeStr;
+  }
+}
+
+void THealthMonitorUI::UpdateLatencyDisplay(int latency) {
+  // 0 이하의 지연시간은 0으로 보정
+  int displayLatency = (latency <= 0) ? 0 : latency;
+  
+  LatencyLabel->Caption = "Latency: " + IntToStr(displayLatency) + " ms";
+  
+  // 지연시간에 따라 색상 변경
+  if (displayLatency > 500) {
+    LatencyLabel->Font->Color = clRed;
+  } else {
+    LatencyLabel->Font->Color = clGreen;
   }
 }
