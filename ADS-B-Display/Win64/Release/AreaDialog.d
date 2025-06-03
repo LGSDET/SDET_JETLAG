@@ -344,37 +344,12 @@
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\System.MaskUtils.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Vcl.ListActns.hpp \
   AreaDialog.cpp D:\PJT_SDET\SDET_JETLAG\ADS-B-Display/DisplayGUI.h \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\Classes.hpp \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Controls.hpp \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\StdCtrls.hpp \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Forms.hpp \
   D:\PJT_SDET\SDET_JETLAG\ADS-B-Display/Components\OpenGLv0.5BDS2006\Component\OpenGLPanel.h \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\gl\gl.h \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\gl\glu.h \
   D:\PJT_SDET\SDET_JETLAG\ADS-B-Display/Components\OpenGLv0.5BDS2006\Component/BMPTexture.hpp \
   D:\PJT_SDET\SDET_JETLAG\ADS-B-Display/Components\OpenGLv0.5BDS2006\Component/OpenGLFont3D.hpp \
   D:\PJT_SDET\SDET_JETLAG\ADS-B-Display/Components\OpenGLv0.5BDS2006\Component/OpenGLFont2D.hpp \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\ComCtrls.hpp \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\ExtCtrls.hpp \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Menus.hpp \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdBaseComponent.hpp \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdComponent.hpp \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdGlobal.hpp \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdException.hpp \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdResourceStrings.hpp \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdStack.hpp \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdStackConsts.hpp \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdWship6.hpp \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdWinsock2.hpp \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\ws2tcpip.h \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\ws2ipdef.h \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\wsipx.h \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\wsnwlink.h \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\wsnetbs.h \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\ws2atm.h \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\mswsock.h \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\mswsockdef.h \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Graphics.hpp \
   Map\MapSrc\FilesystemStorage.h \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\dinkumware64\list \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\crtl\sys/stat.h \
@@ -389,12 +364,13 @@
   Map\MapSrc/Exceptions.h Map\MapSrc/TileStorage.h Map\MapSrc/Tile.h \
   Map\MapSrc/Timer.h Map\MapSrc/SmartPtr.h Map\MapSrc/RawBuffer.h \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\crtl\io.h \
-  Map\MapSrc/global.h Map\MapSrc\KeyholeConnection.h \
-  Map\libgefetch\gefetch.h Map\MapSrc\GoogleLayer.h \
+  Map\MapSrc/global.h Map\MapSrc\FlatEarthView.h \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\Windows.h \
+  Map\MapSrc/glutil.h Map\MapSrc/EarthView.h Map\MapSrc/Viewpoint.h \
   Map\MapSrc/MasterLayer.h Map\MapSrc/Region.h Map\MapSrc/VMath.h \
   Map\MapSrc/Layer.h Map\MapSrc/SlaveLayer.h \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\crtl\Math.h \
-  Map\MapSrc/TileManager.h \
+  Map\MapSrc\GoogleLayer.h Map\MapSrc/TileManager.h \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\dinkumware64\map \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\dinkumware64\xtree \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\dinkumware64\optional \
@@ -402,17 +378,33 @@
   Map\zlib\zlib.h Map\zlib/zconf.h Map\png/pngconf.h \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\crtl\setjmp.h \
   Map\jpeg\jpeglib.h Map\jpeg/../jpeg/jconfig.h Map\jpeg/jconfig.vc \
-  Map\jpeg/jmorecfg.h Map\MapSrc\FlatEarthView.h \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\Windows.h \
-  Map\MapSrc/glutil.h Map\MapSrc/EarthView.h Map\MapSrc/Viewpoint.h \
-  HashTable\Lib\ght_hash_table.h \
-  D:\PJT_SDET\SDET_JETLAG\ADS-B-Display/TriangulatPoly.h \
-  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Dialogs.hpp \
+  Map\jpeg/jmorecfg.h \
+  D:\PJT_SDET\SDET_JETLAG\ADS-B-Display/HealthMonitor_UI.h \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\ExtCtrls.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\ComCtrls.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\StdCtrls.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdTCPClient.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdGlobal.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdException.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdExceptionCore.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdStack.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdStackConsts.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdWship6.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdWinsock2.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\ws2tcpip.h \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\ws2ipdef.h \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\wsipx.h \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\wsnwlink.h \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\wsnetbs.h \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\ws2atm.h \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\mswsock.h \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\sdk\mswsockdef.h \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdIOHandler.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdAntiFreezeBase.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdBaseComponent.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdBuffer.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdComponent.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdResourceStrings.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdIntercept.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdResourceStringsCore.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdStream.hpp \
@@ -423,10 +415,21 @@
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdSocketHandle.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdIOHandlerStack.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\IdReply.hpp \
+  D:\PJT_SDET\SDET_JETLAG\ADS-B-Display/HealthMonitor_Communication.h \
+  D:\PJT_SDET\SDET_JETLAG\ADS-B-Display/HealthMonitor_MetricData.h \
+  Map\MapSrc\KeyholeConnection.h Map\libgefetch\gefetch.h \
+  D:\PJT_SDET\SDET_JETLAG\ADS-B-Display/TriangulatPoly.h \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\cspin.h \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Buttons.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Vcl.Buttons.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Menus.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Graphics.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Forms.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\SysUtils.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\Messages.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Controls.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\Classes.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\rtl\Windows.hpp \
+  HashTable\Lib\ght_hash_table.h \
+  c:\program\ files\ (x86)\embarcadero\studio\23.0\include\windows\vcl\Dialogs.hpp \
   D:\PJT_SDET\SDET_JETLAG\ADS-B-Display/AreaDialog.h
