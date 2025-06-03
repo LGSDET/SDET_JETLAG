@@ -58,7 +58,7 @@ void __fastcall THealthMonitorUI::FormDestroy(TObject *Sender) {
 
 void __fastcall THealthMonitorUI::ConnectButtonClick(TObject *Sender) {
   if (!Communication->IsConnected()) {
-    if (Communication->Connect(IPAddressEdit->Text)) {
+    if (Communication->Connect(IPAddressEdit->Text, 5001)) {
       HandleConnectionStateChange(true);
     } else {
       ShowMessage("Connection Failed");

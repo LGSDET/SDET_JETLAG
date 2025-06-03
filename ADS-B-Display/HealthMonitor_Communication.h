@@ -29,6 +29,13 @@ private:
     // 지연시간 관련 함수
     void UpdateLatency(__int64 serverTime);
     
+    // 메트릭 데이터 저장
+    CPUMetricData cpuData;
+    MemoryMetricData memoryData;
+    TemperatureMetricData temperatureData;
+    DiskMetricData diskData;
+    UptimeMetricData uptimeData;
+    
 public:
     THealthMonitorCommunication(TComponent* Owner);
     ~THealthMonitorCommunication();
@@ -40,12 +47,12 @@ public:
     bool IsConnected() const { return isConnected; }
     bool IsLatencyExceeded() const;  // 지연시간 초과 여부 확인
     
-    // 메트릭 데이터
-    CPUMetricData cpuData;
-    MemoryMetricData memoryData;
-    TemperatureMetricData temperatureData;
-    DiskMetricData diskData;
-    UptimeMetricData uptimeData;
+    // 메트릭 데이터 getter 함수들
+    const CPUMetricData& GetCPUData() const { return cpuData; }
+    const MemoryMetricData& GetMemoryData() const { return memoryData; }
+    const TemperatureMetricData& GetTemperatureData() const { return temperatureData; }
+    const DiskMetricData& GetDiskData() const { return diskData; }
+    const UptimeMetricData& GetUptimeData() const { return uptimeData; }
     
     // 지연시간 관련
     int currentLatency;  // 현재 지연시간 (밀리초)
