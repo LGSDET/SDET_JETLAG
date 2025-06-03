@@ -2,6 +2,10 @@
 #define HEALTHMONITOR_UI_H
 
 #include <vcl.h>
+#include <ExtCtrls.hpp>  // TPanel
+#include <ComCtrls.hpp>  // TProgressBar
+#include <StdCtrls.hpp>  // TLabel, TEdit, TButton
+#include <IdTCPClient.hpp>  // TIdTCPClient
 #pragma hdrstop
 
 #include "HealthMonitor_Communication.h"
@@ -9,6 +13,8 @@
 
 class THealthMonitorUI : public TForm {
 __published:
+  TPanel *MainPanel;
+  
   TProgressBar *CPUProgressBar;
   TProgressBar *MemoryProgressBar;
   TProgressBar *TempProgressBar;
@@ -23,11 +29,14 @@ __published:
   TEdit *IPAddressEdit;
   TButton *ConnectButton;
   TTimer *UpdateTimer;
+  TIdTCPClient *MonitorTCPClient;  // TCP 클라이언트 추가
 
   void __fastcall FormCreate(TObject *Sender);
   void __fastcall FormDestroy(TObject *Sender);
   void __fastcall ConnectButtonClick(TObject *Sender);
   void __fastcall UpdateTimerTimer(TObject *Sender);
+  void __fastcall MonitorTCPClientConnected(TObject *Sender);
+  void __fastcall MonitorTCPClientDisconnected(TObject *Sender);
 
 private:  // User declarations
   THealthMonitorCommunication *Communication;
