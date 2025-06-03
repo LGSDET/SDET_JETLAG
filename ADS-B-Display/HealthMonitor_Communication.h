@@ -10,6 +10,13 @@ private:
   TIdTCPClient *MonitorTCPClient;
   bool isConnected;
 
+  // Metric data storage
+  CPUMetricData cpuData;
+  MemoryMetricData memoryData;
+  TemperatureMetricData temperatureData;
+  DiskMetricData diskData;
+  UptimeMetricData uptimeData;
+
   bool VerifyCRC32(const String &data, const String &receivedCRC);
 
 public:
@@ -27,6 +34,13 @@ public:
   DiskMetricData ParseDiskMetric(const String &value);
   UptimeMetricData ParseUptimeMetric(const String &value);
   bool ParseSystemInfo(const String &data);
+
+  // Getter functions for metric data
+  const CPUMetricData& GetCPUData() const { return cpuData; }
+  const MemoryMetricData& GetMemoryData() const { return memoryData; }
+  const TemperatureMetricData& GetTemperatureData() const { return temperatureData; }
+  const DiskMetricData& GetDiskData() const { return diskData; }
+  const UptimeMetricData& GetUptimeData() const { return uptimeData; }
 
   // Event handlers
   void __fastcall OnConnected(TObject *Sender);

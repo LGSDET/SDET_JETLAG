@@ -58,6 +58,13 @@ void __fastcall THealthMonitorUI::ConnectButtonClick(TObject *Sender) {
 
 void __fastcall THealthMonitorUI::UpdateTimerTimer(TObject *Sender) {
   Communication->UpdateSystemInfo();
+  
+  // Update UI with stored metric data
+  UpdateCPUUI(Communication->GetCPUData());
+  UpdateMemoryUI(Communication->GetMemoryData());
+  UpdateTemperatureUI(Communication->GetTemperatureData());
+  UpdateDiskUI(Communication->GetDiskData());
+  UpdateUptimeUI(Communication->GetUptimeData());
 }
 
 void __fastcall THealthMonitorUI::MonitorTCPClientConnected(TObject *Sender) {
