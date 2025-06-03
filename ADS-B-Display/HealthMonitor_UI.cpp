@@ -16,8 +16,8 @@ __fastcall THealthMonitorUI::THealthMonitorUI(TComponent *Owner)
     : TForm(Owner) {
   Communication = new THealthMonitorCommunication(this);
 
-  // 타이머 설정 (1초마다 업데이트)
-  UpdateTimer->Interval = 1000;
+  // 타이머 설정 (100ms마다 업데이트하여 더 빠른 응답성 제공)
+  UpdateTimer->Interval = 100;
   UpdateTimer->Enabled = false;
 
   // 지연시간 레이블 생성 및 설정
@@ -76,7 +76,10 @@ void __fastcall THealthMonitorUI::FormResize(TObject *Sender) {
 }
 
 void __fastcall THealthMonitorUI::UpdateTimerTimer(TObject *Sender) {
-  Communication->UpdateSystemInfo();
+  static int updateCounter = 0;
+  
+  // 지연시간은 매 타이머 틱마다 업데이트
+  UpdateLatencyDisplay(Communication->currentLatency);
   
   // 지연시간 초과로 연결이 끊어졌는지 확인
   if (!Communication->IsConnected()) {
@@ -85,13 +88,19 @@ void __fastcall THealthMonitorUI::UpdateTimerTimer(TObject *Sender) {
     return;
   }
   
-  // Update UI with stored metric data
-  UpdateCPUUI(Communication->GetCPUData());
-  UpdateMemoryUI(Communication->GetMemoryData());
-  UpdateTemperatureUI(Communication->GetTemperatureData());
-  UpdateDiskUI(Communication->GetDiskData());
-  UpdateUptimeUI(Communication->GetUptimeData());
-  UpdateLatencyDisplay(Communication->currentLatency);
+  // 시스템 정보는 1초마다 업데이트 (10번의 타이머 틱마다)
+  if (++updateCounter >= 10) {
+    updateCounter = 0;
+    
+    Communication->UpdateSystemInfo();
+    
+    // Update UI with stored metric data
+    UpdateCPUUI(Communication->GetCPUData());
+    UpdateMemoryUI(Communication->GetMemoryData());
+    UpdateTemperatureUI(Communication->GetTemperatureData());
+    UpdateDiskUI(Communication->GetDiskData());
+    UpdateUptimeUI(Communication->GetUptimeData());
+  }
 }
 
 void __fastcall THealthMonitorUI::MonitorTCPClientConnected(TObject *Sender) {
@@ -196,4 +205,7 @@ void THealthMonitorUI::UpdateLatencyDisplay(int latency) {
   } else {
     LatencyLabel->Font->Color = clGreen;
   }
+  
+  // 레이블 위치 업데이트 (텍스트가 바뀌면서 너비가 변할 수 있음)
+  LatencyLabel->Left = this->ClientWidth - LatencyLabel->Width - 20;
 }
