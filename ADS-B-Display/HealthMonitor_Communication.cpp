@@ -41,6 +41,7 @@ bool THealthMonitorCommunication::Connect(const String &ipAddress, int port) {
     MonitorTCPClient->Port = port;
     MonitorTCPClient->ConnectTimeout = 5000;
     MonitorTCPClient->ReadTimeout = 5000;
+    currentLatency = 0;  // 연결 시 지연시간 초기화
     MonitorTCPClient->Connect();
     return true;
   } catch (Exception &e) {
@@ -56,6 +57,7 @@ void THealthMonitorCommunication::Disconnect() {
 
 void __fastcall THealthMonitorCommunication::OnConnected(TObject *Sender) {
   isConnected = true;
+  ResetTimer();  // 연결 성공 시 타이머 초기화
 }
 
 void __fastcall THealthMonitorCommunication::OnDisconnected(TObject *Sender) {
@@ -85,6 +87,7 @@ void THealthMonitorCommunication::UpdateSystemInfo() {
     return;
 
   try {
+    ResetTimer();  // 요청 전 타이머 초기화
     MonitorTCPClient->Socket->WriteLn("GET_SYSTEM_INFO");
     String response = MonitorTCPClient->Socket->ReadLn();
     ParseSystemInfo(response);
