@@ -37,14 +37,30 @@ THealthMonitorCommunication::~THealthMonitorCommunication() {
 
 bool THealthMonitorCommunication::Connect(const String &ipAddress, int port) {
   try {
+    // 이전 연결이 있다면 완전히 정리
+    if (MonitorTCPClient->Connected()) {
+      Disconnect();
+    }
+    
+    // 소켓 재초기화
+    MonitorTCPClient->Socket->Close();
+    MonitorTCPClient->Socket->Open();
+    
+    // 연결 설정
     MonitorTCPClient->Host = ipAddress;
     MonitorTCPClient->Port = port;
     MonitorTCPClient->ConnectTimeout = 5000;
     MonitorTCPClient->ReadTimeout = 5000;
     currentLatency = 0;  // 연결 시 지연시간 초기화
+    
+    // 연결 시도
     MonitorTCPClient->Connect();
     return true;
   } catch (Exception &e) {
+    // 연결 실패 시 상태 초기화
+    isConnected = false;
+    currentLatency = 0;
+    MonitorTCPClient->Socket->Close();
     return false;
   }
 }
@@ -53,6 +69,10 @@ void THealthMonitorCommunication::Disconnect() {
   if (MonitorTCPClient->Connected()) {
     MonitorTCPClient->Disconnect();
   }
+  // 연결 해제 후 상태 초기화
+  isConnected = false;
+  currentLatency = 0;
+  MonitorTCPClient->Socket->Close();  // 소켓 완전히 닫기
 }
 
 void __fastcall THealthMonitorCommunication::OnConnected(TObject *Sender) {
@@ -62,6 +82,8 @@ void __fastcall THealthMonitorCommunication::OnConnected(TObject *Sender) {
 
 void __fastcall THealthMonitorCommunication::OnDisconnected(TObject *Sender) {
   isConnected = false;
+  currentLatency = 0;
+  MonitorTCPClient->Socket->Close();  // 소켓 완전히 닫기
 }
 
 bool THealthMonitorCommunication::VerifyCRC32(const String &data,
