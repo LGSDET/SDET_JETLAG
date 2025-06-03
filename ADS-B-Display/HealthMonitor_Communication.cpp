@@ -100,21 +100,32 @@ bool THealthMonitorCommunication::ParseSystemInfo(const String &data) {
       String value = item.SubString(item.Pos(":") + 1, item.Length());
 
       if (key == "CPU") {
-        ParseCPUMetric(value);
+        auto cpuData = ParseCPUMetric(value);
+        if (cpuData.isValid)
+          UI->UpdateCPUUI(cpuData);
       } else if (key == "MEM") {
-        ParseMemoryMetric(value);
+        auto memData = ParseMemoryMetric(value);
+        if (memData.isValid)
+          UI->UpdateMemoryUI(memData);
       } else if (key == "TEMP") {
-        ParseTemperatureMetric(value);
+        auto tempData = ParseTemperatureMetric(value);
+        if (tempData.isValid)
+          UI->UpdateTemperatureUI(tempData);
       } else if (key == "DISK") {
-        ParseDiskMetric(value);
+        auto diskData = ParseDiskMetric(value);
+        if (diskData.isValid)
+          UI->UpdateDiskUI(diskData);
       } else if (key == "UPTIME") {
-        ParseUptimeMetric(value);
+        auto uptimeData = ParseUptimeMetric(value);
+        if (uptimeData.isValid)
+          UI->UpdateUptimeUI(uptimeData);
       }
     }
 
     delete items;
     return true;
   } catch (Exception &e) {
+    ShowMessage("데이터 검증 오류: " + e.Message);
     MonitorTCPClient->Disconnect();
     return false;
   }
