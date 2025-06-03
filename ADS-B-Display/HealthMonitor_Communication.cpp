@@ -37,14 +37,20 @@ THealthMonitorCommunication::~THealthMonitorCommunication() {
 
 bool THealthMonitorCommunication::Connect(const String &ipAddress, int port) {
   try {
+    if (!MonitorTCPClient) {
+      return false;
+    }
+    
     // 이전 연결이 있다면 완전히 정리
     if (MonitorTCPClient->Connected()) {
       Disconnect();
     }
     
     // 소켓 재초기화
-    MonitorTCPClient->Socket->Close();
-    MonitorTCPClient->Socket->Open();
+    if (MonitorTCPClient->Socket) {
+      MonitorTCPClient->Socket->Close();
+      MonitorTCPClient->Socket->Open();
+    }
     
     // 연결 설정
     MonitorTCPClient->Host = ipAddress;
@@ -56,23 +62,33 @@ bool THealthMonitorCommunication::Connect(const String &ipAddress, int port) {
     // 연결 시도
     MonitorTCPClient->Connect();
     return true;
-  } catch (Exception &e) {
+  } catch (...) {
     // 연결 실패 시 상태 초기화
     isConnected = false;
     currentLatency = 0;
-    MonitorTCPClient->Socket->Close();
+    if (MonitorTCPClient && MonitorTCPClient->Socket) {
+      MonitorTCPClient->Socket->Close();
+    }
     return false;
   }
 }
 
 void THealthMonitorCommunication::Disconnect() {
-  if (MonitorTCPClient->Connected()) {
-    MonitorTCPClient->Disconnect();
+  try {
+    if (MonitorTCPClient && MonitorTCPClient->Connected()) {
+      MonitorTCPClient->Disconnect();
+    }
+    // 연결 해제 후 상태 초기화
+    isConnected = false;
+    currentLatency = 0;
+    if (MonitorTCPClient && MonitorTCPClient->Socket) {
+      MonitorTCPClient->Socket->Close();
+    }
+  } catch (...) {
+    // 예외가 발생해도 상태는 초기화
+    isConnected = false;
+    currentLatency = 0;
   }
-  // 연결 해제 후 상태 초기화
-  isConnected = false;
-  currentLatency = 0;
-  MonitorTCPClient->Socket->Close();  // 소켓 완전히 닫기
 }
 
 void __fastcall THealthMonitorCommunication::OnConnected(TObject *Sender) {
@@ -81,9 +97,17 @@ void __fastcall THealthMonitorCommunication::OnConnected(TObject *Sender) {
 }
 
 void __fastcall THealthMonitorCommunication::OnDisconnected(TObject *Sender) {
-  isConnected = false;
-  currentLatency = 0;
-  MonitorTCPClient->Socket->Close();  // 소켓 완전히 닫기
+  try {
+    isConnected = false;
+    currentLatency = 0;
+    if (MonitorTCPClient && MonitorTCPClient->Socket) {
+      MonitorTCPClient->Socket->Close();
+    }
+  } catch (...) {
+    // 예외가 발생해도 상태는 초기화
+    isConnected = false;
+    currentLatency = 0;
+  }
 }
 
 bool THealthMonitorCommunication::VerifyCRC32(const String &data,
@@ -105,16 +129,18 @@ bool THealthMonitorCommunication::VerifyCRC32(const String &data,
 }
 
 void THealthMonitorCommunication::UpdateSystemInfo() {
-  if (!MonitorTCPClient->Connected())
-    return;
-
   try {
+    if (!MonitorTCPClient || !MonitorTCPClient->Connected() || !MonitorTCPClient->Socket) {
+      Disconnect();
+      return;
+    }
+
     ResetTimer();  // 요청 전 타이머 초기화
     MonitorTCPClient->Socket->WriteLn("GET_SYSTEM_INFO");
     String response = MonitorTCPClient->Socket->ReadLn();
     ParseSystemInfo(response);
-  } catch (Exception &e) {
-    MonitorTCPClient->Disconnect();
+  } catch (...) {
+    Disconnect();
   }
 }
 

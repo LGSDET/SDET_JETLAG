@@ -52,8 +52,18 @@ void __fastcall THealthMonitorUI::FormCreate(TObject *Sender) {
 }
 
 void __fastcall THealthMonitorUI::FormDestroy(TObject *Sender) {
-  UpdateTimer->Enabled = false;
-  delete Communication;
+  try {
+    if (UpdateTimer) {
+      UpdateTimer->Enabled = false;
+    }
+    if (Communication) {
+      Communication->Disconnect();
+      delete Communication;
+      Communication = nullptr;
+    }
+  } catch (...) {
+    // 정리 작업 중 예외 발생시 무시
+  }
 }
 
 void __fastcall THealthMonitorUI::ConnectButtonClick(TObject *Sender) {
@@ -78,6 +88,11 @@ void __fastcall THealthMonitorUI::FormResize(TObject *Sender) {
 void __fastcall THealthMonitorUI::UpdateTimerTimer(TObject *Sender) {
   static int updateCounter = 0;
   
+  if (!Communication) {
+    UpdateTimer->Enabled = false;
+    return;
+  }
+  
   // 지연시간은 매 타이머 틱마다 업데이트
   UpdateLatencyDisplay(Communication->currentLatency);
   
@@ -91,15 +106,19 @@ void __fastcall THealthMonitorUI::UpdateTimerTimer(TObject *Sender) {
   // 시스템 정보는 1초마다 업데이트 (10번의 타이머 틱마다)
   if (++updateCounter >= 10) {
     updateCounter = 0;
-    
-    Communication->UpdateSystemInfo();
-    
-    // Update UI with stored metric data
-    UpdateCPUUI(Communication->GetCPUData());
-    UpdateMemoryUI(Communication->GetMemoryData());
-    UpdateTemperatureUI(Communication->GetTemperatureData());
-    UpdateDiskUI(Communication->GetDiskData());
-    UpdateUptimeUI(Communication->GetUptimeData());
+    try {
+      Communication->UpdateSystemInfo();
+      
+      // Update UI with stored metric data
+      UpdateCPUUI(Communication->GetCPUData());
+      UpdateMemoryUI(Communication->GetMemoryData());
+      UpdateTemperatureUI(Communication->GetTemperatureData());
+      UpdateDiskUI(Communication->GetDiskData());
+      UpdateUptimeUI(Communication->GetUptimeData());
+    } catch (...) {
+      // 예외 발생시 연결 종료
+      HandleConnectionStateChange(false);
+    }
   }
 }
 
@@ -131,13 +150,20 @@ void THealthMonitorUI::ResetUIElements() {
 }
 
 void THealthMonitorUI::HandleConnectionStateChange(bool connected) {
-  if (connected) {
-    ConnectButton->Caption = "Disconnect";
-    UpdateTimer->Enabled = true;
-  } else {
-    ConnectButton->Caption = "Connect";
-    UpdateTimer->Enabled = false;
-    ResetUIElements();
+  try {
+    if (connected) {
+      ConnectButton->Caption = "Disconnect";
+      UpdateTimer->Enabled = true;
+    } else {
+      ConnectButton->Caption = "Connect";
+      UpdateTimer->Enabled = false;
+      ResetUIElements();
+    }
+  } catch (...) {
+    // UI 컴포넌트 접근 중 예외 발생시 타이머는 반드시 중지
+    if (UpdateTimer) {
+      UpdateTimer->Enabled = false;
+    }
   }
 }
 
@@ -194,18 +220,24 @@ void THealthMonitorUI::UpdateUptimeUI(const UptimeMetricData &data) {
 }
 
 void THealthMonitorUI::UpdateLatencyDisplay(int latency) {
-  // 0 이하의 지연시간은 0으로 보정
-  int displayLatency = (latency <= 0) ? 0 : latency;
-  
-  LatencyLabel->Caption = "Latency: " + IntToStr(displayLatency) + " ms";
-  
-  // 지연시간에 따라 색상 변경
-  if (displayLatency > 500) {
-    LatencyLabel->Font->Color = clRed;
-  } else {
-    LatencyLabel->Font->Color = clGreen;
+  try {
+    if (!LatencyLabel) return;
+    
+    // 0 이하의 지연시간은 0으로 보정
+    int displayLatency = (latency <= 0) ? 0 : latency;
+    
+    LatencyLabel->Caption = "Latency: " + IntToStr(displayLatency) + " ms";
+    
+    // 지연시간에 따라 색상 변경
+    if (displayLatency > 500) {
+      LatencyLabel->Font->Color = clRed;
+    } else {
+      LatencyLabel->Font->Color = clGreen;
+    }
+    
+    // 레이블 위치 업데이트 (텍스트가 바뀌면서 너비가 변할 수 있음)
+    LatencyLabel->Left = this->ClientWidth - LatencyLabel->Width - 20;
+  } catch (...) {
+    // UI 업데이트 중 예외 발생시 무시
   }
-  
-  // 레이블 위치 업데이트 (텍스트가 바뀌면서 너비가 변할 수 있음)
-  LatencyLabel->Left = this->ClientWidth - LatencyLabel->Width - 20;
 }
