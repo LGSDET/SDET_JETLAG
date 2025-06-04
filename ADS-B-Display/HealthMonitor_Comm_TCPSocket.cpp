@@ -65,17 +65,35 @@ bool THealthMonitorNetwork::Connect(const std::string& ipAddress, int port) {
         // 이전 연결이 있다면 완전히 정리
         if (client->Connected()) {
             Disconnect();
+            // 소켓 정리를 위한 짧은 대기
+            Sleep(100);
         }
         
-        // 소켓 재초기화
-        if (client->Socket) {
-            client->Socket->Close();
-            client->Socket->Open();
+        // 소켓 강제 정리 및 재초기화
+        try {
+            if (client->Socket) {
+                client->Socket->Close();
+                // 소켓 바인딩 해제를 위한 대기
+                Sleep(50);
+            }
+        } catch (...) {
+            // 소켓 정리 중 예외 무시
+        }
+        
+        // 새로운 소켓으로 완전 재초기화
+        try {
+            if (client->Socket) {
+                client->Socket->Open();
+            }
+        } catch (...) {
+            // 소켓 열기 실패시 무시하고 계속 진행
         }
         
         // 연결 설정
         client->Host = StdStringToVcl(ipAddress);
         client->Port = port;
+        client->ConnectTimeout = 5000;
+        client->ReadTimeout = 5000;
         
         // 연결 시도 
         client->Connect();
@@ -98,13 +116,32 @@ bool THealthMonitorNetwork::Connect(const std::string& ipAddress, int port) {
 void THealthMonitorNetwork::Disconnect() {
     try {
         TIdTCPClient* client = static_cast<TIdTCPClient*>(tcpClient);
-        if (client && client->Connected()) {
-            client->Disconnect();
+        
+        // 연결 상태 확인 후 강제 해제
+        if (client) {
+            try {
+                if (client->Connected()) {
+                    client->Disconnect();
+                    // 연결 해제 완료를 위한 대기
+                    Sleep(50);
+                }
+            } catch (...) {
+                // Disconnect 예외 무시
+            }
+            
+            // 소켓 강제 정리
+            try {
+                if (client->Socket) {
+                    client->Socket->Close();
+                    // 소켓 완전 정리를 위한 대기
+                    Sleep(50);
+                }
+            } catch (...) {
+                // 소켓 정리 예외 무시
+            }
         }
-        if (client && client->Socket) {
-            client->Socket->Close();
-        }
-        // 연결 해제 후 상태 초기화 (원래 THealthMonitorCommunication 방식)
+        
+        // 연결 해제 후 상태 초기화
         isConnected = false;
         if (onDisconnectedCallback) {
             onDisconnectedCallback();
@@ -141,32 +178,7 @@ std::string THealthMonitorNetwork::ReceiveResponse() {
         }
         
         String vclResponse = client->Socket->ReadLn();
-        std::string stdResponse = VclStringToStd(vclResponse);
-        
-        // DEBUG_REMOVE_LATER: VCL String과 std::string 변환 비교 로그
-        if (!vclResponse.IsEmpty()) {
-            // DEBUG_REMOVE_LATER: VCL String 길이와 내용
-            AnsiString vclAnsi = vclResponse;
-            char debugMsg[2048];
-            sprintf(debugMsg, "=== DATA CONVERSION DEBUG ===\n"
-                             "VCL String Length: %d\n"
-                             "VCL String Content: [%s]\n"
-                             "std::string Length: %d\n" 
-                             "std::string Content: [%s]\n"
-                             "=============================\n",
-                    vclResponse.Length(),
-                    vclAnsi.c_str(),
-                    static_cast<int>(stdResponse.length()),
-                    stdResponse.c_str());
-            
-            // DEBUG_REMOVE_LATER: Windows 디버그 출력 (Visual Studio Output 창에서 확인 가능)
-            OutputDebugStringA(debugMsg);
-            
-            // DEBUG_REMOVE_LATER: 콘솔 출력도 시도 (있다면)
-            printf("%s", debugMsg);
-        }
-        
-        return stdResponse;
+        return VclStringToStd(vclResponse);
     } catch (...) {
         Disconnect();
         return "";
