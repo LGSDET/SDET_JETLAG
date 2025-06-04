@@ -134,17 +134,6 @@ void THealthMonitorCommunication::UpdateLatency(int64_t serverTime) {
 }
 
 bool THealthMonitorCommunication::VerifyCRC32(const std::string& data, const std::string& receivedCRC) {
-    // DEBUG_REMOVE_LATER: CRC 오류 테스트를 위한 강제 실패 설정
-    static bool forceCrcFailure = true;  // DEBUG_REMOVE_LATER: 테스트 완료 후 이 줄 삭제
-    if (forceCrcFailure) {                // DEBUG_REMOVE_LATER: 테스트 완료 후 이 블록 전체 삭제
-        // CRC 강제 실패 카운터 증가          // DEBUG_REMOVE_LATER
-        crcFailureCount++;                // DEBUG_REMOVE_LATER
-        if (crcFailureCount >= 3) {       // DEBUG_REMOVE_LATER
-            isNetworkError = true;        // DEBUG_REMOVE_LATER
-        }                                 // DEBUG_REMOVE_LATER
-        return false;                     // DEBUG_REMOVE_LATER
-    }                                     // DEBUG_REMOVE_LATER
-    
     try {
         size_t crcPos = FindSubstring(data, "|CRC=");
         if (crcPos == 0) {
