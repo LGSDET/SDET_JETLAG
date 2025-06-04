@@ -159,7 +159,7 @@ bool THealthMonitorCommunication::ParseSystemInfo(const std::string& data) {
             throw std::runtime_error("CRC not found in data");
         }
         
-        std::string crcValue = Substring(data, crcPos + 4, 8);
+        std::string crcValue = Substring(data, crcPos + 5, 8);
         printf("Found CRC at position: %d\n", static_cast<int>(crcPos));  // DEBUG_REMOVE_LATER
         printf("Extracted CRC: [%s]\n", crcValue.c_str());                // DEBUG_REMOVE_LATER
         
