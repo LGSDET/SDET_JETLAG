@@ -26,17 +26,19 @@ FetchContent_MakeAvailable(googletest)
 
 # 메인 프로그램 소스 파일
 set(SOURCES
-    HealthMonitor_Communication.cpp
+    HealthMonitor_Comm_Parsing.cpp
     HealthMonitor_UI.cpp
     HealthMonitor_Alert.cpp
+    HealthMonitor_Comm_TCPSocket.cpp
 )
 
 # 메인 프로그램 헤더 파일
 set(HEADERS
     HealthMonitor_MetricData.h
-    HealthMonitor_Communication.h
+    HealthMonitor_Comm_Parsing.h
     HealthMonitor_UI.h
     HealthMonitor_Alert.h
+    HealthMonitor_Comm_TCPSocket.h
 )
 
 # 메인 프로그램 타겟
@@ -46,7 +48,7 @@ target_include_directories(health_monitor PRIVATE ${VCL_INCLUDE_DIR})
 # 테스트 소스 파일
 set(TEST_SOURCES
     tests/test_health_monitor.cpp
-    HealthMonitor_Communication.cpp  # 테스트에 필요한 실제 구현 파일
+    HealthMonitor_Comm_Parsing.cpp  # 테스트에 필요한 실제 구현 파일
 )
 
 # 테스트 실행 파일 타겟
