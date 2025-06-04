@@ -147,15 +147,29 @@ bool THealthMonitorCommunication::VerifyCRC32(const std::string& data, const std
 
 bool THealthMonitorCommunication::ParseSystemInfo(const std::string& data) {
     try {
+        // DEBUG_REMOVE_LATER: 파싱 시작 로그
+        printf("=== PARSING DEBUG ===\n");
+        printf("Input data length: %d\n", static_cast<int>(data.length()));
+        printf("Input data content: [%s]\n", data.c_str());
+        
         size_t crcPos = FindSubstring(data, "|CRC=");
         if (crcPos == 0) {
+            printf("ERROR: CRC not found in data\n");    // DEBUG_REMOVE_LATER
+            printf("====================\n");             // DEBUG_REMOVE_LATER
             throw std::runtime_error("CRC not found in data");
         }
         
         std::string crcValue = Substring(data, crcPos + 4, 8);
+        printf("Found CRC at position: %d\n", static_cast<int>(crcPos));  // DEBUG_REMOVE_LATER
+        printf("Extracted CRC: [%s]\n", crcValue.c_str());                // DEBUG_REMOVE_LATER
+        
         if (!VerifyCRC32(data, crcValue)) {
+            printf("ERROR: CRC verification failed\n");  // DEBUG_REMOVE_LATER
+            printf("====================\n");            // DEBUG_REMOVE_LATER
             throw std::runtime_error("CRC verification failed");
         }
+        
+        printf("CRC verification: SUCCESS\n");           // DEBUG_REMOVE_LATER
         
         std::string pureData = Substring(data, 1, crcPos - 1);
         std::vector<std::string> items = Split(pureData, '|');
@@ -192,8 +206,12 @@ bool THealthMonitorCommunication::ParseSystemInfo(const std::string& data) {
             }
         }
         
+        printf("Parsing completed successfully\n");       // DEBUG_REMOVE_LATER
+        printf("====================\n");                 // DEBUG_REMOVE_LATER
         return true;
     } catch (...) {
+        printf("ERROR: Exception occurred during parsing\n");  // DEBUG_REMOVE_LATER
+        printf("====================\n");                      // DEBUG_REMOVE_LATER
         return false;
     }
 }

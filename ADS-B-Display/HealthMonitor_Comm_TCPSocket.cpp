@@ -141,7 +141,32 @@ std::string THealthMonitorNetwork::ReceiveResponse() {
         }
         
         String vclResponse = client->Socket->ReadLn();
-        return VclStringToStd(vclResponse);
+        std::string stdResponse = VclStringToStd(vclResponse);
+        
+        // DEBUG_REMOVE_LATER: VCL String과 std::string 변환 비교 로그
+        if (!vclResponse.IsEmpty()) {
+            // DEBUG_REMOVE_LATER: VCL String 길이와 내용
+            AnsiString vclAnsi = vclResponse;
+            char debugMsg[2048];
+            sprintf(debugMsg, "=== DATA CONVERSION DEBUG ===\n"
+                             "VCL String Length: %d\n"
+                             "VCL String Content: [%s]\n"
+                             "std::string Length: %d\n" 
+                             "std::string Content: [%s]\n"
+                             "=============================\n",
+                    vclResponse.Length(),
+                    vclAnsi.c_str(),
+                    static_cast<int>(stdResponse.length()),
+                    stdResponse.c_str());
+            
+            // DEBUG_REMOVE_LATER: Windows 디버그 출력 (Visual Studio Output 창에서 확인 가능)
+            OutputDebugStringA(debugMsg);
+            
+            // DEBUG_REMOVE_LATER: 콘솔 출력도 시도 (있다면)
+            printf("%s", debugMsg);
+        }
+        
+        return stdResponse;
     } catch (...) {
         Disconnect();
         return "";
