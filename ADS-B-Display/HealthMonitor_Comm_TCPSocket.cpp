@@ -30,9 +30,9 @@ THealthMonitorNetwork::THealthMonitorNetwork(void* owner) {
         client->ConnectTimeout = 5000;
         client->ReadTimeout = 5000;
         
-        // 이벤트 핸들러 설정 (람다로 내부 메서드 호출)
-        client->OnConnected = [this](TObject* Sender) { OnTCPConnected(); };
-        client->OnDisconnected = [this](TObject* Sender) { OnTCPDisconnected(); };
+        // 이벤트 핸들러는 nullptr (Borland C++ 호환성 문제로 인한 대안)
+        client->OnConnected = nullptr;
+        client->OnDisconnected = nullptr;
         
         tcpClient = static_cast<void*>(client);
     } catch (...) {
@@ -77,9 +77,18 @@ bool THealthMonitorNetwork::Connect(const std::string& ipAddress, int port) {
         client->Host = StdStringToVcl(ipAddress);
         client->Port = port;
         
-        // 연결 시도
+        // 연결 시도 
         client->Connect();
-        return client->Connected();
+        
+        // 연결 성공 여부 확인 및 상태 업데이트 (이벤트 핸들러 대신)
+        if (client->Connected()) {
+            isConnected = true;
+            if (onConnectedCallback) {
+                onConnectedCallback();
+            }
+            return true;
+        }
+        return false;
     } catch (...) {
         isConnected = false;
         return false;
@@ -95,10 +104,18 @@ void THealthMonitorNetwork::Disconnect() {
         if (client && client->Socket) {
             client->Socket->Close();
         }
+        // 연결 해제 후 상태 초기화 (원래 THealthMonitorCommunication 방식)
+        isConnected = false;
+        if (onDisconnectedCallback) {
+            onDisconnectedCallback();
+        }
     } catch (...) {
-        // 연결 해제 중 예외는 무시
+        // 연결 해제 중 예외는 무시하되 상태는 초기화
+        isConnected = false;
+        if (onDisconnectedCallback) {
+            onDisconnectedCallback();
+        }
     }
-    isConnected = false;
 }
 
 bool THealthMonitorNetwork::SendCommand(const std::string& command) {
@@ -143,4 +160,13 @@ void THealthMonitorNetwork::OnTCPDisconnected() {
     if (onDisconnectedCallback) {
         onDisconnectedCallback();
     }
+}
+
+// VCL 이벤트 핸들러 구현 (Borland C++ 클로저용)
+void __fastcall THealthMonitorNetwork::OnConnected(TObject* Sender) {
+    OnTCPConnected();
+}
+
+void __fastcall THealthMonitorNetwork::OnDisconnected(TObject* Sender) {
+    OnTCPDisconnected();
 } 
