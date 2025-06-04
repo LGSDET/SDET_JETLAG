@@ -72,19 +72,19 @@ include CMakeFiles/health_monitor.dir/flags.make
 CMakeFiles/health_monitor.dir/codegen:
 .PHONY : CMakeFiles/health_monitor.dir/codegen
 
-CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.o: CMakeFiles/health_monitor.dir/flags.make
-CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.o: /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Communication.cpp
-CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.o: CMakeFiles/health_monitor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.o -MF CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.o.d -o CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.o -c /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Communication.cpp
+CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.o: CMakeFiles/health_monitor.dir/flags.make
+CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.o: /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Comm_Parsing.cpp
+CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.o: CMakeFiles/health_monitor.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.o -MF CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.o.d -o CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.o -c /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Comm_Parsing.cpp
 
-CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Communication.cpp > CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.i
+CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Comm_Parsing.cpp > CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.i
 
-CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Communication.cpp -o CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.s
+CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Comm_Parsing.cpp -o CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.s
 
 CMakeFiles/health_monitor.dir/HealthMonitor_UI.cpp.o: CMakeFiles/health_monitor.dir/flags.make
 CMakeFiles/health_monitor.dir/HealthMonitor_UI.cpp.o: /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_UI.cpp
@@ -114,21 +114,37 @@ CMakeFiles/health_monitor.dir/HealthMonitor_Alert.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/health_monitor.dir/HealthMonitor_Alert.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Alert.cpp -o CMakeFiles/health_monitor.dir/HealthMonitor_Alert.cpp.s
 
+CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.o: CMakeFiles/health_monitor.dir/flags.make
+CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.o: /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Comm_TCPSocket.cpp
+CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.o: CMakeFiles/health_monitor.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.o -MF CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.o.d -o CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.o -c /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Comm_TCPSocket.cpp
+
+CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Comm_TCPSocket.cpp > CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.i
+
+CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Comm_TCPSocket.cpp -o CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.s
+
 # Object files for target health_monitor
 health_monitor_OBJECTS = \
-"CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.o" \
+"CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.o" \
 "CMakeFiles/health_monitor.dir/HealthMonitor_UI.cpp.o" \
-"CMakeFiles/health_monitor.dir/HealthMonitor_Alert.cpp.o"
+"CMakeFiles/health_monitor.dir/HealthMonitor_Alert.cpp.o" \
+"CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.o"
 
 # External object files for target health_monitor
 health_monitor_EXTERNAL_OBJECTS =
 
-health_monitor: CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.o
+health_monitor: CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.o
 health_monitor: CMakeFiles/health_monitor.dir/HealthMonitor_UI.cpp.o
 health_monitor: CMakeFiles/health_monitor.dir/HealthMonitor_Alert.cpp.o
+health_monitor: CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.o
 health_monitor: CMakeFiles/health_monitor.dir/build.make
 health_monitor: CMakeFiles/health_monitor.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable health_monitor"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable health_monitor"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/health_monitor.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

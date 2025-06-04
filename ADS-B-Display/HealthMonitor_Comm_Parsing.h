@@ -1,5 +1,5 @@
-#ifndef HealthMonitor_CommunicationH
-#define HealthMonitor_CommunicationH
+#ifndef HealthMonitor_Comm_ParsingH
+#define HealthMonitor_Comm_ParsingH
 
 #include "HealthMonitor_MetricData.h"
 #include <string>
@@ -7,6 +7,9 @@
 
 // 순수 C++ 데이터 파싱 클래스 - VCL/네트워크 독립적
 class THealthMonitorCommunication {
+    // 테스트 클래스에서 private 메서드 접근 허용
+    friend class TestHealthMonitorCommunication;
+    
 private:
     int64_t timerStart;  // 타이머 시작 시간 (밀리초)
     

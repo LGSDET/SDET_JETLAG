@@ -2,7 +2,7 @@
 #pragma hdrstop
 
 #include "HealthMonitor_UI.h"
-#include "HealthMonitor_Communication_Network.h"
+#include "HealthMonitor_Comm_TCPSocket.h"
 
 // Form 리소스 파일 연결
 #pragma resource "*.dfm"

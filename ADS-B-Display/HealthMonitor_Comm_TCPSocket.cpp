@@ -1,4 +1,4 @@
-#include "HealthMonitor_Communication_Network.h"
+#include "HealthMonitor_Comm_TCPSocket.h"
 
 // VCL 관련 헤더들은 구현 파일에서만 include
 #include <vcl.h>

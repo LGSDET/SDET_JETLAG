@@ -263,32 +263,56 @@ HealthMonitor_Alert.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_Alert.cpp.s
 .PHONY : HealthMonitor_Alert.cpp.s
 
-HealthMonitor_Communication.o: HealthMonitor_Communication.cpp.o
-.PHONY : HealthMonitor_Communication.o
+HealthMonitor_Comm_Parsing.o: HealthMonitor_Comm_Parsing.cpp.o
+.PHONY : HealthMonitor_Comm_Parsing.o
 
 # target to build an object file
-HealthMonitor_Communication.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor_test.dir/build.make CMakeFiles/health_monitor_test.dir/HealthMonitor_Communication.cpp.o
-.PHONY : HealthMonitor_Communication.cpp.o
+HealthMonitor_Comm_Parsing.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor_test.dir/build.make CMakeFiles/health_monitor_test.dir/HealthMonitor_Comm_Parsing.cpp.o
+.PHONY : HealthMonitor_Comm_Parsing.cpp.o
 
-HealthMonitor_Communication.i: HealthMonitor_Communication.cpp.i
-.PHONY : HealthMonitor_Communication.i
+HealthMonitor_Comm_Parsing.i: HealthMonitor_Comm_Parsing.cpp.i
+.PHONY : HealthMonitor_Comm_Parsing.i
 
 # target to preprocess a source file
-HealthMonitor_Communication.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor_test.dir/build.make CMakeFiles/health_monitor_test.dir/HealthMonitor_Communication.cpp.i
-.PHONY : HealthMonitor_Communication.cpp.i
+HealthMonitor_Comm_Parsing.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor_test.dir/build.make CMakeFiles/health_monitor_test.dir/HealthMonitor_Comm_Parsing.cpp.i
+.PHONY : HealthMonitor_Comm_Parsing.cpp.i
 
-HealthMonitor_Communication.s: HealthMonitor_Communication.cpp.s
-.PHONY : HealthMonitor_Communication.s
+HealthMonitor_Comm_Parsing.s: HealthMonitor_Comm_Parsing.cpp.s
+.PHONY : HealthMonitor_Comm_Parsing.s
 
 # target to generate assembly for a file
-HealthMonitor_Communication.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor_test.dir/build.make CMakeFiles/health_monitor_test.dir/HealthMonitor_Communication.cpp.s
-.PHONY : HealthMonitor_Communication.cpp.s
+HealthMonitor_Comm_Parsing.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor_test.dir/build.make CMakeFiles/health_monitor_test.dir/HealthMonitor_Comm_Parsing.cpp.s
+.PHONY : HealthMonitor_Comm_Parsing.cpp.s
+
+HealthMonitor_Comm_TCPSocket.o: HealthMonitor_Comm_TCPSocket.cpp.o
+.PHONY : HealthMonitor_Comm_TCPSocket.o
+
+# target to build an object file
+HealthMonitor_Comm_TCPSocket.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.o
+.PHONY : HealthMonitor_Comm_TCPSocket.cpp.o
+
+HealthMonitor_Comm_TCPSocket.i: HealthMonitor_Comm_TCPSocket.cpp.i
+.PHONY : HealthMonitor_Comm_TCPSocket.i
+
+# target to preprocess a source file
+HealthMonitor_Comm_TCPSocket.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.i
+.PHONY : HealthMonitor_Comm_TCPSocket.cpp.i
+
+HealthMonitor_Comm_TCPSocket.s: HealthMonitor_Comm_TCPSocket.cpp.s
+.PHONY : HealthMonitor_Comm_TCPSocket.s
+
+# target to generate assembly for a file
+HealthMonitor_Comm_TCPSocket.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/health_monitor.dir/build.make CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.s
+.PHONY : HealthMonitor_Comm_TCPSocket.cpp.s
 
 HealthMonitor_UI.o: HealthMonitor_UI.cpp.o
 .PHONY : HealthMonitor_UI.o
@@ -359,9 +383,12 @@ help:
 	@echo "... HealthMonitor_Alert.o"
 	@echo "... HealthMonitor_Alert.i"
 	@echo "... HealthMonitor_Alert.s"
-	@echo "... HealthMonitor_Communication.o"
-	@echo "... HealthMonitor_Communication.i"
-	@echo "... HealthMonitor_Communication.s"
+	@echo "... HealthMonitor_Comm_Parsing.o"
+	@echo "... HealthMonitor_Comm_Parsing.i"
+	@echo "... HealthMonitor_Comm_Parsing.s"
+	@echo "... HealthMonitor_Comm_TCPSocket.o"
+	@echo "... HealthMonitor_Comm_TCPSocket.i"
+	@echo "... HealthMonitor_Comm_TCPSocket.s"
 	@echo "... HealthMonitor_UI.o"
 	@echo "... HealthMonitor_UI.i"
 	@echo "... HealthMonitor_UI.s"

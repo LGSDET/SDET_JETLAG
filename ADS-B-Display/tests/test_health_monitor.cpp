@@ -1,3 +1,4 @@
+#include "../HealthMonitor_Comm_Parsing.h"
 #include "../HealthMonitor_MetricData.h"
 #include <gtest/gtest.h>
 #include <iomanip>
@@ -9,7 +10,7 @@ protected:
   THealthMonitorCommunication *communication;
 
   void SetUp() override {
-    communication = new THealthMonitorCommunication(nullptr);
+    communication = new THealthMonitorCommunication();
   }
 
   void TearDown() override { delete communication; }

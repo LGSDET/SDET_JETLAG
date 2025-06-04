@@ -8,7 +8,7 @@
 #include <IdTCPClient.hpp>  // TIdTCPClient
 #pragma hdrstop
 
-#include "HealthMonitor_Communication.h"
+#include "HealthMonitor_Comm_Parsing.h"
 #include "HealthMonitor_MetricData.h"
 #include "HealthMonitor_Alert.h"  // 알림 시스템 추가
 

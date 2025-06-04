@@ -1,5 +1,5 @@
-#ifndef HealthMonitor_Communication_NetworkH
-#define HealthMonitor_Communication_NetworkH
+#ifndef HealthMonitor_Comm_TCPSocketH
+#define HealthMonitor_Comm_TCPSocketH
 
 #include <string>
 #include <functional>

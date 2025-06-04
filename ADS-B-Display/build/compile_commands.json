@@ -1,9 +1,9 @@
 [
 {
   "directory": "/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build",
-  "command": "/usr/bin/c++  -I/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/vcl_include -g -std=c++14 -arch arm64 -Wall -Wextra -Wpedantic -o CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.o -c /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Communication.cpp",
-  "file": "/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Communication.cpp",
-  "output": "CMakeFiles/health_monitor.dir/HealthMonitor_Communication.cpp.o"
+  "command": "/usr/bin/c++  -I/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/vcl_include -g -std=c++14 -arch arm64 -Wall -Wextra -Wpedantic -o CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.o -c /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Comm_Parsing.cpp",
+  "file": "/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Comm_Parsing.cpp",
+  "output": "CMakeFiles/health_monitor.dir/HealthMonitor_Comm_Parsing.cpp.o"
 },
 {
   "directory": "/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build",
@@ -19,15 +19,21 @@
 },
 {
   "directory": "/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build",
+  "command": "/usr/bin/c++  -I/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/vcl_include -g -std=c++14 -arch arm64 -Wall -Wextra -Wpedantic -o CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.o -c /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Comm_TCPSocket.cpp",
+  "file": "/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Comm_TCPSocket.cpp",
+  "output": "CMakeFiles/health_monitor.dir/HealthMonitor_Comm_TCPSocket.cpp.o"
+},
+{
+  "directory": "/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build",
   "command": "/usr/bin/c++  -I/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display -I/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/vcl_include -isystem /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build/_deps/googletest-src/googletest/include -isystem /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build/_deps/googletest-src/googletest -g -std=c++14 -arch arm64 -Wall -Wextra -Wpedantic -o CMakeFiles/health_monitor_test.dir/tests/test_health_monitor.cpp.o -c /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/tests/test_health_monitor.cpp",
   "file": "/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/tests/test_health_monitor.cpp",
   "output": "CMakeFiles/health_monitor_test.dir/tests/test_health_monitor.cpp.o"
 },
 {
   "directory": "/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build",
-  "command": "/usr/bin/c++  -I/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display -I/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/vcl_include -isystem /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build/_deps/googletest-src/googletest/include -isystem /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build/_deps/googletest-src/googletest -g -std=c++14 -arch arm64 -Wall -Wextra -Wpedantic -o CMakeFiles/health_monitor_test.dir/HealthMonitor_Communication.cpp.o -c /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Communication.cpp",
-  "file": "/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Communication.cpp",
-  "output": "CMakeFiles/health_monitor_test.dir/HealthMonitor_Communication.cpp.o"
+  "command": "/usr/bin/c++  -I/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display -I/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/vcl_include -isystem /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build/_deps/googletest-src/googletest/include -isystem /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build/_deps/googletest-src/googletest -g -std=c++14 -arch arm64 -Wall -Wextra -Wpedantic -o CMakeFiles/health_monitor_test.dir/HealthMonitor_Comm_Parsing.cpp.o -c /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Comm_Parsing.cpp",
+  "file": "/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/HealthMonitor_Comm_Parsing.cpp",
+  "output": "CMakeFiles/health_monitor_test.dir/HealthMonitor_Comm_Parsing.cpp.o"
 },
 {
   "directory": "/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build/_deps/googletest-build/googlemock",
