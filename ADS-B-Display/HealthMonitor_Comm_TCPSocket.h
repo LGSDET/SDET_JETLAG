@@ -10,6 +10,7 @@
 class THealthMonitorNetwork {
 private:
     void* tcpClient;  // TIdTCPClient* (VCL 타입을 헤더에서 숨김)
+    void* vclOwner;   // TComponent* (소켓 재생성 시 사용)
     bool isConnected;
     
     // 콜백 함수들

@@ -19,26 +19,7 @@ namespace {
 THealthMonitorNetwork::THealthMonitorNetwork(void* owner) {
     isConnected = false;
     tcpClient = nullptr;
-    
-    try {
-        // VCL 객체 생성
-        TComponent* vclOwner = static_cast<TComponent*>(owner);
-        TIdTCPClient* client = new TIdTCPClient(vclOwner);
-        
-        // TCP 클라이언트 설정
-        client->Port = 5001;
-        client->ConnectTimeout = 5000;
-        client->ReadTimeout = 5000;
-        
-        // 이벤트 핸들러는 nullptr (Borland C++ 호환성 문제로 인한 대안)
-        client->OnConnected = nullptr;
-        client->OnDisconnected = nullptr;
-        
-        tcpClient = static_cast<void*>(client);
-    } catch (...) {
-        tcpClient = nullptr;
-        isConnected = false;
-    }
+    vclOwner = owner;  // VCL Owner 저장 (소켓 재생성 시 사용)
 }
 
 THealthMonitorNetwork::~THealthMonitorNetwork() {
@@ -59,55 +40,51 @@ THealthMonitorNetwork::~THealthMonitorNetwork() {
 
 bool THealthMonitorNetwork::Connect(const std::string& ipAddress, int port) {
     try {
-        TIdTCPClient* client = static_cast<TIdTCPClient*>(tcpClient);
-        if (!client) return false;
-        
-        // 이전 연결이 있다면 완전히 정리
-        if (client->Connected()) {
+        // 기존 소켓이 있으면 완전히 삭제
+        if (tcpClient) {
             Disconnect();
-            // 소켓 정리를 위한 짧은 대기
-            Sleep(100);
         }
         
-        // 소켓 강제 정리 및 재초기화
-        try {
-            if (client->Socket) {
-                client->Socket->Close();
-                // 소켓 바인딩 해제를 위한 대기
-                Sleep(50);
-            }
-        } catch (...) {
-            // 소켓 정리 중 예외 무시
-        }
+        // 새로운 TCP 클라이언트 객체 생성
+        TComponent* owner = static_cast<TComponent*>(vclOwner);
+        TIdTCPClient* client = new TIdTCPClient(owner);
         
-        // 새로운 소켓으로 완전 재초기화
-        try {
-            if (client->Socket) {
-                client->Socket->Open();
-            }
-        } catch (...) {
-            // 소켓 열기 실패시 무시하고 계속 진행
-        }
-        
-        // 연결 설정
+        // TCP 클라이언트 설정
         client->Host = StdStringToVcl(ipAddress);
         client->Port = port;
         client->ConnectTimeout = 5000;
         client->ReadTimeout = 5000;
         
-        // 연결 시도 
+        // 이벤트 핸들러는 nullptr (콜백 방식 사용)
+        client->OnConnected = nullptr;
+        client->OnDisconnected = nullptr;
+        
+        // 새로운 클라이언트 저장
+        tcpClient = static_cast<void*>(client);
+        
+        // 연결 시도
         client->Connect();
         
-        // 연결 성공 여부 확인 및 상태 업데이트 (이벤트 핸들러 대신)
+        // 연결 성공 여부 확인 및 상태 업데이트
         if (client->Connected()) {
             isConnected = true;
             if (onConnectedCallback) {
                 onConnectedCallback();
             }
             return true;
+        } else {
+            // 연결 실패시 생성한 객체 삭제
+            delete client;
+            tcpClient = nullptr;
+            return false;
         }
-        return false;
     } catch (...) {
+        // 예외 발생시 정리
+        if (tcpClient) {
+            TIdTCPClient* client = static_cast<TIdTCPClient*>(tcpClient);
+            delete client;
+            tcpClient = nullptr;
+        }
         isConnected = false;
         return false;
     }
@@ -117,28 +94,20 @@ void THealthMonitorNetwork::Disconnect() {
     try {
         TIdTCPClient* client = static_cast<TIdTCPClient*>(tcpClient);
         
-        // 연결 상태 확인 후 강제 해제
+        // TCP 클라이언트 객체가 있으면 완전히 삭제
         if (client) {
             try {
+                // 연결되어 있으면 먼저 해제
                 if (client->Connected()) {
                     client->Disconnect();
-                    // 연결 해제 완료를 위한 대기
-                    Sleep(50);
                 }
             } catch (...) {
                 // Disconnect 예외 무시
             }
             
-            // 소켓 강제 정리
-            try {
-                if (client->Socket) {
-                    client->Socket->Close();
-                    // 소켓 완전 정리를 위한 대기
-                    Sleep(50);
-                }
-            } catch (...) {
-                // 소켓 정리 예외 무시
-            }
+            // 객체 완전 삭제 (소멸자가 모든 리소스 정리)
+            delete client;
+            tcpClient = nullptr;
         }
         
         // 연결 해제 후 상태 초기화
@@ -148,6 +117,7 @@ void THealthMonitorNetwork::Disconnect() {
         }
     } catch (...) {
         // 연결 해제 중 예외는 무시하되 상태는 초기화
+        tcpClient = nullptr;  // 예외 발생시에도 포인터 초기화
         isConnected = false;
         if (onDisconnectedCallback) {
             onDisconnectedCallback();
