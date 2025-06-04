@@ -15,15 +15,6 @@
 ########################
 
 //Value Computed by CMake
-ADS-B-Display_BINARY_DIR:STATIC=/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build
-
-//Value Computed by CMake
-ADS-B-Display_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-ADS-B-Display_SOURCE_DIR:STATIC=/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display
-
-//Value Computed by CMake
 ADS_B_Display_BINARY_DIR:STATIC=/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/build
 
 //Value Computed by CMake
