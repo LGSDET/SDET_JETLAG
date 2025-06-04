@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <vector>
+#include <zlib.h>
 
 const int MAX_LATENCY_MS = 5000;  // 최대 허용 지연시간 5초
 
@@ -78,32 +79,11 @@ namespace {
         return str.substr(start, end - start + 1);
     }
     
-    // CRC32 계산 (zlib 없이 순수 C++ 구현)
+    // CRC32 계산 (zlib 라이브러리 사용)
     uint32_t CalculateCRC32(const std::string& data) {
-        // 간단한 CRC32 테이블
-        static uint32_t crc_table[256];
-        static bool table_computed = false;
-        
-        if (!table_computed) {
-            for (uint32_t i = 0; i < 256; i++) {
-                uint32_t crc = i;
-                for (int j = 0; j < 8; j++) {
-                    if (crc & 1) {
-                        crc = (crc >> 1) ^ 0xEDB88320;
-                    } else {
-                        crc = crc >> 1;
-                    }
-                }
-                crc_table[i] = crc;
-            }
-            table_computed = true;
-        }
-        
-        uint32_t crc = 0xFFFFFFFF;
-        for (char c : data) {
-            crc = crc_table[(crc ^ c) & 0xFF] ^ (crc >> 8);
-        }
-        return crc ^ 0xFFFFFFFF;
+        uLong crc = crc32(0L, Z_NULL, 0);
+        crc = crc32(crc, reinterpret_cast<const Bytef*>(data.c_str()), data.length());
+        return static_cast<uint32_t>(crc);
     }
 }
 
