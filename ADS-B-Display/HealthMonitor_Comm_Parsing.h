@@ -42,11 +42,18 @@ public:
    
     // 지연시간 관련
     int currentLatency;  // 현재 지연시간 (밀리초)
-   
+    
+    // 네트워크 오류 관련
+    int crcFailureCount;  // 연속 CRC 실패 횟수
+    bool isNetworkError;  // 네트워크 오류 상태
+
     // 타이머 제어 (UI에서 호출)
     void StartTimer();
     int64_t GetCurrentElapsedTime();
-   
+    
+    // 네트워크 상태 확인
+    bool IsNetworkError() const { return isNetworkError; }
+
     // ----------- 아래 5개 파싱 함수 public으로 이동 -----------
     bool VerifyCRC32(const std::string& data, const std::string& receivedCRC);
     CPUMetricData ParseCPUMetric(const std::string& value);
@@ -57,4 +64,3 @@ public:
 };
  
 #endif
- 
