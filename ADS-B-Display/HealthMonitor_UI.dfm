@@ -40,7 +40,7 @@ object HealthMonitorUI: THealthMonitorUI
       Width = 100
       Height = 20
       Alignment = taRightJustify
-      Caption = #45348#53944#50900#53356' #50724#47448
+      Caption = 'Network Error'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clRed
       Font.Height = -13
