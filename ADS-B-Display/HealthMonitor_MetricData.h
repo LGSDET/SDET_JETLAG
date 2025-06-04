@@ -1,7 +1,7 @@
 #ifndef HEALTHMONITOR_METRICDATA_H
 #define HEALTHMONITOR_METRICDATA_H
 
-#include <System.hpp>
+#include <string>
 
 struct CPUMetricData {
   double usage;
@@ -27,7 +27,7 @@ struct DiskMetricData {
 
 struct UptimeMetricData {
   int days;
-  String timeStr;
+  std::string timeStr;
   bool isValid;
 };
 

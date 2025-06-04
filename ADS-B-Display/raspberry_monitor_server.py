@@ -6,6 +6,19 @@ from datetime import datetime, timedelta
 import subprocess
 import zlib  # CRC32를 위해 추가
 
+class Timer:
+    def __init__(self):
+        self.reset()
+    
+    def reset(self):
+        """타이머를 0으로 초기화"""
+        self.start_time = time.time_ns() // 1_000_000  # 나노초를 밀리초로 변환
+    
+    def get_elapsed(self):
+        """타이머 시작부터 경과된 시간을 밀리초 단위로 반환"""
+        current = time.time_ns() // 1_000_000
+        return current - self.start_time
+
 def get_power_info():
     try:
         # 전압 정보 가져오기 (core 전압)
@@ -88,42 +101,55 @@ def main():
     
     while True:
         client_socket = None
+        timer = Timer()
         try:
             client_socket, addr = server_socket.accept()
             print(f"클라이언트가 연결되었습니다: {addr}")
             
             while True:
-                start_time = time.time()  # 현재 시간 기록
+                try:
+                    # 타이머 초기화
+                    timer.reset()
+                    
+                    # 시스템 정보 수집
+                    info = get_system_info()
+                    
+                    # 타이머 값을 포함하여 데이터 구성
+                    elapsed_time = timer.get_elapsed()
+                    data = f"TIMER={elapsed_time}|{info}"
+                    crc32 = calculate_crc32(data)
+                    message = f"{data}|CRC={crc32}\n"
+                    
+                    # 데이터 전송
+                    client_socket.send(message.encode())
+                    
+                    # 정확한 1초 간격 유지
+                    time.sleep(1.0)
                 
-                # 시스템 정보 수집
-                info = get_system_info()
+                except BrokenPipeError:
+                    print("클라이언트가 연결을 종료했습니다. (Broken Pipe)")
+                    break
+                except ConnectionResetError:
+                    print("클라이언트가 연결을 강제 종료했습니다.")
+                    break
+                except socket.error as e:
+                    if e.errno == 32:  # Broken pipe
+                        print("클라이언트와의 연결이 끊어졌습니다. (Error 32)")
+                    else:
+                        print(f"소켓 에러 발생: {e}")
+                    break
                 
-                # CRC32 체크섬 계산 및 데이터에 추가
-                crc32 = calculate_crc32(info)
-                message = f"{info}|CRC={crc32}\n"
-                
-                # 데이터 전송
-                client_socket.send(message.encode())
-                
-                # 정확한 1초 간격 유지
-                elapsed_time = time.time() - start_time
-                sleep_time = max(0, 1.0 - elapsed_time)
-                if sleep_time > 0:
-                    time.sleep(sleep_time)
-                
-        except ConnectionResetError:
-            print("클라이언트 연결이 종료되었습니다.")
-        except socket.error as e:
-            print(f"소켓 에러 발생: {e}")
         except Exception as e:
             print(f"에러 발생: {e}")
         finally:
             if client_socket:
                 try:
+                    client_socket.shutdown(socket.SHUT_RDWR)
                     client_socket.close()
+                    print("클라이언트 소켓이 정상적으로 종료되었습니다.")
                 except:
                     pass
-            time.sleep(1)  # 재연결 시도 전 잠시 대기
+            time.sleep(0.5)
 
 if __name__ == "__main__":
     main() 

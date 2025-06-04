@@ -3,8 +3,8 @@ object HealthMonitorUI: THealthMonitorUI
   Top = 0
   BorderStyle = bsSingle
   Caption = 'Raspberry Pi Health Monitor'
-  ClientHeight = 350
-  ClientWidth = 400
+  ClientHeight = 450
+  ClientWidth = 800
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,11 +14,26 @@ object HealthMonitorUI: THealthMonitorUI
   Position = poScreenCenter
   TextHeight = 13
   object MainPanel: TPanel
-    Left = 8
-    Top = 8
-    Width = 384
-    Height = 334
+    Left = 0
+    Top = 0
+    Width = 800
+    Height = 450
+    Align = alClient
     TabOrder = 0
+    object LatencyLabel: TLabel
+      Left = 680
+      Top = 10
+      Width = 100
+      Height = 20
+      Alignment = taRightJustify
+      Caption = 'Latency: 0 ms'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clGreen
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
     object CPULabel: TLabel
       Left = 16
       Top = 16
@@ -31,6 +46,20 @@ object HealthMonitorUI: THealthMonitorUI
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
+    end
+    object CPUAlertLabel: TLabel
+      Left = 26
+      Top = 56
+      Width = 400
+      Height = 13
+      Caption = ''
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
+      Font.Height = -9
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Visible = False
     end
     object MemoryLabel: TLabel
       Left = 16
@@ -45,6 +74,20 @@ object HealthMonitorUI: THealthMonitorUI
       Font.Style = [fsBold]
       ParentFont = False
     end
+    object MemoryAlertLabel: TLabel
+      Left = 26
+      Top = 112
+      Width = 400
+      Height = 13
+      Caption = ''
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
+      Font.Height = -9
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Visible = False
+    end
     object TempLabel: TLabel
       Left = 16
       Top = 128
@@ -58,6 +101,20 @@ object HealthMonitorUI: THealthMonitorUI
       Font.Style = [fsBold]
       ParentFont = False
     end
+    object TempAlertLabel: TLabel
+      Left = 26
+      Top = 168
+      Width = 400
+      Height = 13
+      Caption = ''
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
+      Font.Height = -9
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Visible = False
+    end
     object DiskLabel: TLabel
       Left = 16
       Top = 184
@@ -70,6 +127,20 @@ object HealthMonitorUI: THealthMonitorUI
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
+    end
+    object DiskAlertLabel: TLabel
+      Left = 26
+      Top = 224
+      Width = 400
+      Height = 13
+      Caption = ''
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
+      Font.Height = -9
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Visible = False
     end
     object UptimeLabel: TLabel
       Left = 16
