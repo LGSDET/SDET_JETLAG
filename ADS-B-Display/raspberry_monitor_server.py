@@ -40,65 +40,32 @@ def get_power_info():
         return 5.0, 0.6  # 오류 발생 시 기본값 반환
 
 def get_system_info():
-    # DEBUG_REMOVE_LATER: 알람 테스트를 위한 15초 주기 임계값 초과 데이터 생성
-    current_time = time.time()
-    # 30초 주기로 15초는 임계값 초과, 15초는 정상값
-    is_alarm_mode = int(current_time // 15) % 2 == 0
+    # CPU 사용량 (현재/최대)
+    cpu_percent = psutil.cpu_percent(interval=None)
+    cpu_count = psutil.cpu_count()
+    cpu_max = 100.0
+    cpu_info = f"CPU:{cpu_percent:.1f}/{cpu_max:.1f}"
     
-    if is_alarm_mode:
-        # DEBUG_REMOVE_LATER: 임계값 초과 값들 (알람 발생)
-        print("DEBUG: 알람 모드 - 임계값 초과 데이터 전송")
-        cpu_percent = 85.5  # CPU 임계값 80% 초과
-        
-        # 메모리 사용량 - 실제 총 메모리를 기준으로 80% 초과 설정
-        memory = psutil.virtual_memory()
-        mem_total = memory.total / (1024 * 1024)  # MB 단위
-        mem_used = int(mem_total * 0.85)  # 85% 사용 (80% 임계값 초과)
-        
-        temp = 75.2  # 온도 임계값 70°C 초과
-        disk_percent = 95  # 디스크 임계값 90% 초과
-        
-        cpu_info = f"CPU:{cpu_percent:.1f}/100.0"
-        memory_info = f"MEM:{mem_used}/{int(mem_total)}"
-        temp_info = f"TEMP:{temp:.1f}/85.0"
-        disk_info = f"DISK:{disk_percent}/100"
-        
-    else:
-        # DEBUG_REMOVE_LATER: 정상 값들
-        print("DEBUG: 정상 모드 - 임계값 이하 데이터 전송")
-        cpu_percent = psutil.cpu_percent(interval=None)
-        if cpu_percent > 50:  # 실제값이 높으면 강제로 낮춤
-            cpu_percent = 25.5
-        
-        # 메모리 사용량 (실제값 또는 안전한 값)
-        memory = psutil.virtual_memory()
-        mem_used = memory.used / (1024 * 1024)
-        mem_total = memory.total / (1024 * 1024)
-        mem_percent = (mem_used / mem_total) * 100
-        if mem_percent > 60:  # 실제값이 높으면 강제로 낮춤
-            mem_used = int(mem_total * 0.45)  # 45% 사용
-        
-        # CPU 온도 (실제값 또는 안전한 값)
-        try:
-            cpu = CPUTemperature()
-            temp = cpu.temperature
-            if temp > 50:  # 실제값이 높으면 강제로 낮춤
-                temp = 42.5
-        except:
-            temp = 42.5
-        
-        # 디스크 사용량 (실제값 또는 안전한 값)
-        disk = psutil.disk_usage('/')
-        disk_percent = int(disk.percent)
-        if disk_percent > 70:  # 실제값이 높으면 강제로 낮춤
-            disk_percent = 55
-        
-        cpu_info = f"CPU:{cpu_percent:.1f}/100.0"
-        memory_info = f"MEM:{int(mem_used)}/{int(mem_total)}"
-        temp_info = f"TEMP:{temp:.1f}/85.0"
-        disk_info = f"DISK:{disk_percent}/100"
+    # 메모리 사용량 (현재/최대, MB 단위)
+    memory = psutil.virtual_memory()
+    mem_used = memory.used / (1024 * 1024)  # Convert to MB
+    mem_total = memory.total / (1024 * 1024)  # Convert to MB
+    memory_info = f"MEM:{int(mem_used)}/{int(mem_total)}"
     
-    # Uptime (공통)
+    # CPU 온도 (현재/최대)
+    try:
+        cpu = CPUTemperature()
+        temp = cpu.temperature
+    except:
+        temp = 0  # 온도 센서를 사용할 수 없는 경우
+    temp_max = 85.0
+    temp_info = f"TEMP:{temp:.1f}/{temp_max:.1f}"
+    
+    # 디스크 사용량 (현재/최대)
+    disk = psutil.disk_usage('/')
+    disk_info = f"DISK:{int(disk.percent)}/{100}"
+    
+    # Uptime
     boot_time = datetime.fromtimestamp(psutil.boot_time())
     uptime = datetime.now() - boot_time
     days = uptime.days
@@ -111,7 +78,7 @@ def get_system_info():
     else:
         uptime_info = f"UPTIME:{hours:02d}:{minutes:02d}:{seconds:02d}"
     
-    # 전원 상태 (공통)
+    # 전원 상태
     voltage, current = get_power_info()
     power_info = f"POWER:{voltage:.1f}V/{current:.1f}A"
     
@@ -131,7 +98,6 @@ def main():
     server_socket.listen(1)
     
     print("모니터링 서버가 시작되었습니다. (포트: 5001)")
-    print("DEBUG_REMOVE_LATER: 알람 테스트 모드 - 15초마다 임계값 초과/정상값 번갈아 전송")
     
     while True:
         client_socket = None
