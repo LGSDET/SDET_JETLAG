@@ -32,6 +32,12 @@ __fastcall THealthMonitorUI::THealthMonitorUI(TComponent *Owner)
   LatencyLabel->Caption = "Latency: 0 ms";
   LatencyLabel->Font->Color = clGreen;
   
+  // 네트워크 오류 레이블 초기화
+  NetworkErrorLabel->Caption = "네트워크 오류";
+  NetworkErrorLabel->Font->Color = clRed;
+  NetworkErrorLabel->Font->Style = TFontStyles() << fsBold;
+  NetworkErrorLabel->Visible = false;  // 초기에는 숨김
+  
   // 폼 크기가 변경될 때 위치 조정
   this->OnResize = FormResize;
 }
@@ -93,6 +99,14 @@ void __fastcall THealthMonitorUI::FormResize(TObject *Sender) {
   if (LatencyLabel) {
     LatencyLabel->Left = this->ClientWidth - LatencyLabel->Width - 20;
   }
+  
+  if (NetworkErrorLabel) {
+    // 네트워크 오류 레이블을 지연시간 레이블 아래에 위치
+    NetworkErrorLabel->Left = this->ClientWidth - NetworkErrorLabel->Width - 20;
+    if (LatencyLabel) {
+      NetworkErrorLabel->Top = LatencyLabel->Top + LatencyLabel->Height + 5;
+    }
+  }
 }
 
 void __fastcall THealthMonitorUI::UpdateTimerTimer(TObject *Sender) {
@@ -105,6 +119,9 @@ void __fastcall THealthMonitorUI::UpdateTimerTimer(TObject *Sender) {
   
   // 지연시간은 매 타이머 틱마다 업데이트
   UpdateLatencyDisplay(Communication->currentLatency);
+  
+  // 네트워크 오류 상태 업데이트
+  UpdateNetworkErrorDisplay(Communication->IsNetworkError());
   
   // 지연시간 초과로 연결이 끊어졌는지 확인
   if (!Network->IsConnected()) {
@@ -174,11 +191,26 @@ void THealthMonitorUI::ResetUIElements() {
   LatencyLabel->Caption = "Latency: 0 ms";
   LatencyLabel->Font->Color = clGreen;
   
+  // 네트워크 오류 레이블 초기화
+  if (NetworkErrorLabel) {
+    NetworkErrorLabel->Visible = false;
+  }
+  
+  // 마지막 알람 메시지들 초기화
+  lastCPUAlertMessage = "";
+  lastMemoryAlertMessage = "";
+  lastTempAlertMessage = "";
+  lastDiskAlertMessage = "";
+  
   // 모든 경고 레이블 초기화
-  ClearMetricAlert(CPUAlertLabel);
-  ClearMetricAlert(MemoryAlertLabel);
-  ClearMetricAlert(TempAlertLabel);
-  ClearMetricAlert(DiskAlertLabel);
+  CPUAlertLabel->Visible = false;
+  CPUAlertLabel->Caption = "";
+  MemoryAlertLabel->Visible = false;
+  MemoryAlertLabel->Caption = "";
+  TempAlertLabel->Visible = false;
+  TempAlertLabel->Caption = "";
+  DiskAlertLabel->Visible = false;
+  DiskAlertLabel->Caption = "";
 }
 
 void THealthMonitorUI::HandleConnectionStateChange(bool connected) {
@@ -274,6 +306,28 @@ void THealthMonitorUI::UpdateLatencyDisplay(int latency) {
   }
 }
 
+void THealthMonitorUI::UpdateNetworkErrorDisplay(bool isNetworkError) {
+  try {
+    if (!NetworkErrorLabel) return;
+    
+    if (isNetworkError) {
+      NetworkErrorLabel->Visible = true;
+      NetworkErrorLabel->Caption = "네트워크 오류";
+      NetworkErrorLabel->Font->Color = clRed;
+      
+      // 지연시간 레이블 아래에 위치
+      NetworkErrorLabel->Left = this->ClientWidth - NetworkErrorLabel->Width - 20;
+      if (LatencyLabel) {
+        NetworkErrorLabel->Top = LatencyLabel->Top + LatencyLabel->Height + 5;
+      }
+    } else {
+      NetworkErrorLabel->Visible = false;
+    }
+  } catch (...) {
+    // UI 업데이트 중 예외 발생시 무시
+  }
+}
+
 void THealthMonitorUI::CheckAndShowAlerts() {
   if (!AlertMonitor) return;
   
@@ -289,9 +343,9 @@ void THealthMonitorUI::CheckAndShowAlerts() {
     String message = "CPU 부하 높음 - 사용률 " + 
                      FloatToStrF(cpuData.usage, ffFixed, 7, 1) + 
                      "%가 5초 이상 80% 임계값을 초과";
-    ShowMetricAlert(CPUAlertLabel, cpuAlert, message);
+    ShowMetricAlert(CPUAlertLabel, cpuAlert, message, lastCPUAlertMessage);
   } else {
-    ClearMetricAlert(CPUAlertLabel);
+    ClearMetricAlert(CPUAlertLabel, lastCPUAlertMessage);
   }
   
   // 메모리 알림 확인
@@ -301,9 +355,9 @@ void THealthMonitorUI::CheckAndShowAlerts() {
     String message = "메모리 부족 - 사용률 " + 
                      FloatToStrF(usagePercent, ffFixed, 7, 1) + 
                      "%가 80% 임계값을 초과";
-    ShowMetricAlert(MemoryAlertLabel, memAlert, message);
+    ShowMetricAlert(MemoryAlertLabel, memAlert, message, lastMemoryAlertMessage);
   } else {
-    ClearMetricAlert(MemoryAlertLabel);
+    ClearMetricAlert(MemoryAlertLabel, lastMemoryAlertMessage);
   }
   
   // 온도 알림 확인
@@ -312,9 +366,9 @@ void THealthMonitorUI::CheckAndShowAlerts() {
     String message = "고온 - CPU 온도 " + 
                      FloatToStrF(tempData.temperature, ffFixed, 7, 1) + 
                      "°C가 70°C 임계값을 초과";
-    ShowMetricAlert(TempAlertLabel, tempAlert, message);
+    ShowMetricAlert(TempAlertLabel, tempAlert, message, lastTempAlertMessage);
   } else {
-    ClearMetricAlert(TempAlertLabel);
+    ClearMetricAlert(TempAlertLabel, lastTempAlertMessage);
   }
   
   // 디스크 알림 확인
@@ -323,13 +377,13 @@ void THealthMonitorUI::CheckAndShowAlerts() {
     String message = "디스크 용량 부족 - 사용률 " + 
                      IntToStr(diskData.usagePercent) + 
                      "%가 90% 임계값을 초과";
-    ShowMetricAlert(DiskAlertLabel, diskAlert, message);
+    ShowMetricAlert(DiskAlertLabel, diskAlert, message, lastDiskAlertMessage);
   } else {
-    ClearMetricAlert(DiskAlertLabel);
+    ClearMetricAlert(DiskAlertLabel, lastDiskAlertMessage);
   }
 }
 
-void THealthMonitorUI::ShowMetricAlert(TLabel *alertLabel, AlertType alertType, const String &message) {
+void THealthMonitorUI::ShowMetricAlert(TLabel *alertLabel, AlertType alertType, const String &message, String &lastAlertMessage) {
   if (!alertLabel) return;
   
   // 현재 시간 문자열 생성 (yy-mm-dd, hh:mm:ss 형식)
@@ -338,17 +392,28 @@ void THealthMonitorUI::ShowMetricAlert(TLabel *alertLabel, AlertType alertType, 
   // 경고 메시지 조합: [시간] 메시지
   String fullMessage = "[" + timeStr + "] " + message;
   
+  // 마지막 알람 메시지 저장 (매니저가 에러 발생 시간 확인용)
+  lastAlertMessage = fullMessage;
+  
   // 레이블에 설정
   alertLabel->Caption = fullMessage;
   alertLabel->Visible = true;
   alertLabel->Font->Color = clRed;
 }
 
-void THealthMonitorUI::ClearMetricAlert(TLabel *alertLabel) {
+void THealthMonitorUI::ClearMetricAlert(TLabel *alertLabel, const String &lastAlertMessage) {
   if (!alertLabel) return;
   
-  alertLabel->Visible = false;
-  alertLabel->Caption = "";
+  // 알람이 해제되어도 마지막 알람 메시지를 계속 표시 (연한 회색으로)
+  if (!lastAlertMessage.IsEmpty()) {
+    alertLabel->Caption = lastAlertMessage + " (해제됨)";
+    alertLabel->Visible = true;
+    alertLabel->Font->Color = clGray;  // 회색으로 표시해서 해제된 상태임을 표시
+  } else {
+    // 마지막 알람이 없으면 숨김
+    alertLabel->Visible = false;
+    alertLabel->Caption = "";
+  }
 }
 
 String THealthMonitorUI::GetCurrentTimeString() const {

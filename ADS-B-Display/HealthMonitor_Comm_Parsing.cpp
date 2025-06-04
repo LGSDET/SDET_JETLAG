@@ -89,6 +89,8 @@ namespace {
 
 THealthMonitorCommunication::THealthMonitorCommunication() {
     currentLatency = 0;
+    crcFailureCount = 0;
+    isNetworkError = false;
     ResetTimer();
 }
 
@@ -134,13 +136,39 @@ void THealthMonitorCommunication::UpdateLatency(int64_t serverTime) {
 bool THealthMonitorCommunication::VerifyCRC32(const std::string& data, const std::string& receivedCRC) {
     try {
         size_t crcPos = FindSubstring(data, "|CRC=");
-        if (crcPos == 0) return false;
+        if (crcPos == 0) {
+            // CRC 실패 카운터 증가
+            crcFailureCount++;
+            if (crcFailureCount >= 3) {
+                isNetworkError = true;
+            }
+            return false;
+        }
         
         std::string pureData = Substring(data, 1, crcPos - 1);
         uint32_t calculatedCRC = CalculateCRC32(pureData);
         std::string calculatedCRCStr = ToLowerCase(IntToHexString(calculatedCRC));
-        return calculatedCRCStr == ToLowerCase(receivedCRC);
+        bool crcValid = calculatedCRCStr == ToLowerCase(receivedCRC);
+        
+        if (crcValid) {
+            // CRC 성공 시 카운터 리셋 및 네트워크 오류 해제
+            crcFailureCount = 0;
+            isNetworkError = false;
+        } else {
+            // CRC 실패 카운터 증가
+            crcFailureCount++;
+            if (crcFailureCount >= 3) {
+                isNetworkError = true;
+            }
+        }
+        
+        return crcValid;
     } catch (...) {
+        // 예외 발생 시에도 CRC 실패로 처리
+        crcFailureCount++;
+        if (crcFailureCount >= 3) {
+            isNetworkError = true;
+        }
         return false;
     }
 }

@@ -30,6 +30,7 @@ __published:
   TLabel *DiskLabel;
   TLabel *UptimeLabel;
   TLabel *LatencyLabel;  // 지연시간 표시 레이블
+  TLabel *NetworkErrorLabel;  // 네트워크 오류 표시 레이블
 
   // 각 메트릭별 경고 표시 레이블 추가
   TLabel *CPUAlertLabel;
@@ -55,10 +56,17 @@ private:
   THealthMonitorNetwork *Network;              // VCL 네트워크 클래스
   THealthMonitorAlert *AlertMonitor;           // 알림 시스템 추가
   
+  // 마지막 알람 메시지 저장 (매니저가 에러 발생 시간 확인용)
+  String lastCPUAlertMessage;
+  String lastMemoryAlertMessage;
+  String lastTempAlertMessage;
+  String lastDiskAlertMessage;
+  
   // UI 관리 함수들
   void ResetUIElements();  // UI 요소들을 기본값으로 초기화
   void HandleConnectionStateChange(bool connected);  // 연결 상태 변경 처리
   void UpdateLatencyDisplay(int latency);  // 지연시간 표시 업데이트
+  void UpdateNetworkErrorDisplay(bool isNetworkError);  // 네트워크 오류 표시 업데이트
   
   // 메트릭 데이터 UI 업데이트 함수들
   void UpdateCPUUI(const CPUMetricData &data);
@@ -69,8 +77,8 @@ private:
   
   // 알림 관련 함수들
   void CheckAndShowAlerts();  // 모든 메트릭에 대해 알림 확인 및 표시
-  void ShowMetricAlert(TLabel *alertLabel, AlertType alertType, const String &message);
-  void ClearMetricAlert(TLabel *alertLabel);
+  void ShowMetricAlert(TLabel *alertLabel, AlertType alertType, const String &message, String &lastAlertMessage);
+  void ClearMetricAlert(TLabel *alertLabel, const String &lastAlertMessage);
   String GetCurrentTimeString() const;  // 현재 시간을 문자열로 반환
 
 public:

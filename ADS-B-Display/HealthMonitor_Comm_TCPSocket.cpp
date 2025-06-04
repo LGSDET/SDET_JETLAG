@@ -43,6 +43,7 @@ bool THealthMonitorNetwork::Connect(const std::string& ipAddress, int port) {
         // 기존 소켓이 있으면 완전히 삭제
         if (tcpClient) {
             Disconnect();
+            Sleep(200);  // 서버의 연결 정리 대기 시간
         }
         
         // 새로운 TCP 클라이언트 객체 생성
