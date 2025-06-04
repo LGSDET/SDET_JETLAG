@@ -3,9 +3,8 @@
 
 #include <string>
 #include <functional>
-
-// VCL 전방 선언
-class TObject;
+#include <vcl.h>
+#include <Classes.hpp>  // TObject 정의를 위해 추가
 
 // 순전히 VCL TCP 통신만 담당하는 클래스
 class THealthMonitorNetwork {
