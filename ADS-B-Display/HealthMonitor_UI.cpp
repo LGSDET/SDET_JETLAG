@@ -196,11 +196,21 @@ void THealthMonitorUI::ResetUIElements() {
     NetworkErrorLabel->Visible = false;
   }
   
+  // 마지막 알람 메시지들 초기화
+  lastCPUAlertMessage = "";
+  lastMemoryAlertMessage = "";
+  lastTempAlertMessage = "";
+  lastDiskAlertMessage = "";
+  
   // 모든 경고 레이블 초기화
-  ClearMetricAlert(CPUAlertLabel);
-  ClearMetricAlert(MemoryAlertLabel);
-  ClearMetricAlert(TempAlertLabel);
-  ClearMetricAlert(DiskAlertLabel);
+  CPUAlertLabel->Visible = false;
+  CPUAlertLabel->Caption = "";
+  MemoryAlertLabel->Visible = false;
+  MemoryAlertLabel->Caption = "";
+  TempAlertLabel->Visible = false;
+  TempAlertLabel->Caption = "";
+  DiskAlertLabel->Visible = false;
+  DiskAlertLabel->Caption = "";
 }
 
 void THealthMonitorUI::HandleConnectionStateChange(bool connected) {
@@ -333,9 +343,9 @@ void THealthMonitorUI::CheckAndShowAlerts() {
     String message = "CPU 부하 높음 - 사용률 " + 
                      FloatToStrF(cpuData.usage, ffFixed, 7, 1) + 
                      "%가 5초 이상 80% 임계값을 초과";
-    ShowMetricAlert(CPUAlertLabel, cpuAlert, message);
+    ShowMetricAlert(CPUAlertLabel, cpuAlert, message, lastCPUAlertMessage);
   } else {
-    ClearMetricAlert(CPUAlertLabel);
+    ClearMetricAlert(CPUAlertLabel, lastCPUAlertMessage);
   }
   
   // 메모리 알림 확인
@@ -345,9 +355,9 @@ void THealthMonitorUI::CheckAndShowAlerts() {
     String message = "메모리 부족 - 사용률 " + 
                      FloatToStrF(usagePercent, ffFixed, 7, 1) + 
                      "%가 80% 임계값을 초과";
-    ShowMetricAlert(MemoryAlertLabel, memAlert, message);
+    ShowMetricAlert(MemoryAlertLabel, memAlert, message, lastMemoryAlertMessage);
   } else {
-    ClearMetricAlert(MemoryAlertLabel);
+    ClearMetricAlert(MemoryAlertLabel, lastMemoryAlertMessage);
   }
   
   // 온도 알림 확인
@@ -356,9 +366,9 @@ void THealthMonitorUI::CheckAndShowAlerts() {
     String message = "고온 - CPU 온도 " + 
                      FloatToStrF(tempData.temperature, ffFixed, 7, 1) + 
                      "°C가 70°C 임계값을 초과";
-    ShowMetricAlert(TempAlertLabel, tempAlert, message);
+    ShowMetricAlert(TempAlertLabel, tempAlert, message, lastTempAlertMessage);
   } else {
-    ClearMetricAlert(TempAlertLabel);
+    ClearMetricAlert(TempAlertLabel, lastTempAlertMessage);
   }
   
   // 디스크 알림 확인
@@ -367,13 +377,13 @@ void THealthMonitorUI::CheckAndShowAlerts() {
     String message = "디스크 용량 부족 - 사용률 " + 
                      IntToStr(diskData.usagePercent) + 
                      "%가 90% 임계값을 초과";
-    ShowMetricAlert(DiskAlertLabel, diskAlert, message);
+    ShowMetricAlert(DiskAlertLabel, diskAlert, message, lastDiskAlertMessage);
   } else {
-    ClearMetricAlert(DiskAlertLabel);
+    ClearMetricAlert(DiskAlertLabel, lastDiskAlertMessage);
   }
 }
 
-void THealthMonitorUI::ShowMetricAlert(TLabel *alertLabel, AlertType alertType, const String &message) {
+void THealthMonitorUI::ShowMetricAlert(TLabel *alertLabel, AlertType alertType, const String &message, String &lastAlertMessage) {
   if (!alertLabel) return;
   
   // 현재 시간 문자열 생성 (yy-mm-dd, hh:mm:ss 형식)
@@ -382,17 +392,28 @@ void THealthMonitorUI::ShowMetricAlert(TLabel *alertLabel, AlertType alertType, 
   // 경고 메시지 조합: [시간] 메시지
   String fullMessage = "[" + timeStr + "] " + message;
   
+  // 마지막 알람 메시지 저장 (매니저가 에러 발생 시간 확인용)
+  lastAlertMessage = fullMessage;
+  
   // 레이블에 설정
   alertLabel->Caption = fullMessage;
   alertLabel->Visible = true;
   alertLabel->Font->Color = clRed;
 }
 
-void THealthMonitorUI::ClearMetricAlert(TLabel *alertLabel) {
+void THealthMonitorUI::ClearMetricAlert(TLabel *alertLabel, const String &lastAlertMessage) {
   if (!alertLabel) return;
   
-  alertLabel->Visible = false;
-  alertLabel->Caption = "";
+  // 알람이 해제되어도 마지막 알람 메시지를 계속 표시 (연한 회색으로)
+  if (!lastAlertMessage.IsEmpty()) {
+    alertLabel->Caption = lastAlertMessage + " (해제됨)";
+    alertLabel->Visible = true;
+    alertLabel->Font->Color = clGray;  // 회색으로 표시해서 해제된 상태임을 표시
+  } else {
+    // 마지막 알람이 없으면 숨김
+    alertLabel->Visible = false;
+    alertLabel->Caption = "";
+  }
 }
 
 String THealthMonitorUI::GetCurrentTimeString() const {
