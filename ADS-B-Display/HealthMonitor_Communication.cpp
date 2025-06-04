@@ -1,291 +1,298 @@
-#include <vcl.h>
-#pragma hdrstop
-
 #include "HealthMonitor_Communication.h"
-#include <zlib.h>
 #include <chrono>
+#include <sstream>
+#include <iomanip>
+#include <algorithm>
+#include <stdexcept>
+#include <vector>
 
 const int MAX_LATENCY_MS = 5000;  // 최대 허용 지연시간 5초
 
-THealthMonitorCommunication::THealthMonitorCommunication(TComponent *Owner) {
-  isConnected = false;
-  MonitorTCPClient = new TIdTCPClient(Owner);
-  MonitorTCPClient->Port = 5001;
-  MonitorTCPClient->OnConnected = OnConnected;
-  MonitorTCPClient->OnDisconnected = OnDisconnected;
-  currentLatency = 0;
-  ResetTimer();
+// 표준 C++ 문자열 파싱 유틸리티 함수들
+namespace {
+    double StringToDouble(const std::string& str) {
+        try {
+            return std::stod(str);
+        } catch (...) {
+            return 0.0;
+        }
+    }
+    
+    int StringToInt(const std::string& str) {
+        try {
+            return std::stoi(str);
+        } catch (...) {
+            return 0;
+        }
+    }
+    
+    int64_t StringToInt64(const std::string& str) {
+        try {
+            return std::stoll(str);
+        } catch (...) {
+            return 0;
+        }
+    }
+    
+    std::string IntToHexString(uint32_t value) {
+        std::stringstream ss;
+        ss << std::hex << std::setw(8) << std::setfill('0') << value;
+        return ss.str();
+    }
+    
+    std::string ToLowerCase(const std::string& str) {
+        std::string result = str;
+        std::transform(result.begin(), result.end(), result.begin(), ::tolower);
+        return result;
+    }
+    
+    // 문자열에서 특정 구분자로 분할
+    std::vector<std::string> Split(const std::string& str, char delimiter) {
+        std::vector<std::string> tokens;
+        std::stringstream ss(str);
+        std::string token;
+        
+        while (std::getline(ss, token, delimiter)) {
+            tokens.push_back(token);
+        }
+        return tokens;
+    }
+    
+    // 문자열에서 부분 문자열 찾기 (VCL Pos 함수 대체)
+    size_t FindSubstring(const std::string& str, const std::string& substr) {
+        size_t pos = str.find(substr);
+        return (pos != std::string::npos) ? pos + 1 : 0;  // VCL 스타일로 1-based 인덱스
+    }
+    
+    // 부분 문자열 추출 (VCL SubString 함수 대체)
+    std::string Substring(const std::string& str, size_t start, size_t length) {
+        if (start < 1 || start > str.length()) return "";
+        return str.substr(start - 1, length);  // 1-based to 0-based 변환
+    }
+    
+    // 문자열 앞뒤 공백 제거
+    std::string Trim(const std::string& str) {
+        size_t start = str.find_first_not_of(" \t\n\r");
+        if (start == std::string::npos) return "";
+        size_t end = str.find_last_not_of(" \t\n\r");
+        return str.substr(start, end - start + 1);
+    }
+    
+    // CRC32 계산 (zlib 없이 순수 C++ 구현)
+    uint32_t CalculateCRC32(const std::string& data) {
+        // 간단한 CRC32 테이블
+        static uint32_t crc_table[256];
+        static bool table_computed = false;
+        
+        if (!table_computed) {
+            for (uint32_t i = 0; i < 256; i++) {
+                uint32_t crc = i;
+                for (int j = 0; j < 8; j++) {
+                    if (crc & 1) {
+                        crc = (crc >> 1) ^ 0xEDB88320;
+                    } else {
+                        crc = crc >> 1;
+                    }
+                }
+                crc_table[i] = crc;
+            }
+            table_computed = true;
+        }
+        
+        uint32_t crc = 0xFFFFFFFF;
+        for (char c : data) {
+            crc = crc_table[(crc ^ c) & 0xFF] ^ (crc >> 8);
+        }
+        return crc ^ 0xFFFFFFFF;
+    }
 }
 
-void THealthMonitorCommunication::ResetTimer() {
-  timerStart = std::chrono::duration_cast<std::chrono::milliseconds>(
-      std::chrono::steady_clock::now().time_since_epoch()).count();
-}
-
-__int64 THealthMonitorCommunication::GetElapsedTime() {
-  auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
-      std::chrono::steady_clock::now().time_since_epoch()).count();
-  return now - timerStart;
+THealthMonitorCommunication::THealthMonitorCommunication() {
+    currentLatency = 0;
+    ResetTimer();
 }
 
 THealthMonitorCommunication::~THealthMonitorCommunication() {
-  if (MonitorTCPClient->Connected()) {
-    MonitorTCPClient->Disconnect();
-  }
-  delete MonitorTCPClient;
+    // 순수 파싱 클래스이므로 정리할 리소스 없음
 }
 
-bool THealthMonitorCommunication::Connect(const String &ipAddress, int port) {
-  try {
-    if (!MonitorTCPClient) {
-      return false;
-    }
-    
-    // 이전 연결이 있다면 완전히 정리
-    if (MonitorTCPClient->Connected()) {
-      Disconnect();
-    }
-    
-    // 소켓 재초기화
-    if (MonitorTCPClient->Socket) {
-      MonitorTCPClient->Socket->Close();
-      MonitorTCPClient->Socket->Open();
-    }
-    
-    // 연결 설정
-    MonitorTCPClient->Host = ipAddress;
-    MonitorTCPClient->Port = port;
-    MonitorTCPClient->ConnectTimeout = 5000;
-    MonitorTCPClient->ReadTimeout = 5000;
-    currentLatency = 0;  // 연결 시 지연시간 초기화
-    
-    // 연결 시도
-    MonitorTCPClient->Connect();
-    return true;
-  } catch (...) {
-    // 연결 실패 시 상태 초기화
-    isConnected = false;
-    currentLatency = 0;
-    if (MonitorTCPClient && MonitorTCPClient->Socket) {
-      MonitorTCPClient->Socket->Close();
-    }
-    return false;
-  }
+void THealthMonitorCommunication::ResetTimer() {
+    timerStart = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now().time_since_epoch()).count();
 }
 
-void THealthMonitorCommunication::Disconnect() {
-  try {
-    if (MonitorTCPClient && MonitorTCPClient->Connected()) {
-      MonitorTCPClient->Disconnect();
-    }
-    // 연결 해제 후 상태 초기화
-    isConnected = false;
-    currentLatency = 0;
-    if (MonitorTCPClient && MonitorTCPClient->Socket) {
-      MonitorTCPClient->Socket->Close();
-    }
-  } catch (...) {
-    // 예외가 발생해도 상태는 초기화
-    isConnected = false;
-    currentLatency = 0;
-  }
+int64_t THealthMonitorCommunication::GetElapsedTime() {
+    auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now().time_since_epoch()).count();
+    return now - timerStart;
 }
 
-void __fastcall THealthMonitorCommunication::OnConnected(TObject *Sender) {
-  isConnected = true;
-  ResetTimer();  // 연결 성공 시 타이머 초기화
+void THealthMonitorCommunication::StartTimer() {
+    ResetTimer();
 }
 
-void __fastcall THealthMonitorCommunication::OnDisconnected(TObject *Sender) {
-  try {
-    isConnected = false;
-    currentLatency = 0;
-    if (MonitorTCPClient && MonitorTCPClient->Socket) {
-      MonitorTCPClient->Socket->Close();
-    }
-  } catch (...) {
-    // 예외가 발생해도 상태는 초기화
-    isConnected = false;
-    currentLatency = 0;
-  }
-}
-
-bool THealthMonitorCommunication::VerifyCRC32(const String &data,
-                                              const String &receivedCRC) {
-  try {
-    int crcPos = data.Pos("|CRC=");
-    if (crcPos <= 0)
-      return false;
-
-    String pureData = data.SubString(1, crcPos - 1);
-    uLong crc = crc32(0L, Z_NULL, 0);
-    AnsiString ansiData = pureData;
-    crc = crc32(crc, (const Bytef *)ansiData.c_str(), ansiData.Length());
-    String calculatedCRC = IntToHex(static_cast<__int64>(crc), 8).LowerCase();
-    return calculatedCRC == receivedCRC.LowerCase();
-  } catch (...) {
-    return false;
-  }
-}
-
-void THealthMonitorCommunication::UpdateSystemInfo() {
-  try {
-    if (!MonitorTCPClient || !MonitorTCPClient->Connected() || !MonitorTCPClient->Socket) {
-      Disconnect();
-      return;
-    }
-
-    ResetTimer();  // 요청 전 타이머 초기화
-    MonitorTCPClient->Socket->WriteLn("GET_SYSTEM_INFO");
-    String response = MonitorTCPClient->Socket->ReadLn();
-    ParseSystemInfo(response);
-  } catch (...) {
-    Disconnect();
-  }
+int64_t THealthMonitorCommunication::GetCurrentElapsedTime() {
+    return GetElapsedTime();
 }
 
 bool THealthMonitorCommunication::IsLatencyExceeded() const {
-  return currentLatency > MAX_LATENCY_MS;
+    return currentLatency > MAX_LATENCY_MS;
 }
 
-void THealthMonitorCommunication::UpdateLatency(__int64 serverTime) {
-  __int64 clientTime = GetElapsedTime();
-  currentLatency = clientTime - serverTime;
-  
-  // 음수 지연시간 보정
-  if (currentLatency < 0) {
-    currentLatency = 0;
-  }
-  
-  // 지연시간 초과시 연결 종료
-  if (IsLatencyExceeded()) {
-    Disconnect();
-  }
-  
-  // 다음 측정을 위해 타이머 리셋
-  ResetTimer();
-}
-
-bool THealthMonitorCommunication::ParseSystemInfo(const String &data) {
-  try {
-    int crcPos = data.Pos("|CRC=");
-    if (crcPos <= 0) {
-      throw Exception("CRC not found in data");
+void THealthMonitorCommunication::UpdateLatency(int64_t serverTime) {
+    int64_t clientTime = GetElapsedTime();
+    currentLatency = static_cast<int>(clientTime - serverTime);
+    
+    // 음수 지연시간 보정
+    if (currentLatency < 0) {
+        currentLatency = 0;
     }
+    
+    ResetTimer();
+}
 
-    String crcValue = data.SubString(crcPos + 5, 8);
-    if (!VerifyCRC32(data, crcValue)) {
-      throw Exception("CRC verification failed");
+bool THealthMonitorCommunication::VerifyCRC32(const std::string& data, const std::string& receivedCRC) {
+    try {
+        size_t crcPos = FindSubstring(data, "|CRC=");
+        if (crcPos == 0) return false;
+        
+        std::string pureData = Substring(data, 1, crcPos - 1);
+        uint32_t calculatedCRC = CalculateCRC32(pureData);
+        std::string calculatedCRCStr = ToLowerCase(IntToHexString(calculatedCRC));
+        return calculatedCRCStr == ToLowerCase(receivedCRC);
+    } catch (...) {
+        return false;
     }
+}
 
-    String pureData = data.SubString(1, crcPos - 1);
-    TStringList *items = new TStringList();
-    items->Delimiter = '|';
-    items->DelimitedText = pureData;
-
-    // 서버의 타이머 값 파싱 및 지연시간 업데이트
-    String timerStr = items->Strings[0];
-    if (timerStr.Pos("TIMER=") == 1) {
-      String serverTimeStr = timerStr.SubString(7, timerStr.Length() - 6);
-      __int64 serverTime = StrToInt64(serverTimeStr);
-      UpdateLatency(serverTime);
+bool THealthMonitorCommunication::ParseSystemInfo(const std::string& data) {
+    try {
+        size_t crcPos = FindSubstring(data, "|CRC=");
+        if (crcPos == 0) {
+            throw std::runtime_error("CRC not found in data");
+        }
+        
+        std::string crcValue = Substring(data, crcPos + 4, 8);
+        if (!VerifyCRC32(data, crcValue)) {
+            throw std::runtime_error("CRC verification failed");
+        }
+        
+        std::string pureData = Substring(data, 1, crcPos - 1);
+        std::vector<std::string> items = Split(pureData, '|');
+        
+        if (items.empty()) return false;
+        
+        // 서버의 타이머 값 파싱 및 지연시간 업데이트
+        std::string timerStr = items[0];
+        if (FindSubstring(timerStr, "TIMER=") == 1) {
+            std::string serverTimeStr = Substring(timerStr, 7, timerStr.length() - 6);
+            int64_t serverTime = StringToInt64(serverTimeStr);
+            UpdateLatency(serverTime);
+        }
+        
+        // 나머지 시스템 정보 파싱
+        for (size_t i = 1; i < items.size(); i++) {
+            std::string item = items[i];
+            size_t colonPos = FindSubstring(item, ":");
+            if (colonPos == 0) continue;
+            
+            std::string key = Substring(item, 1, colonPos - 1);
+            std::string value = Substring(item, colonPos + 1, item.length());
+            
+            if (key == "CPU") {
+                cpuData = ParseCPUMetric(value);
+            } else if (key == "MEM") {
+                memoryData = ParseMemoryMetric(value);
+            } else if (key == "TEMP") {
+                temperatureData = ParseTemperatureMetric(value);
+            } else if (key == "DISK") {
+                diskData = ParseDiskMetric(value);
+            } else if (key == "UPTIME") {
+                uptimeData = ParseUptimeMetric(value);
+            }
+        }
+        
+        return true;
+    } catch (...) {
+        return false;
     }
+}
 
-    // 나머지 시스템 정보 파싱
-    for (int i = 1; i < items->Count; i++) {
-      String item = items->Strings[i];
-      String key = item.SubString(1, item.Pos(":") - 1);
-      String value = item.SubString(item.Pos(":") + 1, item.Length());
-
-      if (key == "CPU") {
-        cpuData = ParseCPUMetric(value);
-      } else if (key == "MEM") {
-        memoryData = ParseMemoryMetric(value);
-      } else if (key == "TEMP") {
-        temperatureData = ParseTemperatureMetric(value);
-      } else if (key == "DISK") {
-        diskData = ParseDiskMetric(value);
-      } else if (key == "UPTIME") {
-        uptimeData = ParseUptimeMetric(value);
-      }
+CPUMetricData THealthMonitorCommunication::ParseCPUMetric(const std::string& value) {
+    CPUMetricData result = {0.0, false};
+    try {
+        size_t slashPos = FindSubstring(value, "/");
+        if (slashPos == 0) return result;
+        
+        std::string current = Substring(value, 1, slashPos - 1);
+        result.usage = StringToDouble(current);
+        result.isValid = true;
+    } catch (...) {
     }
-
-    delete items;
-    return true;
-  } catch (Exception &e) {
-    Disconnect();
-    return false;
-  }
+    return result;
 }
 
-CPUMetricData THealthMonitorCommunication::ParseCPUMetric(const String &value) {
-  CPUMetricData result = {0.0, false};
-  try {
-    String current = value.SubString(1, value.Pos("/") - 1);
-    result.usage = StrToFloat(current);
-    result.isValid = true;
-  } catch (...) {
-  }
-  return result;
-}
-
-MemoryMetricData
-THealthMonitorCommunication::ParseMemoryMetric(const String &value) {
-  MemoryMetricData result = {0, 0, false};
-  try {
-    String current = value.SubString(1, value.Pos("/") - 1);
-    String maximum = value.SubString(value.Pos("/") + 1, value.Length());
-    result.currentUsage = StrToInt(current);
-    result.totalMemory = StrToInt(maximum);
-    result.isValid = true;
-  } catch (...) {
-  }
-  return result;
-}
-
-TemperatureMetricData
-THealthMonitorCommunication::ParseTemperatureMetric(const String &value) {
-  TemperatureMetricData result = {0.0, 85.0, false};
-  try {
-    String current = value.SubString(1, value.Pos("/") - 1);
-    String maximum = value.SubString(value.Pos("/") + 1, value.Length());
-    result.temperature = StrToFloat(current);
-    result.maxTemperature = StrToFloat(maximum);
-    result.isValid = true;
-  } catch (...) {
-  }
-  return result;
-}
-
-DiskMetricData
-THealthMonitorCommunication::ParseDiskMetric(const String &value) {
-  DiskMetricData result = {0, false};
-  try {
-    String current = value.SubString(1, value.Pos("/") - 1);
-    result.usagePercent = StrToInt(current.Trim());
-    result.isValid = true;
-  } catch (...) {
-  }
-  return result;
-}
-
-UptimeMetricData
-THealthMonitorCommunication::ParseUptimeMetric(const String &value) {
-  UptimeMetricData result = {0, "", false};
-  try {
-    String uptimeStr = value.Trim();
-    if (uptimeStr.Pos("d ") > 0) {
-      result.days = StrToInt(uptimeStr.SubString(1, uptimeStr.Pos("d") - 1));
-      // VCL String을 std::string으로 변환
-      String timeVclStr = uptimeStr.SubString(uptimeStr.Pos(" ") + 1, uptimeStr.Length());
-      result.timeStr = AnsiString(timeVclStr).c_str();
-    } else {
-      result.days = 0;
-      // VCL String을 std::string으로 변환
-      result.timeStr = AnsiString(uptimeStr).c_str();
+MemoryMetricData THealthMonitorCommunication::ParseMemoryMetric(const std::string& value) {
+    MemoryMetricData result = {0, 0, false};
+    try {
+        size_t slashPos = FindSubstring(value, "/");
+        if (slashPos == 0) return result;
+        
+        std::string current = Substring(value, 1, slashPos - 1);
+        std::string maximum = Substring(value, slashPos + 1, value.length());
+        result.currentUsage = StringToInt(current);
+        result.totalMemory = StringToInt(maximum);
+        result.isValid = true;
+    } catch (...) {
     }
-    result.isValid = true;
-  } catch (...) {
-  }
-  return result;
+    return result;
+}
+
+TemperatureMetricData THealthMonitorCommunication::ParseTemperatureMetric(const std::string& value) {
+    TemperatureMetricData result = {0.0, 85.0, false};
+    try {
+        size_t slashPos = FindSubstring(value, "/");
+        if (slashPos == 0) return result;
+        
+        std::string current = Substring(value, 1, slashPos - 1);
+        std::string maximum = Substring(value, slashPos + 1, value.length());
+        result.temperature = StringToDouble(current);
+        result.maxTemperature = StringToDouble(maximum);
+        result.isValid = true;
+    } catch (...) {
+    }
+    return result;
+}
+
+DiskMetricData THealthMonitorCommunication::ParseDiskMetric(const std::string& value) {
+    DiskMetricData result = {0, false};
+    try {
+        size_t slashPos = FindSubstring(value, "/");
+        std::string current = (slashPos > 0) ? Substring(value, 1, slashPos - 1) : value;
+        result.usagePercent = StringToInt(Trim(current));
+        result.isValid = true;
+    } catch (...) {
+    }
+    return result;
+}
+
+UptimeMetricData THealthMonitorCommunication::ParseUptimeMetric(const std::string& value) {
+    UptimeMetricData result = {0, "", false};
+    try {
+        std::string uptimeStr = Trim(value);
+        size_t dPos = FindSubstring(uptimeStr, "d ");
+        if (dPos > 0) {
+            result.days = StringToInt(Substring(uptimeStr, 1, dPos - 1));
+            size_t spacePos = FindSubstring(uptimeStr, " ");
+            if (spacePos > 0) {
+                result.timeStr = Substring(uptimeStr, spacePos + 1, uptimeStr.length());
+            }
+        } else {
+            result.days = 0;
+            result.timeStr = uptimeStr;
+        }
+        result.isValid = true;
+    } catch (...) {
+    }
+    return result;
 }

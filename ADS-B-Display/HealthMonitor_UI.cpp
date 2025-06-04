@@ -2,6 +2,7 @@
 #pragma hdrstop
 
 #include "HealthMonitor_UI.h"
+#include "HealthMonitor_Communication_Network.h"
 
 // Form 리소스 파일 연결
 #pragma resource "*.dfm"
@@ -14,8 +15,14 @@ static inline void ValidCtrCheck(THealthMonitorUI *) {
 
 __fastcall THealthMonitorUI::THealthMonitorUI(TComponent *Owner)
     : TForm(Owner) {
-  Communication = new THealthMonitorCommunication(this);
-  AlertMonitor = new THealthMonitorAlert();  // 알림 시스템 초기화
+  // 파싱 클래스와 네트워크 클래스 초기화
+  Communication = new THealthMonitorCommunication();  // 순수 파싱 클래스
+  Network = new THealthMonitorNetwork(this);          // VCL 네트워크 클래스
+  AlertMonitor = new THealthMonitorAlert();           // 알림 시스템 초기화
+
+  // 네트워크 콜백 설정
+  Network->SetOnConnected([this]() { HandleConnectionStateChange(true); });
+  Network->SetOnDisconnected([this]() { HandleConnectionStateChange(false); });
 
   // 타이머 설정 (100ms마다 업데이트하여 더 빠른 응답성 제공)
   UpdateTimer->Interval = 100;
@@ -49,8 +56,12 @@ void __fastcall THealthMonitorUI::FormDestroy(TObject *Sender) {
     if (UpdateTimer) {
       UpdateTimer->Enabled = false;
     }
+    if (Network) {
+      Network->Disconnect();
+      delete Network;
+      Network = nullptr;
+    }
     if (Communication) {
-      Communication->Disconnect();
       delete Communication;
       Communication = nullptr;
     }
@@ -64,15 +75,17 @@ void __fastcall THealthMonitorUI::FormDestroy(TObject *Sender) {
 }
 
 void __fastcall THealthMonitorUI::ConnectButtonClick(TObject *Sender) {
-  if (!Communication->IsConnected()) {
-    if (Communication->Connect(IPAddressEdit->Text, 5001)) {
-      HandleConnectionStateChange(true);
+  if (!Network->IsConnected()) {
+    // VCL String을 std::string으로 변환
+    std::string ipAddress = AnsiString(IPAddressEdit->Text).c_str();
+    if (Network->Connect(ipAddress, 5001)) {
+      // 연결 성공 - 콜백에서 HandleConnectionStateChange 호출됨
     } else {
       ShowMessage("Connection Failed");
     }
   } else {
-    Communication->Disconnect();
-    HandleConnectionStateChange(false);
+    Network->Disconnect();
+    // 연결 해제 - 콜백에서 HandleConnectionStateChange 호출됨
   }
 }
 
@@ -85,7 +98,7 @@ void __fastcall THealthMonitorUI::FormResize(TObject *Sender) {
 void __fastcall THealthMonitorUI::UpdateTimerTimer(TObject *Sender) {
   static int updateCounter = 0;
   
-  if (!Communication) {
+  if (!Network || !Communication) {
     UpdateTimer->Enabled = false;
     return;
   }
@@ -94,9 +107,11 @@ void __fastcall THealthMonitorUI::UpdateTimerTimer(TObject *Sender) {
   UpdateLatencyDisplay(Communication->currentLatency);
   
   // 지연시간 초과로 연결이 끊어졌는지 확인
-  if (!Communication->IsConnected()) {
+  if (!Network->IsConnected()) {
     HandleConnectionStateChange(false);
-    ShowMessage("서버와의 연결이 지연시간 초과로 종료되었습니다. (5초 초과)");
+    if (Communication->IsLatencyExceeded()) {
+      ShowMessage("서버와의 연결이 지연시간 초과로 종료되었습니다. (5초 초과)");
+    }
     return;
   }
   
@@ -104,17 +119,28 @@ void __fastcall THealthMonitorUI::UpdateTimerTimer(TObject *Sender) {
   if (++updateCounter >= 10) {
     updateCounter = 0;
     try {
-      Communication->UpdateSystemInfo();
-      
-      // Update UI with stored metric data
-      UpdateCPUUI(Communication->GetCPUData());
-      UpdateMemoryUI(Communication->GetMemoryData());
-      UpdateTemperatureUI(Communication->GetTemperatureData());
-      UpdateDiskUI(Communication->GetDiskData());
-      UpdateUptimeUI(Communication->GetUptimeData());
-      
-      // 알림 확인 및 표시
-      CheckAndShowAlerts();
+      // 네트워크를 통해 데이터 요청
+      if (Network->SendCommand("GET_SYSTEM_INFO")) {
+        Communication->StartTimer();  // 타이머 시작
+        std::string response = Network->ReceiveResponse();
+        
+        if (!response.empty() && Communication->ParseSystemInfo(response)) {
+          // Update UI with parsed metric data
+          UpdateCPUUI(Communication->GetCPUData());
+          UpdateMemoryUI(Communication->GetMemoryData());
+          UpdateTemperatureUI(Communication->GetTemperatureData());
+          UpdateDiskUI(Communication->GetDiskData());
+          UpdateUptimeUI(Communication->GetUptimeData());
+          
+          // 알림 확인 및 표시
+          CheckAndShowAlerts();
+          
+          // 지연시간 초과 확인
+          if (Communication->IsLatencyExceeded()) {
+            Network->Disconnect();
+          }
+        }
+      }
     } catch (...) {
       // 예외 발생시 연결 종료
       HandleConnectionStateChange(false);

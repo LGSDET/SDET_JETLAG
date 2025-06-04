@@ -1,33 +1,27 @@
 #ifndef HealthMonitor_CommunicationH
 #define HealthMonitor_CommunicationH
 
-#include <System.Classes.hpp>
-#include <IdTCPClient.hpp>
 #include "HealthMonitor_MetricData.h"
+#include <string>
+#include <cstdint>
 
+// 순수 C++ 데이터 파싱 클래스 - VCL/네트워크 독립적
 class THealthMonitorCommunication {
 private:
-    TIdTCPClient* MonitorTCPClient;
-    bool isConnected;
-    __int64 timerStart;  // 타이머 시작 시간 (밀리초)
+    int64_t timerStart;  // 타이머 시작 시간 (밀리초)
     
-    void __fastcall OnConnected(TObject* Sender);
-    void __fastcall OnDisconnected(TObject* Sender);
-    bool VerifyCRC32(const String& data, const String& receivedCRC);
-    
-    // 메트릭 파싱 함수들
-    CPUMetricData ParseCPUMetric(const String& value);
-    MemoryMetricData ParseMemoryMetric(const String& value);
-    TemperatureMetricData ParseTemperatureMetric(const String& value);
-    DiskMetricData ParseDiskMetric(const String& value);
-    UptimeMetricData ParseUptimeMetric(const String& value);
+    // 순수 파싱 함수들 (VCL 독립적)
+    bool VerifyCRC32(const std::string& data, const std::string& receivedCRC);
+    CPUMetricData ParseCPUMetric(const std::string& value);
+    MemoryMetricData ParseMemoryMetric(const std::string& value);
+    TemperatureMetricData ParseTemperatureMetric(const std::string& value);
+    DiskMetricData ParseDiskMetric(const std::string& value);
+    UptimeMetricData ParseUptimeMetric(const std::string& value);
     
     // 타이머 관련 함수들
     void ResetTimer();
-    __int64 GetElapsedTime();
-    
-    // 지연시간 관련 함수
-    void UpdateLatency(__int64 serverTime);
+    int64_t GetElapsedTime();
+    void UpdateLatency(int64_t serverTime);
     
     // 메트릭 데이터 저장
     CPUMetricData cpuData;
@@ -37,15 +31,12 @@ private:
     UptimeMetricData uptimeData;
     
 public:
-    THealthMonitorCommunication(TComponent* Owner);
+    THealthMonitorCommunication();
     ~THealthMonitorCommunication();
     
-    bool Connect(const String& ipAddress, int port);
-    void Disconnect();
-    void UpdateSystemInfo();
-    bool ParseSystemInfo(const String& data);
-    bool IsConnected() const { return isConnected; }
-    bool IsLatencyExceeded() const;  // 지연시간 초과 여부 확인
+    // 순수 파싱 인터페이스 (네트워크 독립적)
+    bool ParseSystemInfo(const std::string& data);
+    bool IsLatencyExceeded() const;
     
     // 메트릭 데이터 getter 함수들
     const CPUMetricData& GetCPUData() const { return cpuData; }
@@ -56,6 +47,10 @@ public:
     
     // 지연시간 관련
     int currentLatency;  // 현재 지연시간 (밀리초)
+    
+    // 타이머 제어 (UI에서 호출)
+    void StartTimer();
+    int64_t GetCurrentElapsedTime();
 };
 
 #endif

@@ -12,6 +12,9 @@
 #include "HealthMonitor_MetricData.h"
 #include "HealthMonitor_Alert.h"  // 알림 시스템 추가
 
+// Forward declaration
+class THealthMonitorNetwork;
+
 class THealthMonitorUI : public TForm {
 __published:
   TPanel *MainPanel;
@@ -48,8 +51,9 @@ __published:
   void __fastcall FormResize(TObject *Sender);
 
 private:
-  THealthMonitorCommunication *Communication;
-  THealthMonitorAlert *AlertMonitor;  // 알림 시스템 추가
+  THealthMonitorCommunication *Communication;  // 순수 파싱 클래스
+  THealthMonitorNetwork *Network;              // VCL 네트워크 클래스
+  THealthMonitorAlert *AlertMonitor;           // 알림 시스템 추가
   
   // UI 관리 함수들
   void ResetUIElements();  // UI 요소들을 기본값으로 초기화
