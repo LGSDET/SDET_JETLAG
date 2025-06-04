@@ -1,63 +1,58 @@
 #include <gtest/gtest.h>
-#include <string>
 #include "../HealthMonitor_Alert.h"
 
-TEST(THealthMonitorAlertTest, CPUAlertTriggered) {
+// CPU Usage BVA
+TEST(THealthMonitorAlertTest, CPUAlert_JustBeforeWarning) {
     THealthMonitorAlert alert;
-    CPUMetricData data{true, 85.0};
-    EXPECT_TRUE(alert.IsCPUAlert(data));
-    std::string msg = alert.GetCPUAlertMessage(data);
-    EXPECT_NE(msg.find("CPU usage"), std::string::npos);
-}
-
-TEST(THealthMonitorAlertTest, CPUAlertNotTriggered) {
-    THealthMonitorAlert alert;
-    CPUMetricData data{true, 50.0};
+    CPUMetricData data{79.0, true};
     EXPECT_FALSE(alert.IsCPUAlert(data));
-    EXPECT_EQ(alert.GetCPUAlertMessage(data), "");
+    EXPECT_EQ(alert.GetCPUAlertType(data), AlertType::NONE);
+}
+TEST(THealthMonitorAlertTest, CPUAlert_AtWarningThreshold) {
+    THealthMonitorAlert alert;
+    CPUMetricData data{80.0, true};
+    EXPECT_TRUE(alert.IsCPUAlert(data));
+    EXPECT_EQ(alert.GetCPUAlertType(data), AlertType::CPU_HIGH);
 }
 
-TEST(THealthMonitorAlertTest, MemoryAlertTriggered) {
+// Memory Usage BVA
+TEST(THealthMonitorAlertTest, MemoryAlert_JustBeforeWarning) {
     THealthMonitorAlert alert;
-    MemoryMetricData data{true, 950, 1000};
-    EXPECT_TRUE(alert.IsMemoryAlert(data));
-    std::string msg = alert.GetMemoryAlertMessage(data);
-    EXPECT_NE(msg.find("Memory usage"), std::string::npos);
-}
-
-TEST(THealthMonitorAlertTest, MemoryAlertNotTriggered) {
-    THealthMonitorAlert alert;
-    MemoryMetricData data{true, 500, 1000};
+    MemoryMetricData data{790, 1000, true}; // 79%
     EXPECT_FALSE(alert.IsMemoryAlert(data));
-    EXPECT_EQ(alert.GetMemoryAlertMessage(data), "");
+    EXPECT_EQ(alert.GetMemoryAlertType(data), AlertType::NONE);
+}
+TEST(THealthMonitorAlertTest, MemoryAlert_AtWarningThreshold) {
+    THealthMonitorAlert alert;
+    MemoryMetricData data{800, 1000, true}; // 80%
+    EXPECT_TRUE(alert.IsMemoryAlert(data));
+    EXPECT_EQ(alert.GetMemoryAlertType(data), AlertType::MEMORY_INSUFFICIENT);
 }
 
-TEST(THealthMonitorAlertTest, TemperatureAlertTriggered) {
+// CPU Temperature BVA
+TEST(THealthMonitorAlertTest, TemperatureAlert_JustBeforeWarning) {
     THealthMonitorAlert alert;
-    TemperatureMetricData data{true, 80.0};
-    EXPECT_TRUE(alert.IsTemperatureAlert(data));
-    std::string msg = alert.GetTemperatureAlertMessage(data);
-    EXPECT_NE(msg.find("CPU temperature"), std::string::npos);
-}
-
-TEST(THealthMonitorAlertTest, TemperatureAlertNotTriggered) {
-    THealthMonitorAlert alert;
-    TemperatureMetricData data{true, 60.0};
+    TemperatureMetricData data{69.0, 100.0, true};
     EXPECT_FALSE(alert.IsTemperatureAlert(data));
-    EXPECT_EQ(alert.GetTemperatureAlertMessage(data), "");
+    EXPECT_EQ(alert.GetTemperatureAlertType(data), AlertType::NONE);
+}
+TEST(THealthMonitorAlertTest, TemperatureAlert_AtWarningThreshold) {
+    THealthMonitorAlert alert;
+    TemperatureMetricData data{70.0, 100.0, true};
+    EXPECT_TRUE(alert.IsTemperatureAlert(data));
+    EXPECT_EQ(alert.GetTemperatureAlertType(data), AlertType::HIGH_TEMPERATURE);
 }
 
-TEST(THealthMonitorAlertTest, DiskAlertTriggered) {
+// Disk Usage BVA
+TEST(THealthMonitorAlertTest, DiskAlert_JustBeforeWarning) {
     THealthMonitorAlert alert;
-    DiskMetricData data{true, 95};
-    EXPECT_TRUE(alert.IsDiskAlert(data));
-    std::string msg = alert.GetDiskAlertMessage(data);
-    EXPECT_NE(msg.find("Disk usage"), std::string::npos);
-}
-
-TEST(THealthMonitorAlertTest, DiskAlertNotTriggered) {
-    THealthMonitorAlert alert;
-    DiskMetricData data{true, 50};
+    DiskMetricData data{89, true};
     EXPECT_FALSE(alert.IsDiskAlert(data));
-    EXPECT_EQ(alert.GetDiskAlertMessage(data), "");
+    EXPECT_EQ(alert.GetDiskAlertType(data), AlertType::NONE);
+}
+TEST(THealthMonitorAlertTest, DiskAlert_AtWarningThreshold) {
+    THealthMonitorAlert alert;
+    DiskMetricData data{90, true};
+    EXPECT_TRUE(alert.IsDiskAlert(data));
+    EXPECT_EQ(alert.GetDiskAlertType(data), AlertType::DISK_SPACE_LOW);
 }
