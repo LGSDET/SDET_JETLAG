@@ -6,6 +6,7 @@
 //---------------------------------------------------------------------------
 USEFORM("DisplayGUI.cpp", Form1);
 USEFORM("AreaDialog.cpp", AreaConfirm);
+USEFORM("HealthMonitor_UI.cpp", HealthMonitorUI);
 //---------------------------------------------------------------------------
 static FILE* pCout = NULL;
 static void SetStdOutToNewConsole(void);
@@ -28,6 +29,7 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 		Application->MainFormOnTaskBar = true;
 		Application->CreateForm(__classid(TForm1), &Form1);
 		Application->CreateForm(__classid(TAreaConfirm), &AreaConfirm);
+		Application->CreateForm(__classid(THealthMonitorUI), &HealthMonitorUI);
 		Application->Run();
 	   if (pCout)
 		{
