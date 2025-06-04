@@ -32,6 +32,12 @@ __fastcall THealthMonitorUI::THealthMonitorUI(TComponent *Owner)
   LatencyLabel->Caption = "Latency: 0 ms";
   LatencyLabel->Font->Color = clGreen;
   
+  // 네트워크 오류 레이블 초기화
+  NetworkErrorLabel->Caption = "네트워크 오류";
+  NetworkErrorLabel->Font->Color = clRed;
+  NetworkErrorLabel->Font->Style = TFontStyles() << fsBold;
+  NetworkErrorLabel->Visible = false;  // 초기에는 숨김
+  
   // 폼 크기가 변경될 때 위치 조정
   this->OnResize = FormResize;
 }
@@ -93,6 +99,14 @@ void __fastcall THealthMonitorUI::FormResize(TObject *Sender) {
   if (LatencyLabel) {
     LatencyLabel->Left = this->ClientWidth - LatencyLabel->Width - 20;
   }
+  
+  if (NetworkErrorLabel) {
+    // 네트워크 오류 레이블을 지연시간 레이블 아래에 위치
+    NetworkErrorLabel->Left = this->ClientWidth - NetworkErrorLabel->Width - 20;
+    if (LatencyLabel) {
+      NetworkErrorLabel->Top = LatencyLabel->Top + LatencyLabel->Height + 5;
+    }
+  }
 }
 
 void __fastcall THealthMonitorUI::UpdateTimerTimer(TObject *Sender) {
@@ -105,6 +119,9 @@ void __fastcall THealthMonitorUI::UpdateTimerTimer(TObject *Sender) {
   
   // 지연시간은 매 타이머 틱마다 업데이트
   UpdateLatencyDisplay(Communication->currentLatency);
+  
+  // 네트워크 오류 상태 업데이트
+  UpdateNetworkErrorDisplay(Communication->IsNetworkError());
   
   // 지연시간 초과로 연결이 끊어졌는지 확인
   if (!Network->IsConnected()) {
@@ -173,6 +190,11 @@ void THealthMonitorUI::ResetUIElements() {
   // 지연시간 레이블 초기화
   LatencyLabel->Caption = "Latency: 0 ms";
   LatencyLabel->Font->Color = clGreen;
+  
+  // 네트워크 오류 레이블 초기화
+  if (NetworkErrorLabel) {
+    NetworkErrorLabel->Visible = false;
+  }
   
   // 모든 경고 레이블 초기화
   ClearMetricAlert(CPUAlertLabel);
@@ -269,6 +291,28 @@ void THealthMonitorUI::UpdateLatencyDisplay(int latency) {
     
     // 레이블 위치 업데이트 (텍스트가 바뀌면서 너비가 변할 수 있음)
     LatencyLabel->Left = this->ClientWidth - LatencyLabel->Width - 20;
+  } catch (...) {
+    // UI 업데이트 중 예외 발생시 무시
+  }
+}
+
+void THealthMonitorUI::UpdateNetworkErrorDisplay(bool isNetworkError) {
+  try {
+    if (!NetworkErrorLabel) return;
+    
+    if (isNetworkError) {
+      NetworkErrorLabel->Visible = true;
+      NetworkErrorLabel->Caption = "네트워크 오류";
+      NetworkErrorLabel->Font->Color = clRed;
+      
+      // 지연시간 레이블 아래에 위치
+      NetworkErrorLabel->Left = this->ClientWidth - NetworkErrorLabel->Width - 20;
+      if (LatencyLabel) {
+        NetworkErrorLabel->Top = LatencyLabel->Top + LatencyLabel->Height + 5;
+      }
+    } else {
+      NetworkErrorLabel->Visible = false;
+    }
   } catch (...) {
     // UI 업데이트 중 예외 발생시 무시
   }

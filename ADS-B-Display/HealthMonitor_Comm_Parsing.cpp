@@ -89,6 +89,8 @@ namespace {
 
 THealthMonitorCommunication::THealthMonitorCommunication() {
     currentLatency = 0;
+    crcFailureCount = 0;
+    isNetworkError = false;
     ResetTimer();
 }
 
@@ -132,15 +134,52 @@ void THealthMonitorCommunication::UpdateLatency(int64_t serverTime) {
 }
 
 bool THealthMonitorCommunication::VerifyCRC32(const std::string& data, const std::string& receivedCRC) {
+    // DEBUG_REMOVE_LATER: CRC 오류 테스트를 위한 강제 실패 설정
+    static bool forceCrcFailure = true;  // DEBUG_REMOVE_LATER: 테스트 완료 후 이 줄 삭제
+    if (forceCrcFailure) {                // DEBUG_REMOVE_LATER: 테스트 완료 후 이 블록 전체 삭제
+        // CRC 강제 실패 카운터 증가          // DEBUG_REMOVE_LATER
+        crcFailureCount++;                // DEBUG_REMOVE_LATER
+        if (crcFailureCount >= 3) {       // DEBUG_REMOVE_LATER
+            isNetworkError = true;        // DEBUG_REMOVE_LATER
+        }                                 // DEBUG_REMOVE_LATER
+        return false;                     // DEBUG_REMOVE_LATER
+    }                                     // DEBUG_REMOVE_LATER
+    
     try {
         size_t crcPos = FindSubstring(data, "|CRC=");
-        if (crcPos == 0) return false;
+        if (crcPos == 0) {
+            // CRC 실패 카운터 증가
+            crcFailureCount++;
+            if (crcFailureCount >= 3) {
+                isNetworkError = true;
+            }
+            return false;
+        }
         
         std::string pureData = Substring(data, 1, crcPos - 1);
         uint32_t calculatedCRC = CalculateCRC32(pureData);
         std::string calculatedCRCStr = ToLowerCase(IntToHexString(calculatedCRC));
-        return calculatedCRCStr == ToLowerCase(receivedCRC);
+        bool crcValid = calculatedCRCStr == ToLowerCase(receivedCRC);
+        
+        if (crcValid) {
+            // CRC 성공 시 카운터 리셋 및 네트워크 오류 해제
+            crcFailureCount = 0;
+            isNetworkError = false;
+        } else {
+            // CRC 실패 카운터 증가
+            crcFailureCount++;
+            if (crcFailureCount >= 3) {
+                isNetworkError = true;
+            }
+        }
+        
+        return crcValid;
     } catch (...) {
+        // 예외 발생 시에도 CRC 실패로 처리
+        crcFailureCount++;
+        if (crcFailureCount >= 3) {
+            isNetworkError = true;
+        }
         return false;
     }
 }

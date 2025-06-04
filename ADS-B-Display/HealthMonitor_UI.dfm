@@ -34,6 +34,21 @@ object HealthMonitorUI: THealthMonitorUI
       Font.Style = [fsBold]
       ParentFont = False
     end
+    object NetworkErrorLabel: TLabel
+      Left = 680
+      Top = 35
+      Width = 100
+      Height = 20
+      Alignment = taRightJustify
+      Caption = #45348#53944#50900#53356' #50724#47448
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Visible = False
+    end
     object CPULabel: TLabel
       Left = 16
       Top = 16

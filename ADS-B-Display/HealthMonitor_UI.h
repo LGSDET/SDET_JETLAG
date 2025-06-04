@@ -30,6 +30,7 @@ __published:
   TLabel *DiskLabel;
   TLabel *UptimeLabel;
   TLabel *LatencyLabel;  // 지연시간 표시 레이블
+  TLabel *NetworkErrorLabel;  // 네트워크 오류 표시 레이블
 
   // 각 메트릭별 경고 표시 레이블 추가
   TLabel *CPUAlertLabel;
@@ -59,6 +60,7 @@ private:
   void ResetUIElements();  // UI 요소들을 기본값으로 초기화
   void HandleConnectionStateChange(bool connected);  // 연결 상태 변경 처리
   void UpdateLatencyDisplay(int latency);  // 지연시간 표시 업데이트
+  void UpdateNetworkErrorDisplay(bool isNetworkError);  // 네트워크 오류 표시 업데이트
   
   // 메트릭 데이터 UI 업데이트 함수들
   void UpdateCPUUI(const CPUMetricData &data);

@@ -51,9 +51,16 @@ public:
     // 지연시간 관련
     int currentLatency;  // 현재 지연시간 (밀리초)
     
+    // 네트워크 오류 관련
+    int crcFailureCount;  // 연속 CRC 실패 횟수
+    bool isNetworkError;  // 네트워크 오류 상태
+    
     // 타이머 제어 (UI에서 호출)
     void StartTimer();
     int64_t GetCurrentElapsedTime();
+    
+    // 네트워크 상태 확인
+    bool IsNetworkError() const { return isNetworkError; }
 };
 
 #endif
