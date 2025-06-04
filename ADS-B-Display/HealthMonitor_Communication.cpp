@@ -276,11 +276,13 @@ THealthMonitorCommunication::ParseUptimeMetric(const String &value) {
     String uptimeStr = value.Trim();
     if (uptimeStr.Pos("d ") > 0) {
       result.days = StrToInt(uptimeStr.SubString(1, uptimeStr.Pos("d") - 1));
-      result.timeStr =
-          uptimeStr.SubString(uptimeStr.Pos(" ") + 1, uptimeStr.Length());
+      // VCL String을 std::string으로 변환
+      String timeVclStr = uptimeStr.SubString(uptimeStr.Pos(" ") + 1, uptimeStr.Length());
+      result.timeStr = AnsiString(timeVclStr).c_str();
     } else {
       result.days = 0;
-      result.timeStr = uptimeStr;
+      // VCL String을 std::string으로 변환
+      result.timeStr = AnsiString(uptimeStr).c_str();
     }
     result.isValid = true;
   } catch (...) {
