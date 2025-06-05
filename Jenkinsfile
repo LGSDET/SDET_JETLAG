@@ -5,6 +5,7 @@ pipeline {
         PATH = "C:\\Program Files\\mingw64\\bin;" +
                "C:\\Python\\Python311\\Scripts;" +
                "${env.PATH}"
+        GTEST_DIR = "gtest"
         GTEST_INCLUDE = "gtest\\googletest\\include"
         GTEST_LIB     = "gtest\\build\\lib"
         REPORT_DIR    = "ADS-B-Display\\tests\\coverage"
