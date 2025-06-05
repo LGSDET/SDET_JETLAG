@@ -24,6 +24,12 @@ set(TEST_SOURCES
     ../HealthMonitor_Comm_Parsing.cpp
 )
 
+# GCC/Clang에서만 커버리지 옵션 추가
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    add_compile_options(--coverage)
+    add_link_options(--coverage)
+endif()
+
 add_executable(health_monitor_test ${TEST_SOURCES})
 target_link_libraries(health_monitor_test PRIVATE gtest_main)
 target_include_directories(health_monitor_test PRIVATE ${CMAKE_SOURCE_DIR}/..)
