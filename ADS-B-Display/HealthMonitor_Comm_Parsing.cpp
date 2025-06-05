@@ -10,6 +10,76 @@ const int MAX_LATENCY_MS = 5000;  // 최대 허용 지연시간 5초
  
 // 표준 C++ 문자열 파싱 유틸리티 함수들
 namespace {
+    // 문자열이 유효한 숫자인지 검사하는 함수 추가
+    bool IsValidDouble(const std::string& str) {
+        if (str.empty()) return false;
+        
+        std::string trimmed = str;
+        // 앞뒤 공백 제거
+        size_t start = trimmed.find_first_not_of(" \t\n\r");
+        if (start == std::string::npos) return false;
+        size_t end = trimmed.find_last_not_of(" \t\n\r");
+        trimmed = trimmed.substr(start, end - start + 1);
+        
+        if (trimmed.empty()) return false;
+        
+        // 첫 문자가 부호이거나 숫자여야 함
+        size_t idx = 0;
+        if (trimmed[0] == '+' || trimmed[0] == '-') {
+            idx = 1;
+            if (trimmed.length() == 1) return false; // 부호만 있는 경우
+        }
+        
+        bool hasDigit = false;
+        bool hasDot = false;
+        
+        for (; idx < trimmed.length(); ++idx) {
+            char c = trimmed[idx];
+            if (std::isdigit(c)) {
+                hasDigit = true;
+            } else if (c == '.' && !hasDot) {
+                hasDot = true;
+            } else {
+                return false; // 유효하지 않은 문자
+            }
+        }
+        
+        return hasDigit; // 최소한 하나의 숫자는 있어야 함
+    }
+    
+    bool IsValidInt(const std::string& str) {
+        if (str.empty()) return false;
+        
+        std::string trimmed = str;
+        // 앞뒤 공백 제거
+        size_t start = trimmed.find_first_not_of(" \t\n\r");
+        if (start == std::string::npos) return false;
+        size_t end = trimmed.find_last_not_of(" \t\n\r");
+        trimmed = trimmed.substr(start, end - start + 1);
+        
+        if (trimmed.empty()) return false;
+        
+        // 첫 문자가 부호이거나 숫자여야 함
+        size_t idx = 0;
+        if (trimmed[0] == '+' || trimmed[0] == '-') {
+            idx = 1;
+            if (trimmed.length() == 1) return false; // 부호만 있는 경우
+        }
+        
+        bool hasDigit = false;
+        
+        for (; idx < trimmed.length(); ++idx) {
+            char c = trimmed[idx];
+            if (std::isdigit(c)) {
+                hasDigit = true;
+            } else {
+                return false; // 유효하지 않은 문자
+            }
+        }
+        
+        return hasDigit; // 최소한 하나의 숫자는 있어야 함
+    }
+
     double StringToDouble(const std::string& str) {
         try {
             return std::stod(str);
@@ -264,6 +334,11 @@ CPUMetricData THealthMonitorCommunication::ParseCPUMetric(const std::string& val
             return result;
         }
         
+        // 숫자 유효성 검사 추가
+        if (!IsValidDouble(current)) {
+            return result;
+        }
+        
         result.usage = StringToDouble(current);
         
         // CPU 사용률이 100%를 초과하면 유효하지 않음
@@ -293,6 +368,11 @@ MemoryMetricData THealthMonitorCommunication::ParseMemoryMetric(const std::strin
         
         // 빈 문자열이나 "//" 같은 경우 체크
         if (current.empty() || maximum.empty()) {
+            return result;
+        }
+        
+        // 숫자 유효성 검사 추가
+        if (!IsValidInt(current) || !IsValidInt(maximum)) {
             return result;
         }
         
@@ -329,6 +409,11 @@ TemperatureMetricData THealthMonitorCommunication::ParseTemperatureMetric(const 
             return result;
         }
         
+        // 숫자 유효성 검사 추가
+        if (!IsValidDouble(current) || !IsValidDouble(maximum)) {
+            return result;
+        }
+        
         result.temperature = StringToDouble(current);
         result.maxTemperature = StringToDouble(maximum);
         
@@ -362,6 +447,11 @@ DiskMetricData THealthMonitorCommunication::ParseDiskMetric(const std::string& v
             return result;
         }
         
+        // 숫자 유효성 검사 추가
+        if (!IsValidInt(current)) {
+            return result;
+        }
+        
         result.usagePercent = StringToInt(current);
         
         // 디스크 사용률이 100%를 초과하거나 음수이면 유효하지 않음
@@ -386,16 +476,18 @@ UptimeMetricData THealthMonitorCommunication::ParseUptimeMetric(const std::strin
         std::string uptimeStr = Trim(value);
         
         // 유효하지 않은 문자들이 포함된 경우 체크 (uptime 형식에 맞지 않는 문자들)
-        // 유효한 문자: 숫자, 'd', ':', ' ', 알파벳 (시간 단위)
+        // 유효한 문자: 숫자, 'd', ':', ' '
         bool hasValidChars = true;
+        bool hasDigit = false;
         for (char c : uptimeStr) {
-            if (!std::isdigit(c) && c != 'd' && c != ':' && c != ' ' && c != '.' && 
-                !std::isalpha(c)) {
+            if (std::isdigit(c)) {
+                hasDigit = true;
+            } else if (c != 'd' && c != ':' && c != ' ') {
                 hasValidChars = false;
                 break;
             }
         }
-        if (!hasValidChars) {
+        if (!hasValidChars || !hasDigit) {
             return result;
         }
         

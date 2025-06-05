@@ -12,4 +12,9 @@ build/
 *.log
 *.tlog
 tests/build/
+tests/_deps/
+tests/external/
+tests/bin/
+tests/CMakeFiles/
+
 .cache/
