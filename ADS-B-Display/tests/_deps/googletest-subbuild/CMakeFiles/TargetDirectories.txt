@@ -1,3 +1,0 @@
-/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/tests/_deps/googletest-subbuild/CMakeFiles/googletest-populate.dir
-/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/tests/_deps/googletest-subbuild/CMakeFiles/edit_cache.dir
-/Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/tests/_deps/googletest-subbuild/CMakeFiles/rebuild_cache.dir

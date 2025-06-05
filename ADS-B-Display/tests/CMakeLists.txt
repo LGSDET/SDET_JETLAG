@@ -19,7 +19,7 @@ add_subdirectory(
 
 set(TEST_SOURCES
     HealthMonitor_Alert_test.cpp
-    HealthMonitor_Comm_Parsing.cpp
+    HealthMonitor_Comm_Parsing_test.cpp
     ../HealthMonitor_Alert.cpp
     ../HealthMonitor_Comm_Parsing.cpp
 )
