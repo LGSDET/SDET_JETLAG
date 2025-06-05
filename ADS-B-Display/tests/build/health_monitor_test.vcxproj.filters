@@ -4,7 +4,13 @@
     <ClCompile Include="D:\PJT_SDET\SDET_JETLAG\ADS-B-Display\tests\HealthMonitor_Alert_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="D:\PJT_SDET\SDET_JETLAG\ADS-B-Display\tests\HealthMonitor_Comm_Parsing_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="D:\PJT_SDET\SDET_JETLAG\ADS-B-Display\HealthMonitor_Alert.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\PJT_SDET\SDET_JETLAG\ADS-B-Display\HealthMonitor_Comm_Parsing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
