@@ -19,11 +19,14 @@ add_subdirectory(
 
 set(TEST_SOURCES
     HealthMonitor_Alert_test.cpp
+    HealthMonitor_Comm_Parsing_test.cpp
     ../HealthMonitor_Alert.cpp
+    ../HealthMonitor_Comm_Parsing.cpp
 )
 
 add_executable(health_monitor_test ${TEST_SOURCES})
 target_link_libraries(health_monitor_test PRIVATE gtest_main)
+target_include_directories(health_monitor_test PRIVATE ${CMAKE_SOURCE_DIR}/..)
 
 include(GoogleTest)
 gtest_discover_tests(health_monitor_test)

@@ -9,3 +9,5 @@ Win64/Release/
 *.res
 *.cbproj.local
 *.log
+*.tlog
+tests/build/
