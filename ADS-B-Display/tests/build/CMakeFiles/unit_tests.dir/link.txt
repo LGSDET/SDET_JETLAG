@@ -1,1 +1,0 @@
-/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/unit_tests.dir/test_health_monitor.cpp.o CMakeFiles/unit_tests.dir/HealthMonitorMetrics.cpp.o -o unit_tests  lib/libgtest.a lib/libgtest_main.a /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/libz.tbd lib/libgtest.a

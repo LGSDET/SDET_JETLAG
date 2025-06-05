@@ -225,6 +225,18 @@
         <None Include="dms.h">
             <BuildOrder>36</BuildOrder>
         </None>
+        <CppCompile Include="HealthMonitor_Alert.cpp">
+            <BuildOrder>38</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="HealthMonitor_Communication.cpp">
+            <BuildOrder>39</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="HealthMonitor_UI.cpp">
+            <Form>HealthMonitorUI</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>HealthMonitor_UI.h</DependentOn>
+            <BuildOrder>40</BuildOrder>
+        </CppCompile>
         <CppCompile Include="LatLonConv.cpp">
             <DependentOn>LatLonConv.h</DependentOn>
             <BuildOrder>33</BuildOrder>
@@ -340,6 +352,7 @@
         </CppCompile>
         <FormResources Include="DisplayGUI.dfm"/>
         <FormResources Include="AreaDialog.dfm"/>
+        <FormResources Include="HealthMonitor_UI.dfm"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
