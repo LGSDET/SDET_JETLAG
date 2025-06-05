@@ -1,0 +1,6 @@
+# CMake generated Testfile for 
+# Source directory: /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/external/googletest/googletest
+# Build directory: /Users/jawsmacair/Downloads/CMU/SDET_JETLAG/ADS-B-Display/tests/external/googletest-build/googletest
+# 
+# This file includes the relevant testing commands required for 
+# testing this directory and lists subdirectories to be tested as well.

@@ -1,5 +1,6 @@
 # 빌드 산출물 무시
 Win64/Release/
+build/
 *.o
 *.d
 *.pdb
@@ -11,3 +12,4 @@ Win64/Release/
 *.log
 *.tlog
 tests/build/
+.cache/
