@@ -419,7 +419,7 @@ TemperatureMetricData THealthMonitorCommunication::ParseTemperatureMetric(const 
         
         // 현재 온도가 최대 온도보다 크거나 음수이면 유효하지 않음
         // 또한 최대 온도가 0 이하이면 유효하지 않음
-        if (result.temperature > result.maxTemperature || result.temperature < -50.0 || 
+        if (result.temperature > result.maxTemperature || result.temperature < 0.0 || 
             result.maxTemperature <= 0.0 || result.maxTemperature > 200.0) {
             return result;
         }
