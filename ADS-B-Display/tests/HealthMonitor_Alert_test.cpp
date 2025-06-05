@@ -1,4 +1,6 @@
 #include <gtest/gtest.h>
+#include <thread>
+#include <chrono>
 #include "../HealthMonitor_Alert.h"
 
 // 80도 5초 연속: 알람이 와야 함
@@ -102,4 +104,86 @@ TEST(THealthMonitorAlertTest, DiskAlert_MinValue_NoAlert) {
     DiskMetricData data{0, true};
     EXPECT_FALSE(alert.IsDiskAlert(data));
     EXPECT_EQ(alert.GetDiskAlertType(data), AlertType::NONE);
+}
+
+// 추가 테스트: Setter 메서드들 테스트
+TEST(THealthMonitorAlertTest, SetThresholds_ValidValues) {
+    THealthMonitorAlert alert;
+    
+    // 기본 값 확인
+    EXPECT_EQ(alert.GetCPUThreshold(), 80.0);
+    EXPECT_EQ(alert.GetMemoryThreshold(), 80.0);
+    EXPECT_EQ(alert.GetTemperatureThreshold(), 70.0);
+    EXPECT_EQ(alert.GetDiskThreshold(), 90.0);
+    
+    // 새로운 임계값 설정
+    alert.SetCPUThreshold(85.0);
+    alert.SetMemoryThreshold(75.0);
+    alert.SetTemperatureThreshold(65.0);
+    alert.SetDiskThreshold(95.0);
+    
+    // 변경된 값 확인
+    EXPECT_EQ(alert.GetCPUThreshold(), 85.0);
+    EXPECT_EQ(alert.GetMemoryThreshold(), 75.0);
+    EXPECT_EQ(alert.GetTemperatureThreshold(), 65.0);
+    EXPECT_EQ(alert.GetDiskThreshold(), 95.0);
+}
+
+// 추가 테스트: Invalid 데이터 처리
+TEST(THealthMonitorAlertTest, CPUAlert_InvalidData_NoAlert) {
+    THealthMonitorAlert alert;
+    CPUMetricData invalidData{80.0, false}; // isValid = false
+    
+    EXPECT_FALSE(alert.IsCPUAlert(invalidData));
+}
+
+TEST(THealthMonitorAlertTest, MemoryAlert_InvalidData_NoAlert) {
+    THealthMonitorAlert alert;
+    MemoryMetricData invalidData1{800, 1000, false}; // isValid = false
+    MemoryMetricData invalidData2{800, 0, true}; // totalMemory = 0
+    
+    EXPECT_FALSE(alert.IsMemoryAlert(invalidData1));
+    EXPECT_FALSE(alert.IsMemoryAlert(invalidData2));
+}
+
+TEST(THealthMonitorAlertTest, TemperatureAlert_InvalidData_NoAlert) {
+    THealthMonitorAlert alert;
+    TemperatureMetricData invalidData{80.0, 100.0, false}; // isValid = false
+    
+    EXPECT_FALSE(alert.IsTemperatureAlert(invalidData));
+}
+
+TEST(THealthMonitorAlertTest, DiskAlert_InvalidData_NoAlert) {
+    THealthMonitorAlert alert;
+    DiskMetricData invalidData{95, false}; // isValid = false
+    
+    EXPECT_FALSE(alert.IsDiskAlert(invalidData));
+}
+
+// 추가 테스트: GetCPUAlertType 메서드
+TEST(THealthMonitorAlertTest, GetCPUAlertType_ReturnsCorrectType) {
+    THealthMonitorAlert alert;
+    CPUMetricData lowData{50.0, true};
+    CPUMetricData highData{85.0, true};
+    
+    // 낮은 CPU 사용률: NONE
+    EXPECT_EQ(alert.GetCPUAlertType(lowData), AlertType::NONE);
+    
+    // 높은 CPU 사용률: 처음에는 NONE (5초 대기 필요)
+    EXPECT_EQ(alert.GetCPUAlertType(highData), AlertType::NONE);
+}
+
+// 추가 테스트: ResetCPUSustainedState 메서드
+TEST(THealthMonitorAlertTest, ResetCPUSustainedState_ResetsState) {
+    THealthMonitorAlert alert;
+    CPUMetricData highData{85.0, true};
+    
+    // CPU 상태를 높은 상태로 만들기
+    alert.IsCPUAlert(highData);
+    
+    // 상태 리셋
+    alert.ResetCPUSustainedState();
+    
+    // 리셋 후 다시 호출하면 처음처럼 동작해야 함
+    EXPECT_FALSE(alert.IsCPUAlert(highData));
 }

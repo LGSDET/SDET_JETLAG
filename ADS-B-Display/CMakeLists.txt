@@ -47,8 +47,10 @@ target_include_directories(health_monitor PRIVATE ${VCL_INCLUDE_DIR})
 
 # 테스트 소스 파일
 set(TEST_SOURCES
-    tests/test_health_monitor.cpp
+    tests/HealthMonitor_Alert_test.cpp
+    tests/HealthMonitor_Comm_Parsing_test.cpp
     HealthMonitor_Comm_Parsing.cpp  # 테스트에 필요한 실제 구현 파일
+    HealthMonitor_Alert.cpp  # Alert 테스트에 필요한 실제 구현 파일
 )
 
 # 테스트 실행 파일 타겟

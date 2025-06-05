@@ -250,11 +250,27 @@ bool THealthMonitorCommunication::ParseSystemInfo(const std::string& data) {
 CPUMetricData THealthMonitorCommunication::ParseCPUMetric(const std::string& value) {
     CPUMetricData result = {0.0, false};
     try {
+        // 빈 문자열 체크
+        if (value.empty() || Trim(value).empty()) {
+            return result;
+        }
+        
         size_t slashPos = FindSubstring(value, "/");
         if (slashPos == 0) return result;
        
-        std::string current = Substring(value, 1, slashPos - 1);
+        std::string current = Trim(Substring(value, 1, slashPos - 1));
+        // 빈 문자열이나 "//" 같은 경우 체크
+        if (current.empty()) {
+            return result;
+        }
+        
         result.usage = StringToDouble(current);
+        
+        // CPU 사용률이 100%를 초과하면 유효하지 않음
+        if (result.usage > 100.0 || result.usage < 0.0) {
+            return result;
+        }
+        
         result.isValid = true;
     } catch (...) {
     }
@@ -264,13 +280,30 @@ CPUMetricData THealthMonitorCommunication::ParseCPUMetric(const std::string& val
 MemoryMetricData THealthMonitorCommunication::ParseMemoryMetric(const std::string& value) {
     MemoryMetricData result = {0, 0, false};
     try {
+        // 빈 문자열 체크
+        if (value.empty() || Trim(value).empty()) {
+            return result;
+        }
+        
         size_t slashPos = FindSubstring(value, "/");
         if (slashPos == 0) return result;
        
-        std::string current = Substring(value, 1, slashPos - 1);
-        std::string maximum = Substring(value, slashPos + 1, value.length());
+        std::string current = Trim(Substring(value, 1, slashPos - 1));
+        std::string maximum = Trim(Substring(value, slashPos + 1, value.length()));
+        
+        // 빈 문자열이나 "//" 같은 경우 체크
+        if (current.empty() || maximum.empty()) {
+            return result;
+        }
+        
         result.currentUsage = StringToInt(current);
         result.totalMemory = StringToInt(maximum);
+        
+        // 현재 사용량이 총 메모리보다 크거나 음수이면 유효하지 않음
+        if (result.currentUsage > result.totalMemory || result.currentUsage < 0 || result.totalMemory <= 0) {
+            return result;
+        }
+        
         result.isValid = true;
     } catch (...) {
     }
@@ -280,13 +313,32 @@ MemoryMetricData THealthMonitorCommunication::ParseMemoryMetric(const std::strin
 TemperatureMetricData THealthMonitorCommunication::ParseTemperatureMetric(const std::string& value) {
     TemperatureMetricData result = {0.0, 85.0, false};
     try {
+        // 빈 문자열 체크
+        if (value.empty() || Trim(value).empty()) {
+            return result;
+        }
+        
         size_t slashPos = FindSubstring(value, "/");
         if (slashPos == 0) return result;
        
-        std::string current = Substring(value, 1, slashPos - 1);
-        std::string maximum = Substring(value, slashPos + 1, value.length());
+        std::string current = Trim(Substring(value, 1, slashPos - 1));
+        std::string maximum = Trim(Substring(value, slashPos + 1, value.length()));
+        
+        // 빈 문자열이나 "//" 같은 경우 체크
+        if (current.empty() || maximum.empty()) {
+            return result;
+        }
+        
         result.temperature = StringToDouble(current);
         result.maxTemperature = StringToDouble(maximum);
+        
+        // 현재 온도가 최대 온도보다 크거나 음수이면 유효하지 않음
+        // 또한 최대 온도가 0 이하이면 유효하지 않음
+        if (result.temperature > result.maxTemperature || result.temperature < -50.0 || 
+            result.maxTemperature <= 0.0 || result.maxTemperature > 200.0) {
+            return result;
+        }
+        
         result.isValid = true;
     } catch (...) {
     }
@@ -296,9 +348,27 @@ TemperatureMetricData THealthMonitorCommunication::ParseTemperatureMetric(const 
 DiskMetricData THealthMonitorCommunication::ParseDiskMetric(const std::string& value) {
     DiskMetricData result = {0, false};
     try {
+        // 빈 문자열 체크
+        if (value.empty() || Trim(value).empty()) {
+            return result;
+        }
+        
         size_t slashPos = FindSubstring(value, "/");
         std::string current = (slashPos > 0) ? Substring(value, 1, slashPos - 1) : value;
-        result.usagePercent = StringToInt(Trim(current));
+        current = Trim(current);
+        
+        // 빈 문자열이나 "//" 같은 경우 체크
+        if (current.empty()) {
+            return result;
+        }
+        
+        result.usagePercent = StringToInt(current);
+        
+        // 디스크 사용률이 100%를 초과하거나 음수이면 유효하지 않음
+        if (result.usagePercent > 100 || result.usagePercent < 0) {
+            return result;
+        }
+        
         result.isValid = true;
     } catch (...) {
     }
@@ -308,18 +378,60 @@ DiskMetricData THealthMonitorCommunication::ParseDiskMetric(const std::string& v
 UptimeMetricData THealthMonitorCommunication::ParseUptimeMetric(const std::string& value) {
     UptimeMetricData result = {0, "", false};
     try {
+        // 빈 문자열 체크
+        if (value.empty() || Trim(value).empty()) {
+            return result;
+        }
+        
         std::string uptimeStr = Trim(value);
+        
+        // 유효하지 않은 문자들이 포함된 경우 체크 (uptime 형식에 맞지 않는 문자들)
+        // 유효한 문자: 숫자, 'd', ':', ' ', 알파벳 (시간 단위)
+        bool hasValidChars = true;
+        for (char c : uptimeStr) {
+            if (!std::isdigit(c) && c != 'd' && c != ':' && c != ' ' && c != '.' && 
+                !std::isalpha(c)) {
+                hasValidChars = false;
+                break;
+            }
+        }
+        if (!hasValidChars) {
+            return result;
+        }
+        
         size_t dPos = FindSubstring(uptimeStr, "d ");
         if (dPos > 0) {
-            result.days = StringToInt(Substring(uptimeStr, 1, dPos - 1));
+            // "Xd HH:MM:SS" 형식
+            std::string daysPart = Trim(Substring(uptimeStr, 1, dPos - 1));
+            if (daysPart.empty() || !std::isdigit(daysPart[0])) {
+                return result;
+            }
+            result.days = StringToInt(daysPart);
+            
             size_t spacePos = FindSubstring(uptimeStr, " ");
             if (spacePos > 0) {
-                result.timeStr = Substring(uptimeStr, spacePos + 1, uptimeStr.length());
+                result.timeStr = Trim(Substring(uptimeStr, spacePos + 1, uptimeStr.length()));
+                // 시간 부분이 비어있으면 유효하지 않음
+                if (result.timeStr.empty()) {
+                    return result;
+                }
             }
         } else {
+            // "HH:MM:SS" 형식만 있는 경우
             result.days = 0;
             result.timeStr = uptimeStr;
+            
+            // 최소한 숫자와 콜론이 포함되어야 함 (시간 형식)
+            if (FindSubstring(uptimeStr, ":") == 0 && uptimeStr.find_first_of("0123456789") == std::string::npos) {
+                return result;
+            }
         }
+        
+        // 최종 검증: timeStr이 비어있지 않아야 함
+        if (result.timeStr.empty()) {
+            return result;
+        }
+        
         result.isValid = true;
     } catch (...) {
     }
