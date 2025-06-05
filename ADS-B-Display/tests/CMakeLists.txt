@@ -19,7 +19,9 @@ add_subdirectory(
 
 set(TEST_SOURCES
     HealthMonitor_Alert_test.cpp
+    HealthMonitor_Comm_Parsing.cpp
     ../HealthMonitor_Alert.cpp
+    ../HealthMonitor_Comm_Parsing.cpp
 )
 
 # GCC/Clang에서만 커버리지 옵션 추가
