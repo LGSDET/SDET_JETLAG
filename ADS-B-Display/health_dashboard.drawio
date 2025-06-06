@@ -1,0 +1,218 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36" version="27.0.1" pages="3">
+  <diagram name="Page-1" id="RJHu-6R3pcLW2wuzUfdb">
+    <mxGraphModel dx="1483" dy="985" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="XM5vY8jqkrcC754mUpNT-1" value="ADS-B Display Application" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=16;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="50" y="50" width="1100" height="800" as="geometry" />
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-2" value="Health Dashboard Module" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#01579b;fontStyle=1;fontSize=14;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="100" width="1040" height="600" as="geometry" />
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-3" value="Presentation Layer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1976d2;fontStyle=1;fontSize=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="110" y="140" width="300" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-4" value="HealthMonitor_UI.cpp/.h&#xa;• Progress Bars&#xa;• Labels &amp; Alerts&#xa;• Connection Controls&#xa;• Timer (100ms)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;" vertex="1" parent="1">
+          <mxGeometry x="130" y="170" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-5" value="HealthMonitor_UI.dfm&#xa;• UI Form Definition" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;" vertex="1" parent="1">
+          <mxGeometry x="130" y="270" width="180" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-6" value="Business Logic Layer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontStyle=1;fontSize=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="450" y="140" width="300" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-7" value="HealthMonitor_Alert.cpp/.h&#xa;• Alert Thresholds&#xa;• CPU Sustained Check&#xa;• Alert Type Management" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ce93d8;strokeColor=#7b1fa2;" vertex="1" parent="1">
+          <mxGeometry x="470" y="170" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-8" value="HealthMonitor_MetricData.h&#xa;• Data Structures&#xa;• Validation Flags" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ce93d8;strokeColor=#7b1fa2;" vertex="1" parent="1">
+          <mxGeometry x="470" y="270" width="180" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-9" value="Network &amp; Communication Layer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e8;strokeColor=#388e3c;fontStyle=1;fontSize=12;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="790" y="140" width="300" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-10" value="HealthMonitor_Comm_Parsing.cpp/.h&#xa;• Data Parsing&#xa;• CRC32 Verification&#xa;• Latency Measurement" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a5d6a7;strokeColor=#388e3c;" vertex="1" parent="1">
+          <mxGeometry x="810" y="170" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-11" value="HealthMonitor_Comm_TCPSocket.cpp/.h&#xa;• TCP Connection&#xa;• Send/Receive&#xa;• Connection Management" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a5d6a7;strokeColor=#388e3c;" vertex="1" parent="1">
+          <mxGeometry x="810" y="270" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-12" value="Raspberry Pi Monitor Server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontStyle=1;fontSize=14;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="300" y="750" width="600" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-13" value="raspberry_monitor_server.py&#xa;• CPU/Memory/Temperature/Disk Metrics&#xa;• System Uptime Information&#xa;• CRC32 Checksum Generation&#xa;• Timer Management" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcc02;strokeColor=#f57c00;" vertex="1" parent="1">
+          <mxGeometry x="320" y="780" width="560" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-14" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="XM5vY8jqkrcC754mUpNT-4" target="XM5vY8jqkrcC754mUpNT-7">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="320" y="210" as="sourcePoint" />
+            <mxPoint x="370" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-15" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="XM5vY8jqkrcC754mUpNT-4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="320" y="220" as="sourcePoint" />
+            <mxPoint x="810" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-16" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="XM5vY8jqkrcC754mUpNT-7" target="XM5vY8jqkrcC754mUpNT-8">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="320" y="220" as="sourcePoint" />
+            <mxPoint x="480" y="220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-17" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="XM5vY8jqkrcC754mUpNT-10" target="XM5vY8jqkrcC754mUpNT-11">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="320" y="220" as="sourcePoint" />
+            <mxPoint x="480" y="220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-18" value="TCP Socket&lt;br&gt;Port 5001&lt;br&gt;Period : 1s" style="endArrow=classic;startArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#ff6600;strokeWidth=3;dashed=1;" edge="1" parent="1" source="XM5vY8jqkrcC754mUpNT-11" target="XM5vY8jqkrcC754mUpNT-13">
+          <mxGeometry width="160" height="30" relative="1" as="geometry">
+            <mxPoint x="320" y="220" as="sourcePoint" />
+            <mxPoint x="480" y="220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-19" value="Data Request/Response&#xa;CRC32 Verified" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#ff6600;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="950" y="550" width="140" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-20" value="Connection Features:&#xa;• Latency Monitoring (5sec timeout)&#xa;• CRC32 Data Integrity&#xa;• Network Error Detection&#xa;• Auto Reconnection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffde7;strokeColor=#f9a825;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="110" y="380" width="250" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-21" value="Alert Thresholds:&#xa;• CPU: 80% (5sec sustained)&#xa;• Memory: 80%&#xa;• Temperature: 70°C&#xa;• Disk: 90%" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c2185b;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="450" y="380" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="XM5vY8jqkrcC754mUpNT-22" value="Data Protocol:&#xa;TIMER={time}|CPU:{usage}/{max}|&#xa;MEM:{used}/{total}|TEMP:{temp}/{max}|&#xa;DISK:{percent}/100|UPTIME:{time}|&#xa;CRC={checksum}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0f2f1;strokeColor=#00695c;align=left;spacingLeft=10;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="715" y="400" width="370" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="WiIhbFWG_F5Unf-mTTfu" name="페이지-2">
+    <mxGraphModel dx="1581" dy="1051" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="qa_Ziotc4gtMrQ2TBYSC-1" value="&lt;font style=&quot;font-size: 22px;&quot;&gt;&amp;lt;&amp;lt; ADS-B Display Application &amp;gt;&amp;gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=16;verticalAlign=top;spacingTop=10;fontFamily=Verdana;" vertex="1" parent="1">
+          <mxGeometry x="51" y="11" width="1044" height="827" as="geometry" />
+        </mxCell>
+        <mxCell id="qa_Ziotc4gtMrQ2TBYSC-2" value="&lt;font style=&quot;font-size: 21px;&quot;&gt;Health Dashboard Module&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1;fontSize=14;verticalAlign=top;spacingTop=10;fontFamily=Verdana;" vertex="1" parent="1">
+          <mxGeometry x="73" y="100" width="983" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="qa_Ziotc4gtMrQ2TBYSC-6" value="&lt;font style=&quot;font-size: 17px;&quot;&gt;&lt;font style=&quot;&quot;&gt;Business Logic Lay&lt;/font&gt;er&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontStyle=1;fontSize=12;verticalAlign=top;spacingTop=10;fontFamily=Verdana;" vertex="1" parent="1">
+          <mxGeometry x="122" y="519" width="383" height="237" as="geometry" />
+        </mxCell>
+        <mxCell id="qa_Ziotc4gtMrQ2TBYSC-7" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;HealthMonitor_Alert.cpp/.h&lt;br&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-weight: normal;&quot;&gt;• Alert Thresholds&lt;/span&gt;&lt;/div&gt;&lt;/b&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• CPU Sustained Check&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• Alert Type Management&lt;/span&gt;&lt;/div&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ce93d8;strokeColor=#7b1fa2;fontFamily=Verdana;" vertex="1" parent="1">
+          <mxGeometry x="187" y="591" width="253" height="117" as="geometry" />
+        </mxCell>
+        <mxCell id="qa_Ziotc4gtMrQ2TBYSC-9" value="&lt;font style=&quot;font-size: 17px;&quot;&gt;Network &amp;amp; Communication Layer&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e8;strokeColor=#388e3c;fontStyle=1;fontSize=12;verticalAlign=top;spacingTop=10;fontFamily=Verdana;" vertex="1" parent="1">
+          <mxGeometry x="623" y="516" width="413" height="235" as="geometry" />
+        </mxCell>
+        <mxCell id="Xk65u2c87vCWJ2H1a3IB-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;fontSize=12;startSize=8;endSize=8;fontFamily=Verdana;" edge="1" parent="1" source="qa_Ziotc4gtMrQ2TBYSC-10" target="Xk65u2c87vCWJ2H1a3IB-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="660" y="570" />
+              <mxPoint x="557" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qa_Ziotc4gtMrQ2TBYSC-10" value="&lt;b&gt;HealthMonitor_Comm_Parsing.cpp/.h&lt;br&gt;&lt;/b&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• Data Parsing&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• CRC32 Verification&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• Latency Measurement&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a5d6a7;strokeColor=#388e3c;fontSize=14;fontFamily=Verdana;" vertex="1" parent="1">
+          <mxGeometry x="660" y="560.5" width="339" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="qa_Ziotc4gtMrQ2TBYSC-11" value="&lt;b&gt;HealthMonitor_Comm_TCPSocket.cpp/.h&lt;br&gt;&lt;/b&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• TCP Connection&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• Send/Receive&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• Connection Management&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a5d6a7;strokeColor=#388e3c;fontSize=14;fontFamily=Verdana;" vertex="1" parent="1">
+          <mxGeometry x="643.5" y="658" width="371.5" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="qa_Ziotc4gtMrQ2TBYSC-12" value="&lt;font style=&quot;font-size: 17px;&quot;&gt;Raspberry Pi Monitor Server&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=14;verticalAlign=top;spacingTop=10;fontFamily=Verdana;" vertex="1" parent="1">
+          <mxGeometry x="1441" y="502.5" width="411" height="248.5" as="geometry" />
+        </mxCell>
+        <mxCell id="qa_Ziotc4gtMrQ2TBYSC-13" value="&lt;b&gt;raspberry_monitor_server.py&lt;br&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-weight: normal;&quot;&gt;• CPU/Memory/Temperature/Disk Metrics&lt;/span&gt;&lt;/div&gt;&lt;/b&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• System Uptime Information&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• CRC32 Checksum Generation&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• Timer Management&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8B9A6;strokeColor=#b85450;fontSize=14;fontFamily=Verdana;" vertex="1" parent="1">
+          <mxGeometry x="1461" y="555.5" width="368" height="161.5" as="geometry" />
+        </mxCell>
+        <mxCell id="qa_Ziotc4gtMrQ2TBYSC-17" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Verdana;" edge="1" parent="1" source="qa_Ziotc4gtMrQ2TBYSC-10" target="qa_Ziotc4gtMrQ2TBYSC-11">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="350" y="325" as="sourcePoint" />
+            <mxPoint x="510" y="325" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qa_Ziotc4gtMrQ2TBYSC-18" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b&gt;TCP Socket&lt;br&gt;Port 5001&lt;br&gt;Period : 1s&lt;/b&gt;&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;&lt;b&gt;Security : CRC32&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;" style="endArrow=classic;startArrow=classic;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeColor=#ff6600;strokeWidth=3;dashed=1;entryX=0.002;entryY=0.785;entryDx=0;entryDy=0;entryPerimeter=0;fontFamily=Verdana;" edge="1" parent="1" source="qa_Ziotc4gtMrQ2TBYSC-11" target="qa_Ziotc4gtMrQ2TBYSC-12">
+          <mxGeometry x="-0.0061" y="-3" width="160" height="30" relative="1" as="geometry">
+            <mxPoint x="255" y="220" as="sourcePoint" />
+            <mxPoint x="1213" y="695" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qa_Ziotc4gtMrQ2TBYSC-22" value="&lt;font&gt;&lt;b&gt;Data Protocol:&lt;br&gt;&lt;/b&gt;TIMER={time}|CPU:{usage}/{max}|&lt;br&gt;MEM:{used}/{total}|TEMP:{temp}/{max}|&lt;br&gt;DISK:{percent}/100|UPTIME:{time}|&lt;br&gt;CRC={checksum}&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=none;align=left;spacingLeft=10;fontFamily=Verdana;fontSize=12;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="555.5" width="248" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="Xk65u2c87vCWJ2H1a3IB-4" value="" style="group;fontFamily=Verdana;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="201" y="157" width="682" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="qa_Ziotc4gtMrQ2TBYSC-3" value="&lt;font style=&quot;font-size: 17px;&quot;&gt;Presentation Layer&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1976d2;fontStyle=1;fontSize=12;verticalAlign=top;spacingTop=10;fontFamily=Verdana;" vertex="1" parent="Xk65u2c87vCWJ2H1a3IB-4">
+          <mxGeometry width="682" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="qa_Ziotc4gtMrQ2TBYSC-4" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;HealthMonitor_UI.cpp/.h&lt;br&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-weight: normal;&quot;&gt;• Progress Bars&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-weight: normal;&quot;&gt;• Labels &amp;amp; Alerts&lt;/span&gt;&lt;/div&gt;&lt;/font&gt;&lt;/b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• Connection Controls&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• Timer (100ms)&lt;/span&gt;&lt;/div&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;fontFamily=Verdana;" vertex="1" parent="Xk65u2c87vCWJ2H1a3IB-4">
+          <mxGeometry x="74" y="50" width="247" height="116" as="geometry" />
+        </mxCell>
+        <mxCell id="qa_Ziotc4gtMrQ2TBYSC-5" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;HealthMonitor_UI.dfm&lt;br&gt;&lt;/b&gt;• UI Form Definition&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;fontFamily=Verdana;" vertex="1" parent="Xk65u2c87vCWJ2H1a3IB-4">
+          <mxGeometry x="414" y="50" width="180" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="Xk65u2c87vCWJ2H1a3IB-19" value="" style="verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=mxgraph.basic.tick;fillColor=#a20025;strokeColor=#6F0000;fontColor=#ffffff;" vertex="1" parent="Xk65u2c87vCWJ2H1a3IB-4">
+          <mxGeometry x="74" y="41" width="27" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="Xk65u2c87vCWJ2H1a3IB-5" value="" style="group;fontFamily=Verdana;" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="335" y="368" width="416" height="122" as="geometry" />
+        </mxCell>
+        <mxCell id="Xk65u2c87vCWJ2H1a3IB-1" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Shared Data Model&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontStyle=1;fontSize=12;verticalAlign=top;spacingTop=10;dashed=1;dashPattern=8 8;fontFamily=Verdana;arcSize=16;" vertex="1" parent="Xk65u2c87vCWJ2H1a3IB-5">
+          <mxGeometry width="415.99999999999994" height="122" as="geometry" />
+        </mxCell>
+        <mxCell id="Xk65u2c87vCWJ2H1a3IB-2" value="HealthMonitor_MetricData.h&lt;br&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;font-weight: normal; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• Data Structures (CPU, Memory, Temp, Disk, Uptime)&lt;/span&gt;&lt;/div&gt;&lt;span style=&quot;font-weight: normal;&quot;&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• Validation Flags (isValid)&lt;/span&gt;&lt;/div&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff59d;strokeColor=#f9a825;fontStyle=1;dashed=1;fontSize=14;fontFamily=Verdana;" vertex="1" parent="Xk65u2c87vCWJ2H1a3IB-5">
+          <mxGeometry x="5.75" y="39.5" width="404.49" height="71" as="geometry" />
+        </mxCell>
+        <mxCell id="Xk65u2c87vCWJ2H1a3IB-10" value="" style="edgeStyle=elbowEdgeStyle;elbow=vertical;endArrow=classic;html=1;curved=0;rounded=0;endSize=8;startSize=8;fontSize=12;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Verdana;" edge="1" parent="1" source="qa_Ziotc4gtMrQ2TBYSC-4" target="Xk65u2c87vCWJ2H1a3IB-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="654" y="563" as="sourcePoint" />
+            <mxPoint x="704" y="513" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Xk65u2c87vCWJ2H1a3IB-11" value="&lt;b&gt;include&lt;/b&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontFamily=Verdana;" vertex="1" connectable="0" parent="Xk65u2c87vCWJ2H1a3IB-10">
+          <mxGeometry x="0.3912" y="-1" relative="1" as="geometry">
+            <mxPoint x="-34" y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Xk65u2c87vCWJ2H1a3IB-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;fontSize=12;startSize=8;endSize=8;fontFamily=Verdana;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="qa_Ziotc4gtMrQ2TBYSC-7" target="Xk65u2c87vCWJ2H1a3IB-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="314" y="570" />
+              <mxPoint x="543" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Xk65u2c87vCWJ2H1a3IB-8" value="&lt;b&gt;include&lt;/b&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontFamily=Verdana;" vertex="1" connectable="0" parent="Xk65u2c87vCWJ2H1a3IB-7">
+          <mxGeometry x="0.8082" y="-3" relative="1" as="geometry">
+            <mxPoint x="4" y="-6" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Xk65u2c87vCWJ2H1a3IB-13" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://i.namu.wiki/i/GyvYMBdFgynspO-SloseqTzqer8OXd9RNk_zoVeV6cdTZcw6qOEpj6pdvH6KsasxjYa-Lve4ecG1U-AbsLNwtQ.svg;fontFamily=Verdana;" vertex="1" parent="1">
+          <mxGeometry x="1441" y="454" width="60" height="75.79" as="geometry" />
+        </mxCell>
+        <mxCell id="Xk65u2c87vCWJ2H1a3IB-18" value="" style="verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=mxgraph.basic.tick;fillColor=#a20025;strokeColor=#6F0000;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="649" y="647" width="27" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="Xk65u2c87vCWJ2H1a3IB-20" value="" style="verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=mxgraph.basic.tick;fillColor=#a20025;strokeColor=#6F0000;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1117" y="68" width="27" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="Xk65u2c87vCWJ2H1a3IB-21" value="Is dependent on &lt;b&gt;vcl.h&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=Verdana;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="1126" y="73" width="188" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="8WfCyaNQMD0zpWQlZdEC" name="페이지-3">
+    <mxGraphModel dx="1186" dy="788" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
