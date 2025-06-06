@@ -496,7 +496,7 @@ UptimeMetricData THealthMonitorCommunication::ParseUptimeMetric(const std::strin
             return result;
         }
         
-        std::string uptimeStr = Trim(value);
+        std::string uptimeStr = value;  // trim하지 않고 원본 사용
         
         // 유효하지 않은 문자들이 포함된 경우 체크 (uptime 형식에 맞지 않는 문자들)
         // 유효한 문자: 숫자, 'd', ':', ' '
