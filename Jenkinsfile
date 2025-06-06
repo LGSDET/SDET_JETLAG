@@ -35,6 +35,7 @@ pipeline {
                 """
             }
         }
+
         stage('Build Unit Tests with Coverage Flags') {
             steps {
                 bat """
@@ -62,6 +63,37 @@ pipeline {
             }
         }
 
+        stage('Static Analysis with Cppcheck') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    bat """
+                    if not exist cppcheck_report mkdir cppcheck_report
+        
+                    cppcheck --enable=all --inconclusive --std=c++17 --xml --xml-version=2 ^
+                        ADS-B-Display\\HealthMonitor_Alert.cpp ^
+                        ADS-B-Display\\HealthMonitor_Alert.h ^
+                        ADS-B-Display\\HealthMonitor_Comm_Parsing.cpp ^
+                        ADS-B-Display\\HealthMonitor_Comm_Parsing.h ^
+                        ADS-B-Display\\HealthMonitor_Comm_TCPSocket.cpp ^
+                        ADS-B-Display\\HealthMonitor_Comm_TCPSocket.h ^
+                        ADS-B-Display\\HealthMonitor_MetricData.h ^
+                        ADS-B-Display\\HealthMonitor_UI.cpp ^
+                        ADS-B-Display\\HealthMonitor_UI.h ^
+                        2> cppcheck_report\\cppcheck.xml
+                    """
+                }
+        
+                script {
+                    def xmlContent = readFile('cppcheck_report/cppcheck.xml')
+                    if (!xmlContent.trim().startsWith('<?xml')) {
+                        error("cppcheck.xml is not a valid XML file. Actual content:\n${xmlContent.take(200)}")
+                    }
+                }
+        
+                recordIssues tools: [cppCheck(pattern: 'cppcheck_report/cppcheck.xml')]
+            }
+        }
+
         stage('Generate Coverage Report with gcovr') {
             steps {
                 bat """
@@ -71,12 +103,15 @@ pipeline {
             }
         }
 
-        stage('Publish Coverage Report') {
+        stage('Publish HTML Coverage Report') {
             steps {
                 publishHTML([
                     reportDir: "${REPORT_DIR}",
                     reportFiles: 'index.html',
-                    reportName: 'Gcovr Coverage Report'
+                    reportName: 'Gcovr Coverage Report',
+                    keepAll: true,
+                    alwaysLinkToLastBuild: true,
+                    allowMissing: false
                 ])
             }
         }
@@ -88,4 +123,3 @@ pipeline {
         }
     }
 }
-
