@@ -248,18 +248,24 @@ bool THealthMonitorCommunication::VerifyCRC32(const std::string& data, const std
         std::string calculatedCRCStr = ToLowerCase(IntToHexString(calculatedCRC));
         bool crcValid = calculatedCRCStr == ToLowerCase(receivedCRC);
         
-        // CRC 검증 시도만으로도 네트워크 연결 상태를 나타내므로 항상 오류 상태 해제
-        isNetworkError = false;
-        
         if (crcValid) {
-            // CRC 성공 시 카운터 리셋
+            // CRC 성공 시 카운터 리셋 및 네트워크 에러 해제
             crcFailureCount = 0;
+            isNetworkError = false;
         } else {
-            // CRC 실패 카운터 증가
-            crcFailureCount++;
+            // CRC 실패 시 카운터 증가 (단, 이미 3 이상이면 증가하지 않음)
+            if (crcFailureCount < 3) {
+                crcFailureCount++;
+            }
             if (crcFailureCount >= 3) {
                 isNetworkError = true;
             }
+        }
+        
+        // CRC 검증 시도만으로도 네트워크 연결이 있다는 것을 의미하므로 
+        // 현재 네트워크 에러 상태가 아니라면 해제 (실패가 3번 미만일 때만)
+        if (!crcValid && crcFailureCount < 3) {
+            isNetworkError = false;
         }
         
         return crcValid;
@@ -517,15 +523,12 @@ UptimeMetricData THealthMonitorCommunication::ParseUptimeMetric(const std::strin
             }
             result.days = StringToInt(daysPart);
             
-            size_t spacePos = FindSubstring(uptimeStr, " ");
-            if (spacePos > 0) {
-                result.timeStr = Trim(Substring(uptimeStr, spacePos + 1, uptimeStr.length()));
-                // 시간 부분이 비어있으면 유효하지 않음
-                if (result.timeStr.empty()) {
-                    return result;
-                }
-            } else {
-                // "d " 이후에 공백이 없으면 시간 부분이 없는 것으로 간주
+            // "d " 다음의 시간 부분 추출
+            std::string timePart = Substring(uptimeStr, dPos + 2, uptimeStr.length());
+            result.timeStr = Trim(timePart);
+            
+            // 시간 부분이 비어있으면 유효하지 않음
+            if (result.timeStr.empty()) {
                 return result;
             }
         } else {
