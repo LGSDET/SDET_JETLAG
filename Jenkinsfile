@@ -4,6 +4,7 @@ pipeline {
     environment {
         PATH = "C:\\Program Files\\mingw64\\bin;" +
                "C:\\Python\\Python311\\Scripts;" +
+               "C:\\Program Files\\Cppcheck;" +
                "${env.PATH}"
         GTEST_DIR = "gtest"
         GTEST_INCLUDE = "gtest\\googletest\\include"
@@ -17,11 +18,13 @@ pipeline {
                 deleteDir()
             }
         }
+
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
+
         stage('Clone and Build GoogleTest') {
             steps {
                 bat """
@@ -69,7 +72,7 @@ pipeline {
                     bat """
                     if not exist cppcheck_report mkdir cppcheck_report
         
-                    cppcheck --enable=all --inconclusive --std=c++17 --xml --xml-version=2 ^
+                    cppcheck --enable=all --inconclusive --std=c++17 --language=c++ --xml --xml-version=2 ^
                         ADS-B-Display\\HealthMonitor_Alert.cpp ^
                         ADS-B-Display\\HealthMonitor_Alert.h ^
                         ADS-B-Display\\HealthMonitor_Comm_Parsing.cpp ^
@@ -83,6 +86,7 @@ pipeline {
                     """
                 }
         
+                // XML 유효성 검사 후 파싱 시도
                 script {
                     def xmlContent = readFile('cppcheck_report/cppcheck.xml')
                     if (!xmlContent.trim().startsWith('<?xml')) {
@@ -94,25 +98,52 @@ pipeline {
             }
         }
 
-        stage('Generate Coverage Report with gcovr') {
-            steps {
-                bat """
-                if not exist "%REPORT_DIR%" mkdir "%REPORT_DIR%"
-                gcovr -r . --html --html-details -o %REPORT_DIR%\\index.html
-                """
-            }
-        }
-
-        stage('Publish HTML Coverage Report') {
+        stage('Publish Cppcheck Report') {
             steps {
                 publishHTML([
-                    reportDir: "${REPORT_DIR}",
+                    reportDir: "cppcheck_report",
                     reportFiles: 'index.html',
-                    reportName: 'Gcovr Coverage Report',
+                    reportName: 'Cppcheck Static Analysis',
                     keepAll: true,
                     alwaysLinkToLastBuild: true,
                     allowMissing: false
                 ])
+            }
+        }
+
+        // stage('Generate Coverage Report with gcovr') {
+        //     steps {
+        //         bat """
+        //         if not exist "%REPORT_DIR%" mkdir "%REPORT_DIR%"
+        //         gcovr -r . --html --html-details -o %REPORT_DIR%\\index.html
+        //         """
+        //     }
+        // }
+
+        // stage('Publish HTML Coverage Report') {
+        //     steps {
+        //         publishHTML([
+        //             reportDir: "${REPORT_DIR}",
+        //             reportFiles: 'index.html',
+        //             reportName: 'Gcovr Coverage Report',
+        //             keepAll: true,
+        //             alwaysLinkToLastBuild: true,
+        //             allowMissing: false
+        //         ])
+        //     }
+        // }
+        stage('Generate Coverage Report with gcovr (Cobertura)') {
+            steps {
+                bat """
+                if not exist "%REPORT_DIR%" mkdir "%REPORT_DIR%"
+                gcovr -r . --cobertura -o %REPORT_DIR%\\coverage.xml
+                """
+            }
+        }
+
+        stage('Publish Cobertura Coverage Report') {
+            steps {
+                cobertura coberturaReportFile: "${REPORT_DIR}/coverage.xml", autoUpdateHealth: false, autoUpdateStability: false
             }
         }
     }
