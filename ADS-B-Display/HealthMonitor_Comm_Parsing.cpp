@@ -183,6 +183,13 @@ THealthMonitorCommunication::THealthMonitorCommunication() {
     crcFailureCount = 0;
     isNetworkError = false;
     ResetTimer();
+    
+    // 메트릭 데이터 초기화
+    cpuData = {0.0, false};
+    memoryData = {0, 0, false};
+    temperatureData = {0.0, 85.0, false};
+    diskData = {0, false};
+    uptimeData = {0, "", false};
 }
  
 THealthMonitorCommunication::~THealthMonitorCommunication() {
@@ -241,10 +248,12 @@ bool THealthMonitorCommunication::VerifyCRC32(const std::string& data, const std
         std::string calculatedCRCStr = ToLowerCase(IntToHexString(calculatedCRC));
         bool crcValid = calculatedCRCStr == ToLowerCase(receivedCRC);
         
+        // CRC 검증 시도만으로도 네트워크 연결 상태를 나타내므로 항상 오류 상태 해제
+        isNetworkError = false;
+        
         if (crcValid) {
-            // CRC 성공 시 카운터 리셋 및 네트워크 오류 해제
+            // CRC 성공 시 카운터 리셋
             crcFailureCount = 0;
-            isNetworkError = false;
         } else {
             // CRC 실패 카운터 증가
             crcFailureCount++;
@@ -364,7 +373,11 @@ MemoryMetricData THealthMonitorCommunication::ParseMemoryMetric(const std::strin
         if (slashPos == 0) return result;
        
         std::string current = Trim(Substring(value, 1, slashPos - 1));
-        std::string maximum = Trim(Substring(value, slashPos + 1, value.length()));
+        // 다중 슬래시 처리: 두 번째 슬래시가 있으면 첫 번째 슬래시부터 두 번째 슬래시까지만 사용
+        std::string remainder = Substring(value, slashPos + 1, value.length());
+        size_t secondSlash = FindSubstring(remainder, "/");
+        std::string maximum = (secondSlash > 0) ? 
+            Trim(Substring(remainder, 1, secondSlash - 1)) : Trim(remainder);
         
         // 빈 문자열이나 "//" 같은 경우 체크
         if (current.empty() || maximum.empty()) {
@@ -402,7 +415,11 @@ TemperatureMetricData THealthMonitorCommunication::ParseTemperatureMetric(const 
         if (slashPos == 0) return result;
        
         std::string current = Trim(Substring(value, 1, slashPos - 1));
-        std::string maximum = Trim(Substring(value, slashPos + 1, value.length()));
+        // 다중 슬래시 처리: 두 번째 슬래시가 있으면 첫 번째 슬래시부터 두 번째 슬래시까지만 사용
+        std::string remainder = Substring(value, slashPos + 1, value.length());
+        size_t secondSlash = FindSubstring(remainder, "/");
+        std::string maximum = (secondSlash > 0) ? 
+            Trim(Substring(remainder, 1, secondSlash - 1)) : Trim(remainder);
         
         // 빈 문자열이나 "//" 같은 경우 체크
         if (current.empty() || maximum.empty()) {
@@ -507,6 +524,9 @@ UptimeMetricData THealthMonitorCommunication::ParseUptimeMetric(const std::strin
                 if (result.timeStr.empty()) {
                     return result;
                 }
+            } else {
+                // "d " 이후에 공백이 없으면 시간 부분이 없는 것으로 간주
+                return result;
             }
         } else {
             // "HH:MM:SS" 형식만 있는 경우
