@@ -3,16 +3,14 @@
 
 <div align="center">
 
-<!-- Tab Navigation -->
-<div>
-  <button onclick="showTab('korean')" id="korean-tab" style="background: #0366d6; color: white; border: none; padding: 10px 20px; margin: 0 2px; border-radius: 6px; cursor: pointer; font-weight: bold;">한국어 🇰🇷</button>
-  <button onclick="showTab('english')" id="english-tab" style="background: #f1f8ff; color: #0366d6; border: 1px solid #0366d6; padding: 10px 20px; margin: 0 2px; border-radius: 6px; cursor: pointer; font-weight: bold;">English 🇺🇸</button>
-</div>
+### 🌐 Language / 언어 선택
 
 </div>
 
-<!-- Korean Content -->
-<div id="korean-content">
+---
+
+<details open>
+<summary><h2>🇰🇷 한국어</h2></summary>
 
 ## 📋 개요
 
@@ -206,10 +204,12 @@ make
 ./health_monitor_test
 ```
 
-</div>
+</details>
 
-<!-- English Content -->
-<div id="english-content" style="display: none;">
+---
+
+<details>
+<summary><h2>🇺🇸 English</h2></summary>
 
 ## 📋 Overview
 
@@ -403,39 +403,4 @@ make
 ./health_monitor_test
 ```
 
-</div>
-
-<script>
-function showTab(language) {
-  // Hide all content
-  document.getElementById('korean-content').style.display = 'none';
-  document.getElementById('english-content').style.display = 'none';
-  
-  // Reset all tab buttons
-  document.getElementById('korean-tab').style.background = '#f1f8ff';
-  document.getElementById('korean-tab').style.color = '#0366d6';
-  document.getElementById('korean-tab').style.border = '1px solid #0366d6';
-  
-  document.getElementById('english-tab').style.background = '#f1f8ff';
-  document.getElementById('english-tab').style.color = '#0366d6';
-  document.getElementById('english-tab').style.border = '1px solid #0366d6';
-  
-  // Show selected content and highlight tab
-  if (language === 'korean') {
-    document.getElementById('korean-content').style.display = 'block';
-    document.getElementById('korean-tab').style.background = '#0366d6';
-    document.getElementById('korean-tab').style.color = 'white';
-    document.getElementById('korean-tab').style.border = 'none';
-  } else {
-    document.getElementById('english-content').style.display = 'block';
-    document.getElementById('english-tab').style.background = '#0366d6';
-    document.getElementById('english-tab').style.color = 'white';
-    document.getElementById('english-tab').style.border = 'none';
-  }
-}
-
-// Initialize - show Korean tab by default
-document.addEventListener('DOMContentLoaded', function() {
-  showTab('korean');
-});
-</script>
+</details>
