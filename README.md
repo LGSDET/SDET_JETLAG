@@ -3,58 +3,21 @@
 
 <div align="center">
 
-### 📂 Repository Navigation
+### 📂 Language Selection
 
-**[📖 README](#readme)** • **[🇰🇷 한국어](#한국어)** • **[🇺🇸 English](#english)** • **[📋 License](#license)** • **[🤝 Code of Conduct](#code-of-conduct)** • **[🧪 Testing](#testing)**
+**[🇰🇷 한국어](#korean)** • **[🇺🇸 English](#english)**
 
 </div>
 
 ---
 
-## README
+## Korean
 
-라즈베리파이 시스템 상태를 실시간으로 모니터링하는 Windows 기반 GUI 애플리케이션입니다.
-
-A Windows-based GUI application for real-time monitoring of Raspberry Pi system status.
-
-### 🎯 Quick Overview
-- **Purpose**: Real-time Raspberry Pi system monitoring
-- **Platform**: Windows GUI Application (VCL Framework)
-- **Communication**: TCP Socket (Port 5001)
-- **Data Integrity**: CRC32 Verification
-- **Language**: C++ (Borland C++ Builder)
-
-### 🚀 Quick Start
-```bash
-# Server (Raspberry Pi)
-python3 raspberry_monitor_server.py
-
-# Client (Windows)
-# Build ADS-B-Display.cbproj in C++ Builder
-```
-
-### 📊 Key Metrics Monitored
-| Metric | Threshold | Description |
-|--------|-----------|-------------|
-| 🖥️ CPU | 80% (5s sustained) | Real-time processor load |
-| 💾 Memory | 80% | RAM usage monitoring |
-| 🌡️ Temperature | 70°C | CPU temperature tracking |
-| 💿 Disk | 90% | Storage space utilization |
-| ⏱️ Uptime | - | System boot time |
-
----
-
-## 한국어
-
-<details>
-<summary><h3>📋 개요</h3></summary>
+### 📋 개요
 
 Health Dashboard는 ADS-B Display 애플리케이션의 서브 모듈로, TCP 소켓을 통해 원격 라즈베리파이 서버로부터 시스템 메트릭을 수집하여 실시간으로 모니터링할 수 있는 Windows 기반 GUI 애플리케이션입니다.
 
-</details>
-
-<details>
-<summary><h3>✨ 주요 기능</h3></summary>
+### ✨ 주요 기능
 
 #### 🔍 실시간 모니터링
 - **CPU 사용률**: 실시간 프로세서 부하 상태
@@ -75,10 +38,7 @@ Health Dashboard는 ADS-B Display 애플리케이션의 서브 모듈로, TCP �
 - **지연시간 모니터링**: 네트워크 상태 실시간 표시
 - **자동 재연결**: 연결 오류 시 자동 복구
 
-</details>
-
-<details>
-<summary><h3>🛠️ 시스템 요구사항</h3></summary>
+### 🛠️ 시스템 요구사항
 
 #### 클라이언트 (Windows)
 - **OS**: Windows 10 이상
@@ -94,10 +54,7 @@ Health Dashboard는 ADS-B Display 애플리케이션의 서브 모듈로, TCP �
   pip3 install psutil gpiozero
   ```
 
-</details>
-
-<details>
-<summary><h3>🚀 설치 및 설정</h3></summary>
+### 🚀 설치 및 설정
 
 #### 1. 라즈베리파이 서버 설정
 
@@ -129,10 +86,7 @@ python3 raspberry_monitor_server.py
 3. **프로젝트 빌드**:
    - `Build` → `Build ADS-B-Display`
 
-</details>
-
-<details>
-<summary><h3>📖 사용 방법</h3></summary>
+### 📖 사용 방법
 
 #### 1. 서버 시작
 ```bash
@@ -151,10 +105,7 @@ python3 raspberry_monitor_server.py
 - 각 메트릭은 진행 표시줄과 수치로 표시
 - 임계값 초과 시 자동 알림 표시
 
-</details>
-
-<details>
-<summary><h3>⚙️ 설정 옵션</h3></summary>
+### ⚙️ 설정 옵션
 
 #### 알림 임계값 (HealthMonitor_Alert.h)
 
@@ -180,10 +131,7 @@ DATA_INTERVAL = 1000ms       // 서버 데이터 수집
 LATENCY_TIMEOUT = 5000ms     // 연결 타임아웃
 ```
 
-</details>
-
-<details>
-<summary><h3>📊 데이터 프로토콜</h3></summary>
+### 📊 데이터 프로토콜
 
 #### 메시지 형식
 ```
@@ -195,10 +143,7 @@ TIMER={elapsed_time}|CPU:{usage}/{max}|MEM:{used}/{total}|TEMP:{temp}/{max}|DISK
 TIMER=15|CPU:25.3/100.0|MEM:512/1024|TEMP:45.2/85.0|DISK:67/100|UPTIME:2d 14:30:25|POWER:5.1V/0.6A|CRC=A1B2C3D4
 ```
 
-</details>
-
-<details>
-<summary><h3>🔧 문제 해결</h3></summary>
+### 🔧 문제 해결
 
 #### 연결 문제
 
@@ -229,21 +174,46 @@ TIMER=15|CPU:25.3/100.0|MEM:512/1024|TEMP:45.2/85.0|DISK:67/100|UPTIME:2d 14:30:
   1. 라즈베리파이 하드웨어 상태 확인
   2. 권한 문제 확인 (`sudo` 필요할 수 있음)
 
-</details>
+### 🧪 테스트
+
+#### 테스트 구조
+```
+tests/
+├── CMakeLists.txt                          # CMake 빌드 설정
+├── HealthMonitor_Alert_test.cpp            # 알림 시스템 테스트
+├── HealthMonitor_Comm_Parsing_test.cpp     # 통신 파싱 테스트
+└── build/                                  # 빌드 결과물
+```
+
+#### 단위 테스트
+
+##### CMake를 사용한 빌드
+```bash
+# tests 디렉토리로 이동
+cd ADS-B-Display/tests
+
+# 빌드 디렉토리 생성
+mkdir -p build && cd build
+
+# CMake 구성
+cmake ..
+
+# 빌드 실행
+make
+
+# 테스트 실행
+./health_monitor_test
+```
 
 ---
 
 ## English
 
-<details>
-<summary><h3>📋 Overview</h3></summary>
+### 📋 Overview
 
 A Windows-based GUI application for real-time monitoring of Raspberry Pi system status. Health Dashboard is a sub-module of the ADS-B Display application that provides real-time monitoring capabilities by collecting system metrics from remote Raspberry Pi servers via TCP sockets.
 
-</details>
-
-<details>
-<summary><h3>✨ Key Features</h3></summary>
+### ✨ Key Features
 
 #### 🔍 Real-time Monitoring
 - **CPU Usage**: Real-time processor load status
@@ -264,10 +234,7 @@ A Windows-based GUI application for real-time monitoring of Raspberry Pi system 
 - **Latency Monitoring**: Real-time network status display
 - **Auto Reconnection**: Automatic recovery on connection errors
 
-</details>
-
-<details>
-<summary><h3>🛠️ System Requirements</h3></summary>
+### 🛠️ System Requirements
 
 #### Client (Windows)
 - **OS**: Windows 10 or later
@@ -283,10 +250,7 @@ A Windows-based GUI application for real-time monitoring of Raspberry Pi system 
   pip3 install psutil gpiozero
   ```
 
-</details>
-
-<details>
-<summary><h3>🚀 Installation and Setup</h3></summary>
+### 🚀 Installation and Setup
 
 #### 1. Raspberry Pi Server Setup
 
@@ -318,10 +282,7 @@ python3 raspberry_monitor_server.py
 3. **Build project**:
    - `Build` → `Build ADS-B-Display`
 
-</details>
-
-<details>
-<summary><h3>📖 Usage Guide</h3></summary>
+### 📖 Usage Guide
 
 #### 1. Start Server
 ```bash
@@ -340,10 +301,7 @@ python3 raspberry_monitor_server.py
 - Each metric is displayed with progress bars and numerical values
 - Automatic alerts when thresholds are exceeded
 
-</details>
-
-<details>
-<summary><h3>⚙️ Configuration Options</h3></summary>
+### ⚙️ Configuration Options
 
 #### Alert Thresholds (HealthMonitor_Alert.h)
 
@@ -369,10 +327,7 @@ DATA_INTERVAL = 1000ms       // Server Data Collection
 LATENCY_TIMEOUT = 5000ms     // Connection Timeout
 ```
 
-</details>
-
-<details>
-<summary><h3>📊 Data Protocol</h3></summary>
+### 📊 Data Protocol
 
 #### Message Format
 ```
@@ -384,10 +339,7 @@ TIMER={elapsed_time}|CPU:{usage}/{max}|MEM:{used}/{total}|TEMP:{temp}/{max}|DISK
 TIMER=15|CPU:25.3/100.0|MEM:512/1024|TEMP:45.2/85.0|DISK:67/100|UPTIME:2d 14:30:25|POWER:5.1V/0.6A|CRC=A1B2C3D4
 ```
 
-</details>
-
-<details>
-<summary><h3>🔧 Troubleshooting</h3></summary>
+### 🔧 Troubleshooting
 
 #### Connection Issues
 
@@ -418,71 +370,9 @@ TIMER=15|CPU:25.3/100.0|MEM:512/1024|TEMP:45.2/85.0|DISK:67/100|UPTIME:2d 14:30:
   1. Check Raspberry Pi hardware status
   2. Check permission issues (`sudo` may be required)
 
-</details>
+### 🧪 Testing
 
----
-
-## License
-
-```
-MIT License
-
-Copyright (c) 2024 Health Dashboard
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## Code of Conduct
-
-### Our Pledge
-
-We as members, contributors, and leaders pledge to make participation in our community a harassment-free experience for everyone, regardless of age, body size, visible or invisible disability, ethnicity, sex characteristics, gender identity and expression, level of experience, education, socio-economic status, nationality, personal appearance, race, religion, or sexual identity and orientation.
-
-### Our Standards
-
-Examples of behavior that contributes to a positive environment:
-- Using welcoming and inclusive language
-- Being respectful of differing viewpoints and experiences
-- Gracefully accepting constructive criticism
-- Focusing on what is best for the community
-- Showing empathy towards other community members
-
-Examples of unacceptable behavior:
-- The use of sexualized language or imagery, and sexual attention or advances
-- Trolling, insulting/derogatory comments, and personal or political attacks
-- Public or private harassment
-- Publishing others' private information without explicit permission
-- Other conduct which could reasonably be considered inappropriate
-
-### Enforcement
-
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement. All complaints will be reviewed and investigated promptly and fairly.
-
----
-
-## Testing
-
-<details>
-<summary><h3>🧪 Test Structure</h3></summary>
-
+#### Test Structure
 ```
 tests/
 ├── CMakeLists.txt                          # CMake build configuration
@@ -491,12 +381,9 @@ tests/
 └── build/                                  # Build artifacts
 ```
 
-</details>
+#### Unit Testing
 
-<details>
-<summary><h3>🔧 Unit Testing</h3></summary>
-
-#### Build with CMake
+##### Build with CMake
 ```bash
 # Navigate to tests directory
 cd ADS-B-Display/tests
@@ -513,37 +400,3 @@ make
 # Run tests
 ./health_monitor_test
 ```
-
-</details>
-
-<details>
-<summary><h3>📈 Test Coverage</h3></summary>
-
-#### Alert System Tests
-- **Boundary Value Analysis**: Threshold boundary testing
-- **Duration Tests**: CPU 5-second sustained alert testing
-- **Validation Tests**: Invalid data handling tests
-- **State Management**: Alert state reset tests
-
-#### Communication Parsing Tests
-- **Data Parsing**: All metric parsing tests
-- **CRC Verification**: Data integrity verification tests
-- **Error Handling**: Invalid format handling tests
-- **Network Errors**: Connection failure scenario tests
-
-</details>
-
----
-
-<div align="center">
-
-### 🎯 Project Status
-
-![GitHub last commit](https://img.shields.io/github/last-commit/yourusername/health-dashboard)
-![GitHub issues](https://img.shields.io/github/issues/yourusername/health-dashboard)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/yourusername/health-dashboard)
-![License](https://img.shields.io/github/license/yourusername/health-dashboard)
-
-**Health Dashboard** • Made with ❤️ for monitoring Raspberry Pi systems
-
-</div>
